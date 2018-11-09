@@ -1,10 +1,12 @@
-class FirstVariable
+class test
 {
     public static void main(String [] args)
     {
-        String message = "Hello, world!!!";
-        System.out.println(message);
-        message = "hello, NEW world!!";
-        System.out.println(message);
+        String[] str = {"hello", ",", " world!!"};
+
+        for (int i = 0; i < str.length; i++)
+        {
+            System.out.print(str[i]);
+        }
     }
 }
