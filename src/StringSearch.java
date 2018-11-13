@@ -6,12 +6,12 @@ public class StringSearch {
                                 };
         int counter1 = 0, counter2 = 0, counter3 = 0;
 
-        for (int i = 0; i < example_text.length; i++)
+        for (String oneString : example_text)
         {
-            System.out.print(example_text[i].substring(0, 4) + ' ');
-            if (example_text[i].endsWith("string")) { counter1 ++; }
-            if (example_text[i].startsWith("Java")) { counter2 ++; }
-            if (example_text[i].indexOf("fail") == -1) {counter3 ++; }
+            System.out.print(oneString.substring(0, 4).trim() + ' ');
+            if (oneString.endsWith("string")) { counter1 ++; }
+            if (oneString.startsWith("Java")) { counter2 ++; }
+            if (oneString.contains("fail")) { counter3 ++; }
         }
 
         System.out.println("\ncounter1 = " + Integer.toString(counter1));
