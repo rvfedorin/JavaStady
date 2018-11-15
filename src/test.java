@@ -2,11 +2,13 @@ class test
 {
     public static void main(String [] args)
     {
-        String[] str = {"hello", ",", " world!!"};
+        int a = 2;
+//        byte aa = powww(a, 2);
+        System.out.println(powww(a, 2));
+    }
 
-        for (int i = 0; i < str.length; i++)
-        {
-            System.out.print(str[i]);
-        }
+    public static int powww(int a, int b)
+    {
+        return a * b;
     }
 }
