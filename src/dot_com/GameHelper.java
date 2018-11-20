@@ -35,57 +35,59 @@ public class GameHelper {
         return inputLine;
     }
 
+    // Выбор расположения корабля
     public ArrayList<String> placeDotCom(int numPosition)
     {
-        int tooMuch = 0;
-        int posCounter = numPosition;
-        int direction = -1;
-        String cell;
-        String tempUsed = used;
+        int tooMuch = 0;  // количесвто проходов цикла
+        int posCounter = numPosition;  // счетчик выбранных полей
+        int direction = -1;  // направление расположения (-1 случайный выбор)
+        String cell;  // название поля вида "с1"
+        String tempUsed = used;  // использованные поля до изменений
 
-        ArrayList<String> allPosition = new ArrayList<>();
+        ArrayList<String> allPosition = new ArrayList<>();  // итоговывй результат "а1b1b2"
 
 
 //        int startPosition = ((int) (Math.random() * (abc.length-2)) + 1);
 
-        int x = ((int) (Math.random() * (abc.length-2))) + 2; // Выибираем цифру
+        int x = ((int) (Math.random() * (numeric.length-2))) + 2; // Выибираем цифру
         int y = ((int) (Math.random() * (abc.length-2))) + 2; // Выибираем букву
 
 
         while (tooMuch++ < 200 && posCounter > 0)
-        {
+        {   // Если направление не фиксировано, выбираем случайное
             if (direction == -1){
                 direction = (int) (Math.random() * 3);
             }
+            // сохраняем начальнык координаты, на случай, если придется вернуться к ним
             int tempX = x;
             int tempY = y;
 
 
             switch (direction)
             {
-                case 0:
+                case 0:  // влево
                     if (x > 0)
                     {
                         x -= 1;
                         break;
                     }
-                    direction = 0;
-                case 1:
+                    direction = 0; // переходим к следующему положению и задаём, что это пройдено
+                case 1: // вверх
                     if (y > 0)
                     {
                         y -= 1;
                         break;
                     }
                     direction = 1;
-                case 2:
-                    if (x < 6)
+                case 2: // вправо
+                    if (x < numeric.length-1)
                     {
                         x += 1;
                         break;
                     }
                     direction = 2;
-                case 3:
-                    if (y < 6)
+                case 3: // вниз
+                    if (y < abc.length-1)
                     {
                         y += 1;
                         break;
@@ -94,32 +96,36 @@ public class GameHelper {
 
             String hor = numeric[x];
             String vert = abc[y];
-            cell = vert + hor;
-            if (used.contains(cell))  // Если такое полу уже есть, пробуем заново
+            cell = vert + hor;  // собираем строку вида "с1"
+            if (used.contains(cell))  // Если такое поле занято, пробуем заново
             {
-                x = tempX;  // возвращаем в положение до перехода
+                // возвращаем в положение до перехода
+                x = tempX;
                 y = tempY;
+                // Смотрим на каком направлении остановились и задаём следующее
                 if (direction < 3) {
                     direction += 1;
                 } else {
                     direction = 0;
                 }
 
-            } else {
-                used += cell;
-                posCounter--;
+            } else {  // если поле свободно
+                used += cell;  // добавляем новое поле в занятые
+                posCounter--;  // уменьшаем количество требуемыъ полей
                 allPosition.add(String.valueOf(cell));
+                direction = -1;  // задаем случайный выбор поля на следующей итерации
             }
 
+            // Если по попали в тупик
             if ((posCounter == 0 || tooMuch >= 200) && (allPosition.size() != numPosition))
             {
 //                System.out.println("IN   ->>>>>>>>>>>>");
-                allPosition.clear();
-                used = tempUsed;
-                x = ((int) (Math.random() * (abc.length-2))) + 1; // Выибираем цифру
-                y = ((int) (Math.random() * (abc.length-2))) + 1; // Выибираем букву
-                posCounter = numPosition;
-                tooMuch = 0;
+                allPosition.clear();  // удаляем выбранные ранее поля
+                used = tempUsed;  // очищаем занятые поля
+                x = ((int) (Math.random() * (abc.length-2))) + 1; // Выибираем случайно цифру
+                y = ((int) (Math.random() * (abc.length-2))) + 1; // Выибираем случайно букву
+                posCounter = numPosition;  // сьрасываем счётчик не выбранных полей
+                tooMuch = 0;  // сбрасываем счётчик проходов цикла
             }
 
         } //while (searching && tooMuch++ < 200 && numPosition > 0)
