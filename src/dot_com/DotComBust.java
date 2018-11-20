@@ -7,8 +7,7 @@ public class DotComBust {
     private ArrayList<DotCom> dotComsList = new ArrayList<>();
     private int numOfGuesses = 0;
 
-    private void setUpGame()
-    {
+    private void setUpGame() {
         // Создадим несколько сайтов и присвоим им имена
         DotCom one = new DotCom();
         one.setName("Pets.com");
@@ -25,59 +24,47 @@ public class DotComBust {
         System.out.println("Pets.com, eToys.com, Go2.com");
         System.out.println("Постарайтесь потопить их за наименьшее количество ходов.");
 
-        for (DotCom dotComToSet: dotComsList)
-        {
+        for (DotCom dotComToSet: dotComsList) {
             ArrayList<String> newLocation = helper.placeDotCom(3);
             dotComToSet.SetLocationCells(newLocation);
             System.out.println(newLocation);
         }
-
     }
 
-    private void startPlaying()
-    {
-        while (!dotComsList.isEmpty())
-        {
+    private void startPlaying() {
+        while (!dotComsList.isEmpty()) {
             String userGuess = helper.getUserInput("Сделайте ход: ");
             checkUserGuess(userGuess);
         }
-
         finishGame();
-
     }
 
-    private void checkUserGuess(String userGuess)
-    {
+    private void checkUserGuess(String userGuess) {
         numOfGuesses++;
         String result = "Мимо";
 
-        for (DotCom dot: dotComsList)
-        {
+        for (DotCom dot: dotComsList) {
             result = dot.checkYourSelf(userGuess);
 
-            if (result.equals("Попал"))
-            {
+            if (result.equals("Попал")) {
                 result = result + " в " +dot.getName();
                 break;
             }
-            if (result.equals("Потопил"))
-            {
+            if (result.equals("Потопил")) {
                 dotComsList.remove(dot);
                 result = "----------------------->>>> " + result + " " + dot.getName();
                 break;
             }
-        }
+        } // for (DotCom dot: dotComsList)
         System.out.println(result);
     }
 
-    private void finishGame()
-    {
+    private void finishGame() {
         System.out.println("Все сайты ушли ко дну!!!");
         System.out.println("Количество выстрелов: " + String.valueOf(numOfGuesses));
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         DotComBust game = new DotComBust();
         game.setUpGame();
         game.startPlaying();

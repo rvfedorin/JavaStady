@@ -7,33 +7,27 @@ public class DotCom {
     private ArrayList<String> location;
 
 
-    public void setName(String newName)
-    {
+    public void setName(String newName) {
         name = newName;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void SetLocationCells(ArrayList<String> newLocation)
-    {
+    public void SetLocationCells(ArrayList<String> newLocation) {
         location = newLocation;
     }
 
-    public String checkYourSelf(String guess)
-    {
+    public String checkYourSelf(String guess)  {
         String result = "Мимо";
 
-        if (location.contains(guess))
-        {
+        if (location.contains(guess))  {
             location.remove(location.indexOf(guess));
             result = "Попал";
         }
 
-        if (location.isEmpty())
-        {
+        if (location.isEmpty()) {
             result = "Потопил";
         }
 
