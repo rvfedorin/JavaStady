@@ -1,15 +1,19 @@
+import java.util.Date;
+
 class test {
-    Integer i;
-    int j;
-
     public static void main(String[] args) {
-        test t = new test();
-        t.go();
-    }
+        int x = 10000000;
+        float y = 22.22f;
 
-    public void go(){
-//        j = i;
-        System.out.println(j);
-        System.out.println(i);
+        String s = String.format("Проверка форматирования числа: %,d из %.1f", x, y);
+        System.out.println(s);
+
+        Date today = new Date();
+        System.out.println(String.format("%tc", today));
+
+        System.out.println(String.format("%tA/%tB/%td", today, today, today));
+        // or
+        System.out.println(String.format("%tA/%<tB/%<td", today));
     }
 }
+
