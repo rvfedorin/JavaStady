@@ -1,16 +1,15 @@
 class test {
+    Integer i;
+    int j;
+
     public static void main(String[] args) {
+        test t = new test();
+        t.go();
+    }
 
-
+    public void go(){
+        j = i;
+        System.out.println(j);
+        System.out.println(i);
     }
 }
-
-abstract class Top{}
-class Tip extends Top{}
-
-interface Zeta{}
-interface Beta{}
-class Alpha implements Zeta{}
-class Delata extends Alpha implements Beta{}
-
-
