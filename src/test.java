@@ -1,3 +1,4 @@
+import java.util.Calendar;
 import java.util.Date;
 
 class test {
@@ -14,6 +15,15 @@ class test {
         System.out.println(String.format("%tA/%tB/%td", today, today, today));
         // or
         System.out.println(String.format("%tA/%<tB/%<td", today));
+
+
+        Calendar c = Calendar.getInstance();
+        c.set(1983, 2, 5, 8, 30);
+        long day1 = c.getTimeInMillis();
+        System.out.println(day1);
+        System.out.println(c.getTime());
+        System.out.println(c.get(c.HOUR_OF_DAY));
+
     }
 }
 
