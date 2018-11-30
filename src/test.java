@@ -1,29 +1,25 @@
 import java.util.Calendar;
 import java.util.Date;
+import static java.lang.System.out;
 
 class test {
+    static int DAY_IM = 1000 * 60 * 60 * 24;
+
     public static void main(String[] args) {
-        int x = 10000000;
-        float y = 22.22f;
-
-        String s = String.format("Проверка форматирования числа: %,d из %.1f", x, y);
-        System.out.println(s);
-
-        Date today = new Date();
-        System.out.println(String.format("%tc", today));
-
-        System.out.println(String.format("%tA/%tB/%td", today, today, today));
-        // or
-        System.out.println(String.format("%tA/%<tB/%<td", today));
-
 
         Calendar c = Calendar.getInstance();
-        c.set(1983, 2, 5, 8, 30);
+        long today = c.getTimeInMillis();
+        c.set(2004, 0, 7, 15, 40, 0);
         long day1 = c.getTimeInMillis();
-        System.out.println(day1);
-        System.out.println(c.getTime());
-        System.out.println(c.get(c.HOUR_OF_DAY));
+        int id = 0;
 
-    }
+        while (c.getTimeInMillis() < today){
+            id += 1;
+            String s = String.format("%d Полнолуние было в %tc", id, c);
+            out.println(s);
+            day1 += DAY_IM * 29.52;
+            c.setTimeInMillis(day1);
+        }
+    } // public static void main
 }
 
