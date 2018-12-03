@@ -8,7 +8,7 @@ public class MusicTest1 {
         try{
             Sequencer sequencer = MidiSystem.getSequencer();
             System.out.println("Мы получили синтезатор!!!");
-        } catch (Exception ex) {
+        } catch (MidiUnavailableException ex) {
             System.out.println("Не удалось получить синтезатор. ");
             ex.printStackTrace();
         }
