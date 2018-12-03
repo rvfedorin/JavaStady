@@ -16,18 +16,24 @@ public class MusicTest2 {
             Sequence seq = new Sequence(Sequence.PPQ, 4);
             Track track = seq.createTrack();
 
-            ShortMessage a = new ShortMessage();
-            a.setMessage(144, 1, 44, 100);
-            MidiEvent noteOn = new MidiEvent(a, 4);
-            track.add(noteOn);
+            int tackt = 1;
+            for(int i = 1; i < 120; i += 20) {
 
-            ShortMessage b = new ShortMessage();
-            b.setMessage(128, 1, 44, 100);
-            MidiEvent noteOff = new MidiEvent(b, 16);
-            track.add(noteOff);
+                ShortMessage a = new ShortMessage();
+                a.setMessage(144, 1, i, 100);
+                MidiEvent noteOn = new MidiEvent(a, tackt);
+                track.add(noteOn);
 
-            player.setSequence(seq);
+                ShortMessage b = new ShortMessage();
+                b.setMessage(128, 1, i, 100);
+                MidiEvent noteOff = new MidiEvent(b, tackt+8);
+                track.add(noteOff);
 
+                player.setSequence(seq);
+                tackt += 10;
+
+
+            }
             player.start();
 
         } catch (Exception ex) {
