@@ -3,8 +3,8 @@ import java.awt.event.*;
 
 
 public class SimpleGui1 implements ActionListener{
-    int click_count = 0;
-    JButton button;
+    private int click_count = 0;
+    private JButton button;
 
     public static void main(String[] args){
         SimpleGui1 gui1 = new SimpleGui1();
@@ -12,7 +12,7 @@ public class SimpleGui1 implements ActionListener{
 
     }
 
-    public void go(){
+    private void go(){
         JFrame frame = new JFrame();
         button = new JButton("Click me");
         button.addActionListener(this);
@@ -24,7 +24,7 @@ public class SimpleGui1 implements ActionListener{
 
     }
 
-    public void onClick(){
+    private void onClick(){
         click_count++;
         String s = "Clicked: " + click_count;
         button.setText(s);
