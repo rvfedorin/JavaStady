@@ -50,8 +50,6 @@ public class TwoButton {
             x += 2*direction;
             y += 2*direction;
 
-            System.out.println(x);
-
             panel.repaint();
 //            i ++;
             try {
