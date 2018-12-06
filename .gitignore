@@ -2,3 +2,5 @@
 JavaStudy.iml
 **out/**
 *.class
+*.jar
+*.MF

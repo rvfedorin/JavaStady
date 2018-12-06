@@ -25,8 +25,14 @@ public class PullAnimate {
         frame.setSize(500, 270);
         frame.setVisible(true);
 
-        changXY();
-        System.out.println("END");
+        while (true) {
+            changXY();
+            try{
+                Thread.sleep(50);
+            } catch (Exception ex) {}
+
+        }
+//        System.out.println("END");
 
     }
 
@@ -34,8 +40,6 @@ public class PullAnimate {
         for (i = 0; i < 124; i++, y++, x++){
             x++;
             drawP.repaint();
-
-
             try{
                 Thread.sleep(50);
             } catch (Exception ex) {}
