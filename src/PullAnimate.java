@@ -33,7 +33,6 @@ public class PullAnimate {
 
         }
 //        System.out.println("END");
-
     }
 
     private void changXY(){
