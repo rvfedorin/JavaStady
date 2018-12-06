@@ -89,7 +89,7 @@ class MyDrawPanel1 extends JPanel implements ControllerEventListener{
             int y  = (int) ((Math.random() * 40) + 10);
 
             g2.fillRect(x, y, h, w);
-            msg =false;
+            msg = false;
         }
     }
 }
