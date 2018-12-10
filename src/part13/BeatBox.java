@@ -55,17 +55,22 @@ public class BeatBox {
         clear.addActionListener(new MyClearAll());
         buttonBox.add(clear);
 
-        Box nameBox = new Box(BoxLayout.Y_AXIS);
-        for (int i=0; i < 16; i++) {
-            nameBox.add(new JLabel(instrumentNames[i]));
-        }
+        GridLayout nameGrid = new GridLayout(16, 1);
+        nameGrid.setVgap(1);
+        nameGrid.setHgap(2);
+        JPanel namePanel = new JPanel(nameGrid);
 
-        background.add(BorderLayout.EAST, buttonBox);
-        background.add(BorderLayout.WEST, nameBox);
+        for (int i=0; i < 16; i++) {
+            namePanel.add(new JLabel(instrumentNames[i]));
+        }
 
         theFrame.getContentPane().add(background);
 
-        GridLayout grid = new GridLayout(16, 16);
+        background.add(BorderLayout.EAST, buttonBox);
+        background.add(BorderLayout.WEST, namePanel);
+
+
+        GridLayout grid = new GridLayout(16, 17);
         grid.setVgap(1);
         grid.setHgap(2);
         JPanel mainPanel = new JPanel(grid);
@@ -144,6 +149,7 @@ public class BeatBox {
         @Override
         public void actionPerformed(ActionEvent ev) {
             sequencer.stop();
+            sequencer.setTickPosition(0);
         }
     } // class MyStopListener implements ActionListener
 
