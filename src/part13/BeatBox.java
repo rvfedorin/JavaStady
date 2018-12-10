@@ -51,6 +51,10 @@ public class BeatBox {
         downTempo.addActionListener(new MyDownTempoListener());
         buttonBox.add(downTempo);
 
+        JButton clear = new JButton("Clear All");
+        clear.addActionListener(new MyClearAll());
+        buttonBox.add(clear);
+
         Box nameBox = new Box(BoxLayout.Y_AXIS);
         for (int i=0; i < 16; i++) {
             nameBox.add(new JLabel(instrumentNames[i]));
@@ -161,6 +165,17 @@ public class BeatBox {
         }
     } // class MyDownTempoListener implements ActionListener
 
+    class MyClearAll implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent ev) {
+            for (int i=0; i < 256; i++) {
+                JCheckBox c = checkBoxesList.get(i);
+                c.setSelected(false);
+            }
+        }
+    } // class MyClearAll implements ActionListener
+
     private void makeTracks(int[] list) {
         for (int i=0; i < 16; i++) {
             int key = list[i];
@@ -170,6 +185,7 @@ public class BeatBox {
                 track.add(makeEvent(128, 9, key, 100, i+1));
             }
         } // for (int i=0; i < 16; i++)
+
     } // private void makeTracks(int[] list)
 
     private MidiEvent makeEvent(int comd, int chan, int one, int two, int tick){
