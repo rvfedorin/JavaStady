@@ -7,6 +7,9 @@ class test {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel panel = new JPanel();
+        panel.setBackground(Color.darkGray);
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         JButton b1 = new JButton("shock me");
         JButton b2 = new JButton("bliss");
