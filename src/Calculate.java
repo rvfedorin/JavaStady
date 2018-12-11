@@ -50,7 +50,7 @@ public class Calculate {
 
         frame.getContentPane().add(panel);
 
-        frame.setSize(400, 130);
+        frame.setSize(280, 115);
         frame.setVisible(true);
 
     }  // private void setupGu()
