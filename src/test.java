@@ -1,27 +1,30 @@
-import javax.swing.*;
-import java.awt.*;
+import java.io.*;
 
-class test {
+class test implements Serializable {
+    private int width;
+    private int height;
+
+    public void setWidth(int w) {
+        width = w;
+    }
+
+    public void setHeight(int h) {
+        height = h;
+    }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.darkGray);
+        test box = new test();
+        box.setHeight(20);
+        box.setWidth(40);
 
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        JButton b1 = new JButton("shock me");
-        JButton b2 = new JButton("bliss");
-        JButton b3 = new JButton("huh?");
-
-        panel.add(b1);
-        panel.add(b2);
-        panel.add(b3);
-
-        frame.getContentPane().add(BorderLayout.EAST, panel);
-        frame.setSize(300, 300);
-        frame.setVisible(true);
+        try {
+            FileOutputStream fd = new FileOutputStream("foo.ser");
+            ObjectOutputStream os = new ObjectOutputStream(fd);
+            os.writeObject(box);
+            os.close();
+        } catch ( Exception ex) {
+            ex.printStackTrace();
+        }
 
 
     } // public static void main
