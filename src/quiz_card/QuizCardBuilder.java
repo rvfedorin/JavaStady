@@ -110,8 +110,10 @@ public class QuizCardBuilder {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 
             for (QuizCard card:cardList){
-                writer.write(card.getQuestion() + "/");
-                writer.write(card.getAnswer() + "\n");
+                if (card.getQuestion().length() > 0 && card.getAnswer().length() > 0) {
+                    writer.write(card.getQuestion() + "/");
+                    writer.write(card.getAnswer() + "\n");
+                }
             }
             writer.close();
         } catch (IOException ex) {

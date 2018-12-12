@@ -16,7 +16,7 @@ public class QuizCardPlayer {
     private int currentCardIndex;
     private boolean isShowAnswer;
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         QuizCardPlayer player = new QuizCardPlayer();
         player.go();
     }
@@ -100,9 +100,11 @@ public class QuizCardPlayer {
 
     private void makeCard(String lineToParse) {
         String[] result = lineToParse.split("/");
-        QuizCard card = new QuizCard(result[0], result[1]);
-        cardList.add(card);
-        System.out.println("Made a card");
+        if (result.length == 2) {
+            QuizCard card = new QuizCard(result[0], result[1]);
+            cardList.add(card);
+//            System.out.println("Made a card");
+        }
     }
 
     private void showNextCard() {
