@@ -88,11 +88,8 @@ public class Calculate {
         } // public void mouseClicked(MouseEvent ev)
         @Override
         public void mousePressed(MouseEvent e) {}
-        @Override
         public void mouseReleased(MouseEvent e) {}
-        @Override
         public void mouseEntered(MouseEvent e) {}
-        @Override
         public void mouseExited(MouseEvent e) {}
     }  // class MyMouseListener implements MouseListener
 }  // public class Calculate
