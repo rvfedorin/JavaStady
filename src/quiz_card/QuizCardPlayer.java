@@ -8,7 +8,7 @@ import java.io.*;
 
 public class QuizCardPlayer {
     private JTextArea display;
-    private JTextArea answer;
+//    private JTextArea answer;
     private ArrayList<QuizCard> cardList;
     private QuizCard currentCard;
     private JFrame frame;
@@ -51,7 +51,7 @@ public class QuizCardPlayer {
 
         frame.setJMenuBar(mBar);
         frame.add(mainPanel);
-        frame.setSize(640, 500);
+        frame.setSize(640, 280);
         frame.setVisible(true);
     }
 
