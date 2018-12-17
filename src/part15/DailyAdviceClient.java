@@ -12,7 +12,7 @@ public class DailyAdviceClient {
             BufferedReader bufferedReader = new BufferedReader(streamReader);
             String advice = bufferedReader.readLine();
             bufferedReader.close();
-            System.out.println("Сегодня ты должен: " + advice);
+            System.out.println("Совет на сегодня: " + advice);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
