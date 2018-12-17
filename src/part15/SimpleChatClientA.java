@@ -17,7 +17,7 @@ public class SimpleChatClientA {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel mainPanel = new JPanel();
-        outgoing = new JTextField();
+        outgoing = new JTextField(20);
         JButton sendButton = new JButton("Send");
         sendButton.addActionListener(new SendButtonListener());
         mainPanel.add(outgoing);
@@ -38,7 +38,7 @@ public class SimpleChatClientA {
         }
     } // close void setUpNetworking
 
-    class SendButtonListener implements ActionListener {
+    private class SendButtonListener implements ActionListener {
         public void actionPerformed (ActionEvent ev) {
             try {
                 writer.println(outgoing.getText());
