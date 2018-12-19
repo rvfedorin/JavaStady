@@ -21,7 +21,7 @@ public class SimpleChatClient {
         JFrame frame = new JFrame("Simple Chat Client");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel mainPanel = new JPanel();
-        incoming = new JTextArea(15, 50);
+        incoming = new JTextArea(15, 40);
         incoming.setLineWrap(true);
         incoming.setWrapStyleWord(true);
         incoming.setEditable(false);
@@ -42,14 +42,14 @@ public class SimpleChatClient {
         thread.start();
 
         frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
-        frame.setSize(400, 500);
+        frame.setSize(500, 500);
         frame.setVisible(true);
 
     }  // close go()
 
     private void setUpNetworking() {
         try {
-            Socket socket = new Socket("127.0.0.1", 500);
+            Socket socket = new Socket("127.0.0.1", 5000);
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer = new PrintWriter(socket.getOutputStream());
             System.out.println("Networking established");
@@ -76,8 +76,9 @@ public class SimpleChatClient {
             String message;
             try {
                 while ((message = reader.readLine()) != null) {
-                    System.out.println("read " + message);
                     incoming.append(message + "\n");
+                    System.out.println("read: " + message);
+
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
