@@ -13,6 +13,8 @@ public class Jukebkox1 {
     private void go() {
         getSongs();
         System.out.println(songList);
+        Collections.sort(songList);
+        System.out.println(songList);
     }
 
     private void getSongs () {
