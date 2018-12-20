@@ -11,7 +11,7 @@ public class VerySimpleChatServer {
         BufferedReader reader;
         Socket sock;
 
-        public ClientHandler (Socket clientSocker) {
+        private ClientHandler (Socket clientSocker) {
             try {
                 sock = clientSocker;
                 InputStreamReader sr = new InputStreamReader(sock.getInputStream());

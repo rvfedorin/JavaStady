@@ -28,7 +28,7 @@ public class SimpleChatClient {
         JScrollPane scroller = new JScrollPane(incoming);
         scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        outgoing = new JTextField(20);
+        outgoing = new JTextField(41);
         JButton sentButton = new JButton("Send");
         sentButton.addActionListener(new SendButtonListener());
 
@@ -84,5 +84,5 @@ public class SimpleChatClient {
                 ex.printStackTrace();
             }
         }
-    }
+    }  // close class IncomingReader
 }
