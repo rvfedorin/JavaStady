@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 public class Jukebkox1 {
-    ArrayList<String> songList = new ArrayList<>();
+    private ArrayList<Song> songList = new ArrayList<>();
 
     public static void main(String[] args) {
         new Jukebkox1().go();
@@ -30,9 +30,38 @@ public class Jukebkox1 {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }  // close gerSont()
+    }  // close getSongs()
 
     private void addSong(String song) {
-        songList.add(song.split("/")[0]);
+        String[] songInformation = song.split("/");
+        songList.add(new Song(songInformation[0], songInformation[1]));
+    }
+}
+
+class Song implements Comparable<Song> {
+    private String name;
+    private String author;
+
+    public Song(String name_s, String author_s) {
+        name = name_s;
+        author = author_s;
+    }
+
+    private String getAuthor() {
+        return author;
+    }
+
+    private String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public int compareTo(Song o) {
+        return name.compareTo(o.getName());
     }
 }
