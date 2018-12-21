@@ -18,13 +18,16 @@ public class Jukebkox1 {
 
         AuthorCompare aC = new AuthorCompare();
         Collections.sort(songList, aC);
-
         System.out.println(songList);
 
-        HashSet<Song> uniqSongs = new HashSet<Song>();
-        uniqSongs.addAll(songList);
+        System.out.println("----SET---SET---");
 
+        TreeSet<Song> uniqSongs = new TreeSet<>();
+        TreeSet<Song> uniqSongs2 = new TreeSet<>(aC);
+        uniqSongs.addAll(songList);
+        uniqSongs2.addAll(songList);
         System.out.println(uniqSongs);
+        System.out.println(uniqSongs2);
     }
 
     private void getSongs () {
