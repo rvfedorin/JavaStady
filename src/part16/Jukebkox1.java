@@ -15,6 +15,11 @@ public class Jukebkox1 {
         System.out.println(songList);
         Collections.sort(songList);
         System.out.println(songList);
+
+        AuthorCompare aC = new AuthorCompare();
+        Collections.sort(songList, aC);
+
+        System.out.println(songList);
     }
 
     private void getSongs () {
@@ -36,6 +41,13 @@ public class Jukebkox1 {
         String[] songInformation = song.split("/");
         songList.add(new Song(songInformation[0], songInformation[1]));
     }
+
+    class AuthorCompare implements Comparator<Song> {
+        @Override
+        public int compare(Song o1, Song o2) {
+            return o1.getAuthor().compareTo(o2.getAuthor());
+        }
+    }
 }
 
 class Song implements Comparable<Song> {
@@ -47,17 +59,17 @@ class Song implements Comparable<Song> {
         author = author_s;
     }
 
-    private String getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    private String getName() {
+    public String getName() {
         return name;
     }
 
     @Override
     public String toString() {
-        return name;
+        return name + ":" + author;
     }
 
     @Override
