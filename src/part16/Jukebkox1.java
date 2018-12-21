@@ -20,6 +20,11 @@ public class Jukebkox1 {
         Collections.sort(songList, aC);
 
         System.out.println(songList);
+
+        HashSet<Song> uniqSongs = new HashSet<Song>();
+        uniqSongs.addAll(songList);
+
+        System.out.println(uniqSongs);
     }
 
     private void getSongs () {
@@ -75,5 +80,16 @@ class Song implements Comparable<Song> {
     @Override
     public int compareTo(Song o) {
         return name.compareTo(o.getName());
+    }
+
+    @Override
+    public int hashCode(){
+        return (name + ":" + author).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Song s = (Song) o;
+        return (s.getName().equals(name) && s.getAuthor().equals(author));
     }
 }
