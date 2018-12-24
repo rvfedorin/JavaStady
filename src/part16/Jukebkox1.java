@@ -22,9 +22,9 @@ public class Jukebkox1 {
 
         System.out.println("----SET---SET---");
 
-        TreeSet<Song> uniqSongs = new TreeSet<>();
+        TreeSet<Song> uniqSongs = new TreeSet<>(songList);
         TreeSet<Song> uniqSongs2 = new TreeSet<>(aC);
-        uniqSongs.addAll(songList);
+//        uniqSongs.addAll(songList);
         uniqSongs2.addAll(songList);
         System.out.println(uniqSongs);
         System.out.println(uniqSongs2);
