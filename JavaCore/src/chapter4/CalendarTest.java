@@ -20,12 +20,13 @@ public class CalendarTest {
         }
 
         while (date.getMonthValue() == month) {
-            System.out.printf("%3d", date.getDayOfMonth());
+
             if (date.getDayOfMonth() == today) {
-                System.out.print("*");
-                } else {
-                    System.out.print(" ");
-                }
+                System.out.printf("[%2d]", date.getDayOfMonth());
+            } else {
+                System.out.printf("%3d", date.getDayOfMonth());
+                System.out.print(" ");
+            }
             date = date.plusDays(1);
             if (date.getDayOfWeek().getValue() == 1) {
                 System.out.println();
