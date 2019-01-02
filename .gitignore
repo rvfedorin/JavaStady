@@ -1,5 +1,4 @@
 
-*.xml
-*.xml
+**\idea\**
 *.class
-*.class
+

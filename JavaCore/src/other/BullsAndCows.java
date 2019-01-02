@@ -1,5 +1,6 @@
 package other;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -8,6 +9,7 @@ public class BullsAndCows {
     private static final int LENGTH_NUMBER = 3;
     private static final int NUMBER_OF_TRY = 10;
     private static final String QUIT = "q";
+    private BandCGui gui;
 
     public static void main(String[] args) {
         BullsAndCows game = new BullsAndCows();
@@ -18,6 +20,7 @@ public class BullsAndCows {
     }
 
     private int startGame() {
+        /* Generation of initial parameters */
         guessNumber = new ArrayList<>();
         int err = 0;
         while (guessNumber.size() < LENGTH_NUMBER) {
@@ -32,14 +35,16 @@ public class BullsAndCows {
                 return 0;
             }
         }
-
-
-        System.out.println("I made number of " + guessNumber.size() + " digits. Try to guess it.");
-        System.out.println("You have 10 attempts!");
         return 1;
     } // close startGame()
 
     private void handleGame() {
+        System.out.println("I made number of " + guessNumber.size() + " digits. Try to guess it.");
+        System.out.println("You have 10 attempts!");
+        gui = new BandCGui();
+        gui.initGui();
+        gui.tellToUserL1.setText("Я загадал число из " + guessNumber.size() + " цифр. Попробуй угадай.");
+        gui.tellToUserL2.setText("У тебя " + NUMBER_OF_TRY + " попыток.");
         boolean gameRun = true;
         Scanner cons = new Scanner(System.in);
         String userGuess;
@@ -49,6 +54,7 @@ public class BullsAndCows {
 
         System.out.println(guessNumber);
         System.out.print("You think it is: ");
+
         while (gameRun) {
             tryNum += 1;
 
@@ -73,6 +79,7 @@ public class BullsAndCows {
                 gameRun = false;
             } else if (tryNum < NUMBER_OF_TRY){
                 System.out.println(result);
+                System.out.println("You have " + (NUMBER_OF_TRY - tryNum) + " attempts left.");
                 System.out.print("Try again: ");
             } else {
                 System.out.println("You lost.");
@@ -83,6 +90,7 @@ public class BullsAndCows {
     } // close handleGame()
 
     private String checkNumber(char[] uGess) {
+        /* count how many cows and bulls */
         int cows = 0;
         int bulls = 0;
         ArrayList<Integer> tempNum = (ArrayList<Integer>) guessNumber.clone();
@@ -109,4 +117,33 @@ public class BullsAndCows {
         }
     }  // close String checkNumber(char[] uGess)
 
+}
+
+class BandCGui {
+    JTextField userInput;
+    JLabel tellToUserL1;
+    JLabel tellToUserL2;
+    JButton checkInput;
+    JButton startAgain;
+
+    public void initGui() {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        tellToUserL1 = new JLabel();
+        tellToUserL2 = new JLabel();
+        userInput = new JTextField(15);
+        checkInput = new JButton("Проверить.");
+        JPanel mainPanel = new JPanel();
+//        mainPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        mainPanel.add(tellToUserL1);
+        mainPanel.add(tellToUserL2);
+        mainPanel.add(userInput);
+        mainPanel.add(checkInput);
+
+        frame.add(mainPanel);
+        frame.setSize(290, 200);
+        frame.setVisible(true);
+
+    }
 }
