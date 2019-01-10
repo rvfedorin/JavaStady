@@ -1,15 +1,27 @@
 package other;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BullsAndCows {
-    private ArrayList<Integer> guessNumber;
+
     private static final int LENGTH_NUMBER = 3;
     private static final int NUMBER_OF_TRY = 10;
+    private static final String WIN = "=== Ты выиграл!!! === ";
+    private static final String LOSE = "=== Ты проиграл!!! === ";
     private static final String QUIT = "q";
+
+    private ArrayList<Integer> guessNumber;
     private BandCGui gui;
+    private boolean gameRun = false;
+    private int tryNum = 0;
+
+    private CheckButtonListener checkButtonListener = new CheckButtonListener();
+    private NewGameListener newGameListener = new NewGameListener();
+
 
     public static void main(String[] args) {
         BullsAndCows game = new BullsAndCows();
@@ -45,18 +57,20 @@ public class BullsAndCows {
         gui.initGui();
         gui.tellToUserL1.setText("Я загадал число из " + guessNumber.size() + " цифр. Попробуй угадай.");
         gui.tellToUserL2.setText("У тебя " + NUMBER_OF_TRY + " попыток.");
-        boolean gameRun = true;
+        gui.checkInput.addActionListener(checkButtonListener);
+
+        gameRun = false;
         Scanner cons = new Scanner(System.in);
         String userGuess;
         String result;
         char[] userNumber;
-        int tryNum = 0;
+
 
         System.out.println(guessNumber);
         System.out.print("You think it is: ");
 
         while (gameRun) {
-            tryNum += 1;
+//            tryNum += 1;
 
             userGuess = cons.nextLine();
 
@@ -74,23 +88,24 @@ public class BullsAndCows {
 
             result = checkNumber(userNumber);
 
-            if (result.equals("WIN")) {
+            if (result.equals(WIN)) {
                 System.out.println("You win!");
                 gameRun = false;
             } else if (tryNum < NUMBER_OF_TRY){
                 System.out.println(result);
-                System.out.println("You have " + (NUMBER_OF_TRY - tryNum) + " attempts left.");
+                System.out.println("У тебя ещё есть " + (NUMBER_OF_TRY - tryNum) + " попыток.");
                 System.out.print("Try again: ");
             } else {
                 System.out.println("You lost.");
                 gameRun = false;
             }
-        }
+        }  // close while (gameRun)
 
     } // close handleGame()
 
     private String checkNumber(char[] uGess) {
         /* count how many cows and bulls */
+        tryNum += 1;
         int cows = 0;
         int bulls = 0;
         ArrayList<Integer> tempNum = (ArrayList<Integer>) guessNumber.clone();
@@ -111,11 +126,53 @@ public class BullsAndCows {
             }
         }
         if (bulls == LENGTH_NUMBER) {
-            return ("WIN");
+            return (WIN);
+        } else if ((NUMBER_OF_TRY - tryNum) > 0) {
+            return (" Быков: " + bulls + " Коров: " + cows + " ");
         } else {
-            return ("Bulls: " + bulls + " Cows: " + cows);
+            return (LOSE);
         }
     }  // close String checkNumber(char[] uGess)
+
+    class CheckButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+//            System.out.println(gui.userInput.getText());
+            System.out.println();
+            String result;
+            result = gui.userInput.getText();
+            if (result.length() == LENGTH_NUMBER) {
+                result = checkNumber(result.toCharArray());
+                gui.tellToUserL1.setText("===== " + result + "=====");
+                if (!result.equals(WIN) && !result.equals(LOSE)) {
+                    gui.tellToUserL2.setText("У тебя ещё есть  " + (NUMBER_OF_TRY - tryNum) + " попыток.");
+                } else {
+                    gui.tellToUserL2.setText("");
+                    gui.checkInput.setText("Попробовать ещё.");
+                    gui.checkInput.removeActionListener(checkButtonListener);
+                    gui.checkInput.addActionListener(newGameListener);
+                }
+            } else {
+                gui.tellToUserL1.setText("Необходимо ввести число из трёх цифр.");
+            }
+        }
+    } // close CheckButtonListener
+
+    class NewGameListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int i = startGame();
+            if (i == 1) {
+                System.out.println(guessNumber);
+                tryNum = 0;
+                gui.tellToUserL1.setText("Я загадал число из " + guessNumber.size() + " цифр. Попробуй угадай.");
+                gui.tellToUserL2.setText("У тебя " + NUMBER_OF_TRY + " попыток.");
+                gui.checkInput.setText("Проверить.");
+                gui.checkInput.removeActionListener(newGameListener);
+                gui.checkInput.addActionListener(checkButtonListener);
+            }
+        }
+    }
 
 }
 
@@ -134,6 +191,7 @@ class BandCGui {
         tellToUserL2 = new JLabel();
         userInput = new JTextField(15);
         checkInput = new JButton("Проверить.");
+
         JPanel mainPanel = new JPanel();
 //        mainPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         mainPanel.add(tellToUserL1);
@@ -144,6 +202,8 @@ class BandCGui {
         frame.add(mainPanel);
         frame.setSize(290, 200);
         frame.setVisible(true);
+    }  // close initGui()
 
-    }
+
+
 }
