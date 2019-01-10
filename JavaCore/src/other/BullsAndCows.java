@@ -180,7 +180,7 @@ class BandCGui {
     JLabel tellToUserL1;
     JLabel tellToUserL2;
     JButton checkInput;
-//    JButton startAgain;
+//    JButton startAgain;  
 
     public void initGui() {
         JFrame frame = new JFrame();
