@@ -16,7 +16,6 @@ public class BullsAndCows {
 
     private ArrayList<Integer> guessNumber;
     private BandCGui gui;
-    private boolean gameRun = false;
     private int tryNum = 0;
 
     private CheckButtonListener checkButtonListener = new CheckButtonListener();
@@ -59,7 +58,7 @@ public class BullsAndCows {
         gui.tellToUserL2.setText("У тебя " + NUMBER_OF_TRY + " попыток.");
         gui.checkInput.addActionListener(checkButtonListener);
 
-        gameRun = false;
+        boolean gameRun = true;
         Scanner cons = new Scanner(System.in);
         String userGuess;
         String result;
@@ -181,7 +180,7 @@ class BandCGui {
     JLabel tellToUserL1;
     JLabel tellToUserL2;
     JButton checkInput;
-    JButton startAgain;
+//    JButton startAgain;
 
     public void initGui() {
         JFrame frame = new JFrame();
