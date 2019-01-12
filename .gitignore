@@ -1,3 +1,4 @@
-/*
-!**/src
+**/out
 JavaCore/.idea/workspace.xml
+*.xml
+*.iml
