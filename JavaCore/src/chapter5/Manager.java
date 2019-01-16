@@ -4,7 +4,7 @@ public class Manager extends Employee {
     private double bonus;
 
     public Manager(String name, double salary, int day, int month, int year){
-        super(name, salary, year, month, day);
+        super(name, salary, day, month, year);
         bonus = 0;
     }
 
