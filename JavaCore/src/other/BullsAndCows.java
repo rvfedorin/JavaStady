@@ -180,11 +180,12 @@ class BandCGui {
     JLabel tellToUserL1;
     JLabel tellToUserL2;
     JButton checkInput;
-//    JButton startAgain;  
+//    JButton startAgain;
 
     public void initGui() {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(new JDialog());
 
         tellToUserL1 = new JLabel();
         tellToUserL2 = new JLabel();
@@ -199,7 +200,7 @@ class BandCGui {
         mainPanel.add(checkInput);
 
         frame.add(mainPanel);
-        frame.setSize(290, 200);
+        frame.setSize(295, 140);
         frame.setVisible(true);
     }  // close initGui()
 

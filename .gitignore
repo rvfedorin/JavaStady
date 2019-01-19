@@ -1,4 +1,4 @@
-**/out
-JavaCore/.idea/workspace.xml
 *.xml
 *.iml
+*.class
+**\.idea\**
