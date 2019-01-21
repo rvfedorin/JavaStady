@@ -7,12 +7,17 @@ public class ManagerTest {
 
         Employee[] staff = new Employee[3];
 
+        System.out.println(boss.getClass());
+
         staff[0] = boss;
         staff[1] = new Employee("Tom", 40000, 12, 8, 2019);
         staff[2] = new Employee("Nancy", 40000, 12, 8, 2019);
 
         for(Employee e: staff) {
             System.out.println(e.getSalary());
+            System.out.println("instanceof: " + (e instanceof Employee));
+            System.out.println("Class: " + e.getClass());
+            System.out.println("============================");
         }
 
         Manager[] man = new Manager[2];
