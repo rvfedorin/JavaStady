@@ -17,6 +17,7 @@ public class ManagerTest {
             System.out.println(e.getSalary());
             System.out.println("instanceof: " + (e instanceof Employee));
             System.out.println("Class: " + e.getClass());
+            System.out.println(e);
             System.out.println("============================");
         }
 
