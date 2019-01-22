@@ -1,0 +1,8 @@
+.idea/*
+JavaCore.iml
+**out/**
+*.class
+*.jar
+*.MF
+*.xml
+*.XML
