@@ -34,4 +34,9 @@ public class Employee {
         double newSalary = getSalary() + raise;
         setSalary(newSalary);
     }
+
+    @Override
+    public String toString() {
+        return getClass() + "[name=" + name + "; salary=" + salary + "; hireDay=" + hireDay + "]";
+    }
 }
