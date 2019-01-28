@@ -83,10 +83,6 @@ public class HelpJava {
     } // close showHelp()
 
     private boolean isValid(char ch) {
-        if (ch < '1' || ch > '7' && ch != 'q') {
-            return false;
-        } else {
-            return true;
-        }
+        return (ch < '1' || ch > '7' && ch != 'q');
     } // close isValid()
 }
