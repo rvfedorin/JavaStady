@@ -26,12 +26,12 @@ public class Bubble {
 
     @Override
     public String toString() {
-        String str = "";
-        for (int i : toSort) {
-            str += i + " ";
-        }
+        StringBuilder str = new StringBuilder("");
 
-        return str;
+        for (int i : toSort) {
+            str.append(i + " ");
+        }
+        return str.toString();
     }
 
     public static void main(String[] args) {
