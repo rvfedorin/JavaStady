@@ -8,6 +8,16 @@ public class Bubble {
         toSort = mass;
     }
 
+    public static void main(String[] args) {
+        int[] m = {99, -10, 100123, 18, -978, 5623, 463, -9, 287, 49};
+        Bubble sort = new Bubble(m);
+
+        System.out.println(sort);
+        sort.sort();
+        System.out.println(sort);
+
+    }  // close main()
+
     public void sort() {
         int size = toSort.length;
         for (int i = 0; i < size-1; i++) {
@@ -34,13 +44,5 @@ public class Bubble {
         return str.toString();
     }
 
-    public static void main(String[] args) {
-        int[] m = {1, 4, 3, 4, 6};
-        Bubble sort = new Bubble(m);
 
-        System.out.println(sort);
-        sort.sort();
-        System.out.println(sort);
-
-    }
 } // close class Bubble
