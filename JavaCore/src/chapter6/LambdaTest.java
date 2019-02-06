@@ -28,5 +28,31 @@ public class LambdaTest {
 
         new JOptionPane().showMessageDialog(null,"Hit the button to quit.");
         System.exit(0);
-    }
+
+        /* *** test of recursion ***************
+        LambdaTest lt = new LambdaTest();
+        String st = "12345";
+        System.out.println(lt.revString(st));
+        **************************************/
+
+    }  // close main()
+
+    /* *********************************************
+    public String revString(String s) {
+        if (s.length() == 1) {
+            return s;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<s.length()-1; i++) {
+            sb.append(s.charAt(i));
+        }
+
+        StringBuilder sbNew = new StringBuilder();
+        sbNew.append(s.charAt(s.length()-1));
+        sbNew.append(revString(sb.toString()));
+
+        return sbNew.toString();
+    } // close revString(String s)
+    ************************************************/
 } // close class LambdaTest
