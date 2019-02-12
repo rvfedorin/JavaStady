@@ -5,8 +5,8 @@ public class IQDemo {
         FixedQueue fq = new FixedQueue(2);
         System.out.println("It is the first get " + fq.get());
         fq.put('a');
-        fq.put('d');
-        fq.put('e');
+        fq.put('b');
+        fq.put('c');
         System.out.println("It is the END added ");
         System.out.println(fq.get());
         System.out.println(fq.get());
@@ -14,11 +14,11 @@ public class IQDemo {
 
         printLine();
 
-        CircularQueue cq = new CircularQueue(3);
+        CircularQueue cq = new CircularQueue(2);
         System.out.println(cq.get());
         cq.put('a');
-        cq.put('d');
-        cq.put('e');
+        cq.put('b');
+        cq.put('c');
         System.out.println(cq.get());
         System.out.println(cq.get());
         System.out.println(cq.get());
@@ -68,12 +68,12 @@ class FixedQueue implements ICharQ {
 class CircularQueue implements ICharQ {
     private char[] queue;
     private int putloc, getloc;
-    private boolean notEmpty;
+    private boolean notEmpty, endGet;
 
     CircularQueue(int size) {
         queue = new char[size];
         putloc = getloc = 0;
-        notEmpty = false;
+        notEmpty = endGet = false;
     }
 
     @Override
@@ -98,8 +98,16 @@ class CircularQueue implements ICharQ {
             getloc -= 1;
         } else if(getloc == 0 && notEmpty) {
             putloc = 0;
-            res = queue[getloc];
-            getloc = queue.length-1;
+            if (!endGet) {
+                res = queue[getloc];
+                endGet = true;
+                getloc = queue.length - 1;
+            } else {
+                notEmpty = false;
+                getloc = 0;
+                res = (char) 0;
+                System.out.print("Empty");
+            }
         } else {
             System.out.print("Empty");
             res = (char) 0;
