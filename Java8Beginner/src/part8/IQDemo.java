@@ -25,6 +25,15 @@ public class IQDemo {
 
         printLine();
 
+        DynQueue dq = new DynQueue();
+        System.out.println(dq.get());
+        dq.put('a');
+        dq.put('b');
+        dq.put('c');
+        System.out.println(dq.get());
+        System.out.println(dq.get());
+        System.out.println(dq.get());
+
     } // main()
 
     private static void printLine() {
@@ -115,3 +124,36 @@ class CircularQueue implements ICharQ {
         return res;
     }
 } // class CircularQueue
+
+class DynQueue implements ICharQ {
+    private char[] queue;
+    private int position;
+
+    DynQueue() {
+        queue = new char[2];
+        position = 0;
+    }
+
+    @Override
+    public void put(char ch) {
+        if (position >= queue.length) {
+            char[] t = new char[queue.length * 2];
+            for (int i = 0; i < queue.length; i++) {
+                t[i] = queue[i];
+            }
+            queue = t;
+        }
+            queue[position] = ch;
+            position += 1;
+    }
+
+    @Override
+    public char get() {
+        if (position-1 >= 0) {
+            position -= 1;
+            return queue[position];
+        }
+        System.out.print("Empty");
+        return (char) 0;
+    }
+} // class DynQueue
