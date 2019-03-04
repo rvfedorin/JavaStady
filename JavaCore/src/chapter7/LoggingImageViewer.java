@@ -58,12 +58,9 @@ class ImageViewerFrame extends JFrame{
         menu.add(openItem);
 
         JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        exitItem.addActionListener((e) -> {
                 logger.fine("Exiting.");
                 System.exit(0);
-            }
         });
         menu.add(exitItem);
 
