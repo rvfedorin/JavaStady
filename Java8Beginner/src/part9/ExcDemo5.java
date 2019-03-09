@@ -13,6 +13,9 @@ public class ExcDemo5 {
 //                    System.out.println("Нет соответсвующего элеьента.");
                 } catch (ArithmeticException ex) {
                     System.out.println("Деление на нуль.");
+                } catch (IndexOutOfBoundsException ex) {
+                    System.out.println("Отсутсвующий индекс.");
+                    throw ex;
                 }
             }
         } catch (IndexOutOfBoundsException ex) {
