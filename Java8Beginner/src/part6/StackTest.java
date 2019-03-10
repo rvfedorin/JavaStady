@@ -7,16 +7,29 @@ public class StackTest {
         Stack stack = new Stack(5);
 
         for(int i=1; i<8; i++) {
-            stack.push(i);
+            try {
+                stack.push(i);
+            } catch (StackFullExc ex) {
+                System.out.println(ex);
+            }
+
         }
         System.out.println(stack);
+        try {
+            System.out.println(stack.pop());
+            System.out.println(stack.pop());
+        } catch (StackEmptyExc ex) {
+            System.out.println(ex);
+        }
 
-        System.out.println(stack.pop());
-        System.out.println(stack.pop());
         System.out.println("=========");
 
         for(int i=1; i<8; i++) {
-            System.out.println(stack.pop());
+            try {
+                System.out.println(stack.pop());
+            } catch (StackEmptyExc ex) {
+                System.out.println(ex);
+            }
         }
 
     } // close main()
@@ -33,10 +46,9 @@ class Stack {
         getPos = 0;
     }
 
-    public void push(int newElement) {
+    public void push(int newElement) throws StackFullExc{
         if (currentPos >= stack.length) {
-            System.out.println("stack is full");
-            return;
+            throw new StackFullExc();
         }
 
         stack[currentPos] = newElement;
@@ -44,10 +56,9 @@ class Stack {
         currentPos ++;
     }
 
-    public Object pop() {
+    public Object pop() throws StackEmptyExc{
         if (getPos <= 0) {
-            System.out.print("stack is empty");
-            return (char) 0;
+            throw new StackEmptyExc();
         }
         int temp = stack[getPos];
         getPos --;
@@ -62,5 +73,19 @@ class Stack {
             temp[i] = stack[i];
         }
         return Arrays.toString(temp);
+    }
+}
+
+class StackFullExc extends Exception {
+    @Override
+    public String toString(){
+        return "Стэк заполнен.";
+    }
+}
+
+class StackEmptyExc extends Exception {
+    @Override
+    public String toString(){
+        return "Стэк пуст.";
     }
 }
