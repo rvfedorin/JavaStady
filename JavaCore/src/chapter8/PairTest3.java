@@ -6,6 +6,7 @@ public class PairTest3 {
     public static void main(String[] args) {
         Manager ceo = new Manager("Gus Greedy", 800000, 15, 12, 2003);
         Manager cfo = new Manager("Sid Sneaky", 600000, 15, 12, 2003);
+        Employee test = new Employee("Test Test", 600000, 15, 12, 2003);
 
         Pair<Manager> buddies = new Pair<>(ceo, cfo);
         printBuddies(buddies);
@@ -13,6 +14,10 @@ public class PairTest3 {
         ceo.setBonus(1000000);
         cfo.setBonus(500000);
         Manager[] managers = {ceo, cfo};
+        Employee[] employees = {ceo, cfo, test};
+
+        Pair<Employee> employeePair = new Pair<>(test, cfo);
+        printBuddies(employeePair);
 
         Pair<Employee> result = new Pair<>();
 
