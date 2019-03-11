@@ -1,6 +1,6 @@
 package part6;
 
-class Vehicle {
+class Vehicle implements IVehicle {
         private int passengers; // количество пассажров
         private int fuelcap; // емкость топливного бака
         private int mpg; // потребление топлива в млях на галлон
@@ -12,14 +12,19 @@ class Vehicle {
         }
 
 // Определить дальность поездк транспортного средства
-            int range() {
+        public int range() {
                 return mpg * fuelcap;
-            }
+        }
 
 // Рассчитать объем топлива, необходимого транспортному
 // средству для преодоления заданного расстояния
-                double fuelneeded ( int miles){
-                    return (double) miles / mpg;
+        public double fuelneeded ( int miles){
+            return (double) miles / mpg;
 
-                }
+        }
+}
+
+interface IVehicle {
+    int range();
+    double fuelneeded(int miles);
 }
