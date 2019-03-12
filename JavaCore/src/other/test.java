@@ -5,8 +5,18 @@ public class test {
         String first = "pass";
         String second = "key";
 
-        System.out.println(encode(first, second));
-    }
+//        System.out.println(encode(first, second));
+
+        int it = 24;
+        int sub = 0xfffffff8;
+        int res = it & sub;
+        System.out.println(it << 1);
+        System.out.println(Integer.toBinaryString(sub));
+        System.out.println(Integer.toBinaryString(it));
+        System.out.println(Integer.toBinaryString(res));
+        System.out.println(res);
+
+    }  // close main
 
     public static byte[] encode (String pass, String key) {
         byte[] passB = pass.getBytes();
