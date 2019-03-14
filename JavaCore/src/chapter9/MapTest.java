@@ -2,6 +2,7 @@ package chapter9;
 
 import chapter5.Employee;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ public class MapTest {
         staff.put("234", new Employee("Test4 Test4", 100440, 11, 3, 2001));
 
         System.out.println(staff.get("3"));
+        System.out.println(Collections.nCopies(20, "="));
 
         staff.forEach((k, v) -> {
             System.out.println("[Key = " + k + "] [Value name = \"" + v.getName() + "\"]");
