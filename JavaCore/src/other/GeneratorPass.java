@@ -22,19 +22,20 @@ public class GeneratorPass {
 
     public String getPass(int len) {
         StringBuilder sb = new StringBuilder();
-        StringBuilder temp = new StringBuilder(allSimb);
+
+        ArrayList<String> allSimblList =new ArrayList<>(Arrays.asList(allSimb.split("")));
 
         // if length string is less then length pass
-        while (temp.length() < len) {
-            temp.append(allSimb);
+        while (allSimblList.size() < len) {
+            allSimblList.addAll(Arrays.asList(allSimb.split("")));
         }
 
-        List<String> allSimblList = Arrays.asList(temp.toString().split(""));
         Collections.shuffle(allSimblList);
 
         for (String s: allSimblList.subList(0, len)) {
             sb.append(s);
         }
+
         return sb.toString();
     } // getPass
 }
