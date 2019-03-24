@@ -58,7 +58,6 @@ class Help {
     } // getSelection
 
     void printThemes() {
-        int end;
         String str;
 
         try (BufferedReader br = new BufferedReader(new FileReader(helpFile))) {
