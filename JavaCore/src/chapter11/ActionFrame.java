@@ -15,9 +15,9 @@ public class ActionFrame extends JFrame {
         this.add(jPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(300, 200);
-        actionColorB = new ActionColor("Blue", new ImageIcon("ico.jpg"), Color.BLUE);
-        actionColorR = new ActionColor("Red", new ImageIcon("ico.jpg"), Color.RED);
-        actionColorG = new ActionColor("Green", new ImageIcon("ico.jpg"), Color.GREEN);
+        actionColorB = new ActionColor("Blue", new ImageIcon("b.jpg"), Color.BLUE);
+        actionColorR = new ActionColor("Red", new ImageIcon("r.jpg"), Color.RED);
+        actionColorG = new ActionColor("Green", new ImageIcon("g.jpg"), Color.GREEN);
     }
 
     public static void main(String[] args) {
@@ -26,6 +26,16 @@ public class ActionFrame extends JFrame {
         JButton toBlue = new JButton(frame.actionColorB);
         JButton toRed = new JButton(frame.actionColorR);
         JButton toGreen = new JButton(frame.actionColorG);
+
+        InputMap inputMap = frame.jPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke("ctrl B"), "jPanel.blue");
+        inputMap.put(KeyStroke.getKeyStroke("ctrl R"), "jPanel.red");
+        inputMap.put(KeyStroke.getKeyStroke("ctrl G"), "jPanel.green");
+        ActionMap actionMap = frame.jPanel.getActionMap();
+
+        actionMap.put("jPanel.blue", frame.actionColorB);
+        actionMap.put("jPanel.red", frame.actionColorR);
+        actionMap.put("jPanel.green", frame.actionColorG);
 
         frame.jPanel.add(toBlue);
         frame.jPanel.add(toRed);
