@@ -30,7 +30,7 @@ public class MouseComponent extends JComponent {
 
     @Override
     public void paintComponent(Graphics g) {
-        Graphics2D graphics2D = (Graphics2D) g;
+         Graphics2D graphics2D = (Graphics2D) g;
 
         for(Rectangle2D r: squares) {
             graphics2D.draw(r);
@@ -67,7 +67,7 @@ public class MouseComponent extends JComponent {
         @Override
         public void mousePressed(MouseEvent event) {
             current = find(event.getPoint());
-            if (current != null) {
+            if (current == null) {
                 MouseComponent.this.add(event.getPoint());
             }
         } // mousePressed()
