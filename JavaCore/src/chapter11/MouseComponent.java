@@ -2,6 +2,7 @@ package chapter11;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -85,12 +86,24 @@ public class MouseComponent extends JComponent {
         @Override
         public void mouseDragged(MouseEvent e) {
             if (current != null) {
-                int x = e.getX();
-                int y = e.getY();
+                if (e.getModifiersEx() == InputEvent.BUTTON1_DOWN_MASK) {
+                    int dx = e.getX();
+                    int dy = e.getY();
+                    int width = (int) current.getWidth();
+                    int height = (int) current.getHeight();
 
-                current.setFrame(x - SIDELENGHT/2, y  - SIDELENGHT/2, SIDELENGHT, SIDELENGHT);
+                    current.setFrame(dx, dy, width, height);
+
+                } else if (e.getModifiersEx() == InputEvent.BUTTON3_DOWN_MASK) {
+                    int dx = e.getX();
+                    int dy = e.getY();
+                    int x = (int) current.getX();
+                    int y = (int) current.getY();
+
+                    current.setFrame(x, y, dx-x, dy-y);
+                }
                 repaint();
-            }
+            } // if (current != null)
         } // close mouseDragged()
 
         @Override
