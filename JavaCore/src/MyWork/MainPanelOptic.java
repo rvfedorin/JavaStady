@@ -20,7 +20,6 @@ public class MainPanelOptic extends JPanel {
         add(inputPanel);
         add(rightPanel, BorderLayout.EAST);
         add(selectActionPanel, BorderLayout.SOUTH);
-
     }
 } // class MainPanelOptic
 
@@ -48,10 +47,10 @@ class InputPanel extends JPanel {
                 tempTextField.setBorder(BorderFactory.createCompoundBorder(
                         new CustomeBorder(),
                         BorderFactory.createEmptyBorder(0,2,0,2)
-                ));
 
+                ));
                 allTF.put(lab, tempTextField);
-            }
+            } // if
         } // for(String lab: labels)
 
         JPanel inp = new JPanel(new GridLayout(labels.length, 1, 1, 1));
@@ -77,15 +76,27 @@ class InputPanel extends JPanel {
 class RightPartPanel extends JPanel {
     public JButton freeVlan;
     public JButton freePort;
+    private String[] cities;
 
     RightPartPanel() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        cities = new String[]{"Orel", "Kursk", "Magnitogorsk", "Voronezh"};
+//        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(new GridLayout(6,0));
+        setBorder(BorderFactory.createEmptyBorder(0,4,0,2));
         freeVlan = new JButton("Найти свободный влан");
         freePort = new JButton("Найти свободный порт");
+        JComboBox<String> citiesComboBox = new JComboBox<>();
+        citiesComboBox.setPreferredSize(new Dimension(80, 6));
+        citiesComboBox.setPrototypeDisplayValue("XX");
+
+        for(String c: cities) {
+            citiesComboBox.addItem(c);
+        }
+
+        add(citiesComboBox);
         add(freeVlan);
         add(new Label());
         add(freePort);
-        add(new Label());
     }
 }
 

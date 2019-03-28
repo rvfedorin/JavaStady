@@ -33,12 +33,15 @@ class MainWindow extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Работа с клиентами.");
-        setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+//        setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setResizable(false);
 
         mainPanel = new MainPanel();
         add(mainPanel);
-//        pack();
+        JButton runButton = new JButton("Выполнить");
+        runButton.setSize(20, 50);
+        add(runButton, BorderLayout.SOUTH);
+        pack();
 
     } // const
 } // class MainWindow
@@ -49,6 +52,7 @@ class MainPanel extends JPanel {
     private JPanel rwrPanel;
 
     MainPanel() {
+//        setLayout(new BorderLayout());
         opticPanel = new MainPanelOptic();
         mbPanel = new MainPanelMB();
         rwrPanel = new MainPanelRWR();

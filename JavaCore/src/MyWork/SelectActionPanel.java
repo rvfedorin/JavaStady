@@ -1,7 +1,6 @@
 package MyWork;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,8 +22,6 @@ public class SelectActionPanel extends JPanel {
             group.add(tempButton);
             add(tempButton);
             selected = false;
-        }
-
-
+        } // for
     } // const
 }
