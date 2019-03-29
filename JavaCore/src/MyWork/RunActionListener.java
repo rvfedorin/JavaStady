@@ -26,17 +26,18 @@ public class RunActionListener implements ActionListener {
             }
         } // for
 
+        String mnemokod = allData[0];
+        String vlan = allData[1];
+        String IPswitch = allData[2];
+        String port = allData[3];
+        String untagged = allData[4];
+        String createCis = allData[5];
+
+        String city = allData[6];
+
+        String action = allData[7];
+
         if (fineData) {
-            String mnemokod = allData[0];
-            String vlan = allData[1];
-            String IPswitch = allData[2];
-            String port = allData[3];
-            String untagged = allData[4];
-            String createCis = allData[5];
-
-            String city = allData[6];
-
-            String action = allData[7];
 
             System.out.println(mnemokod);
             System.out.println(vlan);
@@ -47,9 +48,13 @@ public class RunActionListener implements ActionListener {
             System.out.println(city);
             System.out.println(action);
             System.out.println("==================================");
+
         } else {
             System.out.println("Введены не все данные.");
         } // if (fineData)
 
-    }
-}
+        mainFrame.customer = new Customer(mnemokod, vlan, IPswitch, port, untagged);
+        System.out.println(mainFrame.customer);
+
+    } // actionPerformed(ActionEvent e)
+} // class RunActionListener

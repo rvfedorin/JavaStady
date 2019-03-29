@@ -7,7 +7,8 @@ public class Customer {
     private String port;
     private String untagged;
 
-    Customer(String mnemokod, String vlan, String IPswitch, String port, String untagged) throws IllegalArgumentException{
+    Customer(String mnemokod, String vlan, String IPswitch, String port, String untagged)
+            throws IllegalArgumentException{
 
         boolean fineData = true;
         String[] allData = new String[]{mnemokod, vlan, IPswitch, port, untagged};
@@ -26,17 +27,18 @@ public class Customer {
             this.port = port;
             this.untagged = untagged;
         } else {
-//            throw IllegalArgumentException("dfdf");
-        }
+            throw new IllegalArgumentException("<< class Customer: Not all field are filled. >>");
+        } // if (fineData)
     }
 
     @Override
     public String toString() {
-        String s = "Клиент: " + mnemokod + "\n" +
+        String line = "===================================\n";
+        String s = line + "Клиент: " + mnemokod + "\n" +
                    "Номер vlan: " + vlan + "\n" +
                    "IP свитча: " + IPswitch + "\n" +
                    "Порт подключения: " + port + "\n" +
-                   "Тагирование: " + untagged + "\n";
+                   "Растагирование: " + untagged + "\n" + line;
         return s;
     }
 }

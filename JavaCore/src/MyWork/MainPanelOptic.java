@@ -22,7 +22,12 @@ public class MainPanelOptic extends JPanel {
         add(selectActionPanel, BorderLayout.SOUTH);
     } // const
 
+    /*
+     * Get all data from field
+     * @return String[]{mnemokod, vlan, IPswitch, port, untagged, createCis, city, action}
+     */
     public String[] getAllData(){
+
         String mnemokod = ((JTextField) inputPanel.allTF.get("Мнемокод: ")).getText().trim();
         String vlan = ((JTextField) inputPanel.allTF.get("Номер vlan: ")).getText().trim();
         String IPswitch = ((JTextField) inputPanel.allTF.get("IP свитча: ")).getText().trim();
