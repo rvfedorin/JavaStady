@@ -8,7 +8,6 @@ import java.awt.*;
 
 public class MainFrame {
     public static void main(String[] args) {
-        System.out.println("MainFrame");
         MainWindow mainWindow = new MainWindow();
         mainWindow.setVisible(true);
     }
@@ -17,7 +16,8 @@ public class MainFrame {
 class MainWindow extends JFrame {
     private final static int DEFAULT_WIDTH = 380;
     private final static int DEFAULT_HEIGHT = 380;
-    private JPanel mainPanel;
+    public MainPanel mainPanel;
+    public Customer customer;
 
     MainWindow(){
         try {
@@ -38,16 +38,24 @@ class MainWindow extends JFrame {
 
         mainPanel = new MainPanel();
         add(mainPanel);
+
+        // RUN BUTTON //
+        JPanel buttonPanel = new JPanel();
         JButton runButton = new JButton("Выполнить");
-        runButton.setSize(20, 50);
-        add(runButton, BorderLayout.SOUTH);
+        RunActionListener runActionListener = new RunActionListener(this);
+        runButton.setPreferredSize(new Dimension(120, 30));
+        runButton.addActionListener(runActionListener);
+        buttonPanel.add(runButton);
+        // END RUN BUTTON //
+
+        add(buttonPanel, BorderLayout.SOUTH);
         pack();
 
     } // const
 } // class MainWindow
 
 class MainPanel extends JPanel {
-    private JPanel opticPanel;
+    public MainPanelOptic opticPanel;
     private JPanel mbPanel;
     private JPanel rwrPanel;
 

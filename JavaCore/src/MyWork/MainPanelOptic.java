@@ -20,6 +20,22 @@ public class MainPanelOptic extends JPanel {
         add(inputPanel);
         add(rightPanel, BorderLayout.EAST);
         add(selectActionPanel, BorderLayout.SOUTH);
+    } // const
+
+    public String[] getAllData(){
+        String mnemokod = ((JTextField) inputPanel.allTF.get("Мнемокод: ")).getText().trim();
+        String vlan = ((JTextField) inputPanel.allTF.get("Номер vlan: ")).getText().trim();
+        String IPswitch = ((JTextField) inputPanel.allTF.get("IP свитча: ")).getText().trim();
+        String port = ((JTextField) inputPanel.allTF.get("Порт: ")).getText().trim();
+        String untagged = Boolean.toString(((JCheckBox) inputPanel.allTF.get("Untagged")).isSelected());
+        String createCis = Boolean.toString(((JCheckBox) inputPanel.allTF.get("Создать на Cisco")).isSelected());
+
+        JComboBox<String> cityBox = rightPanel.citiesComboBox;
+        String city = cityBox.getItemAt(cityBox.getSelectedIndex());
+
+        String action = selectActionPanel.group.getSelection().getActionCommand();
+
+        return new String[]{mnemokod, vlan, IPswitch, port, untagged, createCis, city, action};
     }
 } // class MainPanelOptic
 
@@ -76,6 +92,7 @@ class InputPanel extends JPanel {
 class RightPartPanel extends JPanel {
     public JButton freeVlan;
     public JButton freePort;
+    public JComboBox<String> citiesComboBox;
     private String[] cities;
 
     RightPartPanel() {
@@ -85,7 +102,7 @@ class RightPartPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(0,4,0,2));
         freeVlan = new JButton("Найти свободный влан");
         freePort = new JButton("Найти свободный порт");
-        JComboBox<String> citiesComboBox = new JComboBox<>();
+        citiesComboBox = new JComboBox<>();
         citiesComboBox.setPreferredSize(new Dimension(80, 6));
         citiesComboBox.setPrototypeDisplayValue("XX");
 

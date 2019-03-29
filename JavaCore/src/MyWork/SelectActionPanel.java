@@ -7,10 +7,11 @@ import java.util.Map;
 public class SelectActionPanel extends JPanel {
     public Map<String, JRadioButton> allButtonMap;
     public static String[] labelsButton = {"Создать", "Удалить", "Сменить скорость"};
+    public ButtonGroup group;
 
     SelectActionPanel() {
         allButtonMap = new HashMap<>();
-        ButtonGroup group = new ButtonGroup();
+        group = new ButtonGroup();
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createEmptyBorder(10, 0, 10, 0),
                 BorderFactory.createTitledBorder("Выберите действие: ")));
@@ -18,6 +19,7 @@ public class SelectActionPanel extends JPanel {
 
         for(String name: labelsButton) {
             JRadioButton tempButton = new JRadioButton(name, selected);
+            tempButton.setActionCommand(name);
             allButtonMap.put(name, tempButton);
             group.add(tempButton);
             add(tempButton);
