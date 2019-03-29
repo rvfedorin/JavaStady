@@ -1,9 +1,13 @@
 package MyWork;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+
+import static MyWork.Config.*;
 
 public class MainPanelOptic extends JPanel {
     public InputPanel inputPanel;
@@ -16,10 +20,30 @@ public class MainPanelOptic extends JPanel {
         inputPanel = new InputPanel();
         rightPanel = new RightPartPanel();
         selectActionPanel = new SelectActionPanel();
+        selectActionPanel.allButtonMap.get(CHANGE_SPEED_S);
 
         add(inputPanel);
         add(rightPanel, BorderLayout.EAST);
         add(selectActionPanel, BorderLayout.SOUTH);
+
+        // START Change city by mnemokod //////////////////////////////////////////////////
+        JTextField mnemokod = (JTextField) inputPanel.allTF.get(MNEMOKOD_S);
+        mnemokod.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {act();}
+            @Override
+            public void removeUpdate(DocumentEvent e) {act();}
+            @Override
+            public void changedUpdate(DocumentEvent e) {act();}
+
+            private void act() {
+                String key = mnemokod.getText().trim().split(MNEMOKOD_DELIMITER_S)[0];
+                if (CITIES.containsKey(key)){
+                    rightPanel.citiesComboBox.setSelectedItem(CITIES.get(key));
+                }  // if
+            }  // act()
+        }); // DocumentListener()
+        // END Change city by mnemokod //////////////////////////////////////////////////
     } // const
 
     /*
@@ -28,12 +52,12 @@ public class MainPanelOptic extends JPanel {
      */
     public String[] getAllData(){
 
-        String mnemokod = ((JTextField) inputPanel.allTF.get("Мнемокод: ")).getText().trim();
-        String vlan = ((JTextField) inputPanel.allTF.get("Номер vlan: ")).getText().trim();
-        String IPswitch = ((JTextField) inputPanel.allTF.get("IP свитча: ")).getText().trim();
-        String port = ((JTextField) inputPanel.allTF.get("Порт: ")).getText().trim();
-        String untagged = Boolean.toString(((JCheckBox) inputPanel.allTF.get("Untagged")).isSelected());
-        String createCis = Boolean.toString(((JCheckBox) inputPanel.allTF.get("Создать на Cisco")).isSelected());
+        String mnemokod = ((JTextField) inputPanel.allTF.get(MNEMOKOD_S)).getText().trim();
+        String vlan = ((JTextField) inputPanel.allTF.get(NUMBER_VLAN_S)).getText().trim();
+        String IPswitch = ((JTextField) inputPanel.allTF.get(IP_SWITCH_S)).getText().trim();
+        String port = ((JTextField) inputPanel.allTF.get(PORT_S)).getText().trim();
+        String untagged = Boolean.toString(((JCheckBox) inputPanel.allTF.get(UNTAGGED_S)).isSelected());
+        String createCis = Boolean.toString(((JCheckBox) inputPanel.allTF.get(CREATE_CISCO_S)).isSelected());
 
         JComboBox<String> cityBox = rightPanel.citiesComboBox;
         String city = cityBox.getItemAt(cityBox.getSelectedIndex());
@@ -47,20 +71,13 @@ public class MainPanelOptic extends JPanel {
 
 class InputPanel extends JPanel {
     public Map<String, JComponent> allTF;
-    private static String[] labels = {
-            "Мнемокод: ",
-            "Номер vlan: ",
-            "IP свитча: ",
-            "Порт: ",
-            "Untagged",
-            "Создать на Cisco"};
 
     InputPanel() {
         setLayout(new BorderLayout());
         allTF = new HashMap<>();
 
-        for(String lab: labels) {
-            if (lab.equals("Untagged") || lab.equals("Создать на Cisco")) {
+        for(String lab: LABELS) {
+            if (lab.equals(UNTAGGED_S) || lab.equals(CREATE_CISCO_S)) {
                 allTF.put(lab, new JCheckBox(lab));
             } else {
                 JTextField tempTextField = new JTextField(18);
@@ -74,10 +91,10 @@ class InputPanel extends JPanel {
             } // if
         } // for(String lab: labels)
 
-        JPanel inp = new JPanel(new GridLayout(labels.length, 1, 1, 1));
-        JPanel lab = new JPanel(new GridLayout(labels.length, 1, 1, 1));
+        JPanel inp = new JPanel(new GridLayout(LABELS.length, 1, 1, 1));
+        JPanel lab = new JPanel(new GridLayout(LABELS.length, 1, 1, 1));
 
-        for (String name: labels) {
+        for (String name: LABELS) {
             if (name.equals("Untagged") || name.equals("Создать на Cisco")) {
                 lab.add(new JLabel());
                 inp.add(allTF.get(name));
@@ -95,30 +112,35 @@ class InputPanel extends JPanel {
 } // class InputPanel
 
 class RightPartPanel extends JPanel {
-    public JButton freeVlan;
-    public JButton freePort;
+    public JButton freeVlanBut;
+    public JButton freePortBut;
+    public JButton changeSpeedBut;
     public JComboBox<String> citiesComboBox;
-    private String[] cities;
 
     RightPartPanel() {
-        cities = new String[]{"Orel", "Kursk", "Magnitogorsk", "Voronezh"};
+
 //        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setLayout(new GridLayout(6,0));
         setBorder(BorderFactory.createEmptyBorder(0,4,0,2));
-        freeVlan = new JButton("Найти свободный влан");
-        freePort = new JButton("Найти свободный порт");
+        freeVlanBut = new JButton("Найти свободный влан");
+        freePortBut = new JButton("Найти свободный порт");
+        changeSpeedBut = new JButton("Файл скоростей.");
+        changeSpeedBut.setEnabled(false);
+
         citiesComboBox = new JComboBox<>();
         citiesComboBox.setPreferredSize(new Dimension(80, 6));
         citiesComboBox.setPrototypeDisplayValue("XX");
 
-        for(String c: cities) {
+        for(String c: CITIES.values()) {
             citiesComboBox.addItem(c);
         }
 
         add(citiesComboBox);
-        add(freeVlan);
+        add(freeVlanBut);
         add(new Label());
-        add(freePort);
+        add(freePortBut);
+        add(new Label());
+        add(changeSpeedBut);
     }
 }
 
