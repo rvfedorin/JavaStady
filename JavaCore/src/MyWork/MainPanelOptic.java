@@ -40,6 +40,8 @@ public class MainPanelOptic extends JPanel {
                 String key = mnemokod.getText().trim().split(MNEMOKOD_DELIMITER_S)[0];
                 if (CITIES.containsKey(key)){
                     rightPanel.citiesComboBox.setSelectedItem(CITIES.get(key));
+                    MainPanelOptic.this.setVisible(false);
+                    MainPanelOptic.this.setVisible(true);
                 }  // if
             }  // act()
         }); // DocumentListener()
@@ -95,7 +97,7 @@ class InputPanel extends JPanel {
         JPanel lab = new JPanel(new GridLayout(LABELS.length, 1, 1, 1));
 
         for (String name: LABELS) {
-            if (name.equals("Untagged") || name.equals("Создать на Cisco")) {
+            if (name.equals(UNTAGGED_S) || name.equals(CREATE_CISCO_S)) {
                 lab.add(new JLabel());
                 inp.add(allTF.get(name));
             } else {
@@ -128,8 +130,8 @@ class RightPartPanel extends JPanel {
         changeSpeedBut.setEnabled(false);
 
         citiesComboBox = new JComboBox<>();
-        citiesComboBox.setPreferredSize(new Dimension(80, 6));
-        citiesComboBox.setPrototypeDisplayValue("XX");
+//        citiesComboBox.setPreferredSize(new Dimension(80, 6));
+//        citiesComboBox.setPrototypeDisplayValue("XX");
 
         for(String c: CITIES.values()) {
             citiesComboBox.addItem(c);
