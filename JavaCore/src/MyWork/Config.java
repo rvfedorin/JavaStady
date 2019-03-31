@@ -15,6 +15,9 @@ public abstract class Config {
     public static final String PORT_S = "Порт: ";
     public static final String UNTAGGED_S = "Untagged";
     public static final String CREATE_CISCO_S = "Создать на Cisco";
+    public static final String DELETE_CISCO_S = "Удалить на Cisco";
+    public static final String ACT_ON_CISCO_S = "Действие на Cisco";
+    public static final String LINE = "===================================\n";
 
 
     public static final Map<String, String> CITIES;
@@ -32,6 +35,6 @@ public abstract class Config {
             IP_SWITCH_S,
             PORT_S,
             UNTAGGED_S,
-            CREATE_CISCO_S};
+            ACT_ON_CISCO_S};
 
 } // END Config

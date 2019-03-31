@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +22,12 @@ public class MainPanelOptic extends JPanel {
         inputPanel = new InputPanel();
         rightPanel = new RightPartPanel();
         selectActionPanel = new SelectActionPanel();
-        selectActionPanel.allButtonMap.get(CHANGE_SPEED_S);
+
+        // START LISTENER SELECTION PANEL
+        selectActionPanel.allButtonMap.get(CHANGE_SPEED_S).addActionListener(new ActionSelectionListener());
+        selectActionPanel.allButtonMap.get(CREATE_S).addActionListener(new ActionSelectionListener());
+        selectActionPanel.allButtonMap.get(DELETE_S).addActionListener(new ActionSelectionListener());
+        // END LISTENER SELECTION PANEL
 
         add(inputPanel);
         add(rightPanel, BorderLayout.EAST);
@@ -46,7 +53,34 @@ public class MainPanelOptic extends JPanel {
             }  // act()
         }); // DocumentListener()
         // END Change city by mnemokod //////////////////////////////////////////////////
+
     } // const
+
+    private class ActionSelectionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(selectActionPanel.allButtonMap.get(CREATE_S).isSelected()) {
+                rightPanel.changeSpeedBut.setEnabled(false);
+                inputPanel.allTF.forEach((k, v) -> v.setEnabled(true));
+                ((JCheckBox) inputPanel.allTF.get(ACT_ON_CISCO_S)).setText(CREATE_CISCO_S);
+            } else if(selectActionPanel.allButtonMap.get(DELETE_S).isSelected()) {
+                rightPanel.changeSpeedBut.setEnabled(false);
+                JCheckBox temCheck = (JCheckBox) inputPanel.allTF.get(ACT_ON_CISCO_S);
+                temCheck.setText(DELETE_CISCO_S);
+                temCheck.setSelected(false);
+                inputPanel.allTF.forEach((k, v) -> {
+                    if(k.equals(UNTAGGED_S) || k.equals(PORT_S)) {
+                        v.setEnabled(false);
+                    } else {
+                        v.setEnabled(true);
+                    } // if equals
+                });
+            } else if(selectActionPanel.allButtonMap.get(CHANGE_SPEED_S).isSelected()) {
+                rightPanel.changeSpeedBut.setEnabled(true);
+                inputPanel.allTF.forEach((k, v) -> v.setEnabled(false));
+            }
+        }
+    } // class ActionSelectionListener
 
     /*
      * Get all data from field
@@ -59,7 +93,7 @@ public class MainPanelOptic extends JPanel {
         String IPswitch = ((JTextField) inputPanel.allTF.get(IP_SWITCH_S)).getText().trim();
         String port = ((JTextField) inputPanel.allTF.get(PORT_S)).getText().trim();
         String untagged = Boolean.toString(((JCheckBox) inputPanel.allTF.get(UNTAGGED_S)).isSelected());
-        String createCis = Boolean.toString(((JCheckBox) inputPanel.allTF.get(CREATE_CISCO_S)).isSelected());
+        String createCis = Boolean.toString(((JCheckBox) inputPanel.allTF.get(ACT_ON_CISCO_S)).isSelected());
 
         JComboBox<String> cityBox = rightPanel.citiesComboBox;
         String city = cityBox.getItemAt(cityBox.getSelectedIndex());
@@ -79,11 +113,13 @@ class InputPanel extends JPanel {
         allTF = new HashMap<>();
 
         for(String lab: LABELS) {
-            if (lab.equals(UNTAGGED_S) || lab.equals(CREATE_CISCO_S)) {
+            if (lab.equals(UNTAGGED_S)) {
                 allTF.put(lab, new JCheckBox(lab));
+            } else if (lab.equals(ACT_ON_CISCO_S)) {
+                allTF.put(lab, new JCheckBox(CREATE_CISCO_S));
             } else {
                 JTextField tempTextField = new JTextField(18);
-                tempTextField.setBackground(this.getBackground());
+//                tempTextField.setBackground(this.getBackground());
                 tempTextField.setBorder(BorderFactory.createCompoundBorder(
                         new CustomeBorder(),
                         BorderFactory.createEmptyBorder(0,2,0,2)
@@ -97,7 +133,7 @@ class InputPanel extends JPanel {
         JPanel lab = new JPanel(new GridLayout(LABELS.length, 1, 1, 1));
 
         for (String name: LABELS) {
-            if (name.equals(UNTAGGED_S) || name.equals(CREATE_CISCO_S)) {
+            if (name.equals(UNTAGGED_S) || name.equals(ACT_ON_CISCO_S)) {
                 lab.add(new JLabel());
                 inp.add(allTF.get(name));
             } else {
@@ -130,6 +166,7 @@ class RightPartPanel extends JPanel {
         changeSpeedBut.setEnabled(false);
 
         citiesComboBox = new JComboBox<>();
+        citiesComboBox.setBorder(BorderFactory.createEmptyBorder(0, 13, 0, 0));
 //        citiesComboBox.setPreferredSize(new Dimension(80, 6));
 //        citiesComboBox.setPrototypeDisplayValue("XX");
 

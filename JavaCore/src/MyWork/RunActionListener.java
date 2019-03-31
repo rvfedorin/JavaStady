@@ -3,6 +3,8 @@ package MyWork;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static MyWork.Config.*;
+
 public class RunActionListener implements ActionListener {
     private MainWindow mainFrame;
 
@@ -15,7 +17,7 @@ public class RunActionListener implements ActionListener {
 
         MainPanelOptic workPanel = mainFrame.mainPanel.opticPanel;
 
-        // String[]{mnemokod, vlan, IPswitch, port, untagged, createCis, city, action}
+        //getAllData() return String[]{mnemokod, vlan, IPswitch, port, untagged, createCis, city, action}
         String[] allData = workPanel.getAllData();
         boolean fineData = true;
 
@@ -32,29 +34,28 @@ public class RunActionListener implements ActionListener {
         String port = allData[3];
         String untagged = allData[4];
         String createCis = allData[5];
-
         String city = allData[6];
-
         String action = allData[7];
 
-        if (fineData) {
+        if (action.equals(CREATE_S)) {
+            // Создаём
+            if (Boolean.valueOf(createCis)) System.out.println("С созданием на Cisco.");
 
-            System.out.println(mnemokod);
-            System.out.println(vlan);
-            System.out.println(IPswitch);
-            System.out.println(port);
-            System.out.println(untagged);
-            System.out.println(createCis);
-            System.out.println(city);
-            System.out.println(action);
-            System.out.println("==================================");
+            System.out.println("Создание клиента: ");
 
+            mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
+            System.out.println(mainFrame.customer);
+        } else if (action.equals(DELETE_S)) {
+            // Удаляем
+            System.out.println("Удаление клиента: ");
+            mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
+            System.out.println(mainFrame.customer);
+        } else if (action.equals(CHANGE_SPEED_S)) {
+            // Меняем скорость
+            System.out.println("Смена скорости.");
         } else {
-            System.out.println("Введены не все данные.");
-        } // if (fineData)
-
-        mainFrame.customer = new Customer(mnemokod, vlan, IPswitch, port, untagged);
-        System.out.println(mainFrame.customer);
+            return;
+        }
 
     } // actionPerformed(ActionEvent e)
 } // class RunActionListener
