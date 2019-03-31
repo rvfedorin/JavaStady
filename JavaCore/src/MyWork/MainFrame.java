@@ -60,26 +60,22 @@ class MainWindow extends JFrame {
 
         JMenu toolsMenu = new JMenu("Tools");
         menuBar.add(toolsMenu);
-        JMenuItem workBDItem = new JMenuItem("Работа с БД");
-        JMenuItem multiDelVlanItem = new JMenuItem("Массовое создание vlan");
-        JMenuItem multiCreateVlanItem = new JMenuItem("Массовое удаление vlan");
-        toolsMenu.add(workBDItem);
-        toolsMenu.add(multiDelVlanItem);
-        toolsMenu.add(multiCreateVlanItem);
+        JMenuItem workBDItem = toolsMenu.add("Работа с БД");
+        JMenuItem multiDelVlanItem = toolsMenu.add("Массовое создание vlan");
+        JMenuItem multiCreateVlanItem = toolsMenu.add("Массовое удаление vlan");
 
         JMenu switchMenu = new JMenu("Switch");
         menuBar.add(switchMenu);
-        JMenuItem pathToSwItem = new JMenuItem("Путь до свитча");
-        JMenuItem allConnectSwItem = new JMenuItem("Все подключения от свитча");
-        switchMenu.add(pathToSwItem);
-        switchMenu.add(allConnectSwItem);
+        JMenuItem pathToSwItem = switchMenu.add("Путь до свитча");
+        JMenuItem allConnectSwItem = switchMenu.add("Все подключения от свитча");
 
         JMenu helpMenu = new JMenu("Help");
         menuBar.add(helpMenu);
-        JMenuItem manualItem = new JMenuItem("Manual");
-        JMenuItem aboutlItem = new JMenuItem("About");
-        helpMenu.add(manualItem);
-        helpMenu.add(aboutlItem);
+        JMenuItem manualItem = helpMenu.add("Manual");
+        JMenuItem aboutlItem = helpMenu.add("About");
+        Image temp = new ImageIcon("ico.jpg").getImage();
+        ImageIcon imageIcon = new ImageIcon(temp.getScaledInstance(20, 20, Image.SCALE_DEFAULT));
+        aboutlItem.setIcon(imageIcon);
 
     } // createMenu()
 } // class MainWindow
