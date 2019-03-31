@@ -19,6 +19,8 @@ public abstract class Config {
     public static final String ACT_ON_CISCO_S = "Действие на Cisco";
     public static final String LINE = "===================================\n";
 
+    public static final String SPEEDS_FILE = "speeds.txt";
+
 
     public static final Map<String, String> CITIES;
     static {

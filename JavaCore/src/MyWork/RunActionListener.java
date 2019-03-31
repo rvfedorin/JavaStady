@@ -2,6 +2,10 @@ package MyWork;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 import static MyWork.Config.*;
 
@@ -53,6 +57,27 @@ public class RunActionListener implements ActionListener {
         } else if (action.equals(CHANGE_SPEED_S)) {
             // Меняем скорость
             System.out.println("Смена скорости.");
+            File speedFile = new File(SPEEDS_FILE);
+            try (BufferedReader frSpeedFile = new BufferedReader(new FileReader(speedFile))) {
+                String line;
+                int i = 1;
+                do {
+                    line = frSpeedFile.readLine();
+                    if(line != null) {
+                        String key = line.split("-")[0];
+                        String citySpeed = CITIES.getOrDefault(key, null);
+                        if(citySpeed != null) {
+                            System.out.println(">" + line.trim() + "<" + " строка " + i);
+                            System.out.println("ОП " + citySpeed);
+                            System.out.println(LINE);
+                        }
+
+                        i++;
+                    }
+                } while (line != null);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         } else {
             return;
         } // if selection action

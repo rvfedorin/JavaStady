@@ -6,6 +6,8 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -164,6 +166,14 @@ class RightPartPanel extends JPanel {
         freePortBut = new JButton("Найти свободный порт");
         changeSpeedBut = new JButton("Файл скоростей.");
         changeSpeedBut.setEnabled(false);
+        changeSpeedBut.addActionListener(e -> {
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.open(new File(SPEEDS_FILE));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
         citiesComboBox = new JComboBox<>();
         citiesComboBox.setBorder(BorderFactory.createEmptyBorder(0, 13, 0, 0));
