@@ -55,7 +55,7 @@ public class RunActionListener implements ActionListener {
             System.out.println("Смена скорости.");
         } else {
             return;
-        }
+        } // if selection action
 
     } // actionPerformed(ActionEvent e)
 } // class RunActionListener

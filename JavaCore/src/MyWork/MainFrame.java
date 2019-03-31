@@ -36,6 +36,7 @@ class MainWindow extends JFrame {
 //        setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setResizable(false);
 
+        this.createMenu();
         mainPanel = new MainPanel();
         add(mainPanel);
 
@@ -52,6 +53,35 @@ class MainWindow extends JFrame {
         pack();
 
     } // const
+
+    private void createMenu() {
+        JMenuBar menuBar = new JMenuBar();
+        this.setJMenuBar(menuBar);
+
+        JMenu toolsMenu = new JMenu("Tools");
+        menuBar.add(toolsMenu);
+        JMenuItem workBDItem = new JMenuItem("Работа с БД");
+        JMenuItem multiDelVlanItem = new JMenuItem("Массовое создание vlan");
+        JMenuItem multiCreateVlanItem = new JMenuItem("Массовое удаление vlan");
+        toolsMenu.add(workBDItem);
+        toolsMenu.add(multiDelVlanItem);
+        toolsMenu.add(multiCreateVlanItem);
+
+        JMenu switchMenu = new JMenu("Switch");
+        menuBar.add(switchMenu);
+        JMenuItem pathToSwItem = new JMenuItem("Путь до свитча");
+        JMenuItem allConnectSwItem = new JMenuItem("Все подключения от свитча");
+        switchMenu.add(pathToSwItem);
+        switchMenu.add(allConnectSwItem);
+
+        JMenu helpMenu = new JMenu("Help");
+        menuBar.add(helpMenu);
+        JMenuItem manualItem = new JMenuItem("Manual");
+        JMenuItem aboutlItem = new JMenuItem("About");
+        helpMenu.add(manualItem);
+        helpMenu.add(aboutlItem);
+
+    } // createMenu()
 } // class MainWindow
 
 class MainPanel extends JPanel {
