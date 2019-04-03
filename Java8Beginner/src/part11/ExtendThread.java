@@ -4,8 +4,11 @@ public class ExtendThread {
     public static void main(String[] args) {
         System.out.println("MAIN SART");
         MyThread myThread = new MyThread("Поток 1");
+        myThread.setPriority(Thread.NORM_PRIORITY+1);
         MyThread myThread2 = new MyThread("Поток 2");
+        myThread2.setPriority(Thread.NORM_PRIORITY+2);
         MyThread myThread3 = new MyThread("Поток 3");
+        myThread3.setPriority(Thread.NORM_PRIORITY+3);
 
         try {
             myThread.join();
