@@ -8,14 +8,13 @@ public class ExtendThread {
         MyThread myThread3 = new MyThread("Поток 3");
 
         try {
-            int i = 0;
-            do {
-                if (i % 10 == 0) {
-                    System.out.println(" Проход номер " + i);
-                } // if
-                i++;
-                Thread.sleep(100);
-            } while (myThread.isAlive() || myThread2.isAlive() || myThread3.isAlive());
+            myThread.join();
+            System.out.println("Присоединён: " + myThread.getName());
+            myThread2.join();
+            System.out.println("Присоединён: " + myThread2.getName());
+            myThread3.join();
+            System.out.println("Присоединён: " + myThread3.getName());
+
         } catch (InterruptedException ex) {
             System.out.println(ex);
         }
