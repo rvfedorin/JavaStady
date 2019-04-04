@@ -1,10 +1,14 @@
 package MyWork;
 
 import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import java.awt.*;
 
+import static MyWork.Config.*;
+
 public class MainMenu {
-    private JFrame mainFrame;
+    private MainWindow mainFrame;
     private JMenuBar menuBar;
 
     private JMenu toolsMenu;
@@ -20,7 +24,7 @@ public class MainMenu {
     private JMenuItem manualItem;
     private JMenuItem aboutItem;
 
-    MainMenu(JFrame frame) {
+    MainMenu(MainWindow frame) {
         mainFrame = frame;
         createMenu();
     }
@@ -36,6 +40,7 @@ public class MainMenu {
         multiCreateVlanItem = toolsMenu.add("Массовое удаление vlan");
 
         switchMenu = new JMenu("Switch");
+        switchMenu.addMenuListener(new SwitchMenuListener());
         menuBar.add(switchMenu);
         pathToSwItem = switchMenu.add("Путь до свитча");
         pathToSwItem.setEnabled(false);
@@ -51,4 +56,22 @@ public class MainMenu {
         aboutItem.setIcon(imageIcon);
 
     } // createMenu()
-}
+
+    class SwitchMenuListener implements MenuListener {
+        @Override
+        public void menuSelected(MenuEvent e) {
+            JTextField switchTF = (JTextField) mainFrame.mainPanel.opticPanel.inputPanel.allTF.get(IP_SWITCH_S);
+            if(switchTF.getText().length() < 6) {
+                pathToSwItem.setEnabled(false);
+                allConnectSwItem.setEnabled(false);
+            } else {
+                pathToSwItem.setEnabled(true);
+                allConnectSwItem.setEnabled(true);
+            }
+        } // menuSelected()
+
+        @Override
+        public void menuDeselected(MenuEvent e) {}
+        public void menuCanceled(MenuEvent e) {}
+    } // class SwitchMenuListener
+} // class MainMenu
