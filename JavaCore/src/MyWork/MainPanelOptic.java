@@ -120,8 +120,7 @@ class InputPanel extends JPanel {
             } else if (lab.equals(ACT_ON_CISCO_S)) {
                 allTF.put(lab, new JCheckBox(CREATE_CISCO_S));
             } else {
-                JTextField tempTextField = new JTextField(18);
-//                tempTextField.setBackground(this.getBackground());
+                JTextField tempTextField = new ExtendedTextField(18);
                 tempTextField.setBorder(BorderFactory.createCompoundBorder(
                         new CustomeBorder(),
                         BorderFactory.createEmptyBorder(0,2,0,2)
