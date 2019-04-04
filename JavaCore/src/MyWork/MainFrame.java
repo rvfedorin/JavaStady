@@ -18,6 +18,7 @@ class MainWindow extends JFrame {
     private final static int DEFAULT_HEIGHT = 380;
     public MainPanel mainPanel;
     public Customer customer;
+    private MainMenu mainMenu;
 
     MainWindow(){
         try {
@@ -36,7 +37,7 @@ class MainWindow extends JFrame {
 //        setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setResizable(false);
 
-        this.createMenu();
+        mainMenu = new MainMenu(this);
         mainPanel = new MainPanel();
         add(mainPanel);
 
@@ -54,30 +55,7 @@ class MainWindow extends JFrame {
 
     } // const
 
-    private void createMenu() {
-        JMenuBar menuBar = new JMenuBar();
-        this.setJMenuBar(menuBar);
 
-        JMenu toolsMenu = new JMenu("Tools");
-        menuBar.add(toolsMenu);
-        JMenuItem workBDItem = toolsMenu.add("Работа с БД");
-        JMenuItem multiDelVlanItem = toolsMenu.add("Массовое создание vlan");
-        JMenuItem multiCreateVlanItem = toolsMenu.add("Массовое удаление vlan");
-
-        JMenu switchMenu = new JMenu("Switch");
-        menuBar.add(switchMenu);
-        JMenuItem pathToSwItem = switchMenu.add("Путь до свитча");
-        JMenuItem allConnectSwItem = switchMenu.add("Все подключения от свитча");
-
-        JMenu helpMenu = new JMenu("Help");
-        menuBar.add(helpMenu);
-        JMenuItem manualItem = helpMenu.add("Manual");
-        JMenuItem aboutlItem = helpMenu.add("About");
-        Image temp = new ImageIcon("ico.jpg").getImage();
-        ImageIcon imageIcon = new ImageIcon(temp.getScaledInstance(20, 20, Image.SCALE_DEFAULT));
-        aboutlItem.setIcon(imageIcon);
-
-    } // createMenu()
 } // class MainWindow
 
 class MainPanel extends JPanel {

@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -129,6 +128,16 @@ class InputPanel extends JPanel {
                 allTF.put(lab, tempTextField);
             } // if
         } // for(String lab: labels)
+
+        JTextField ipSwitchListen = (JTextField) allTF.get(IP_SWITCH_S);
+        ipSwitchListen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(ipSwitchListen.getText().trim().length() > 8) {
+
+                }
+            }
+        });
 
         JPanel inp = new JPanel(new GridLayout(LABELS.length, 1, 1, 1));
         JPanel lab = new JPanel(new GridLayout(LABELS.length, 1, 1, 1));
