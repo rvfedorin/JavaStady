@@ -16,8 +16,8 @@ public class MainFrame {
 class MainWindow extends JFrame {
     private final static int DEFAULT_WIDTH = 380;
     private final static int DEFAULT_HEIGHT = 380;
-    public MainPanel mainPanel;
-    public Customer customer;
+    MainPanel mainPanel;
+    Customer customer;
     private MainMenu mainMenu;
 
     MainWindow(){
@@ -59,7 +59,7 @@ class MainWindow extends JFrame {
 } // class MainWindow
 
 class MainPanel extends JPanel {
-    public MainPanelOptic opticPanel;
+    MainPanelOptic opticPanel;
     private JPanel mbPanel;
     private JPanel rwrPanel;
 

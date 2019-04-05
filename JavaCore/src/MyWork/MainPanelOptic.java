@@ -194,9 +194,9 @@ class RightPartPanel extends JPanel {
 
         add(citiesComboBox);
         add(freeVlanBut);
-        add(new Label());
+        add(new JLabel());
         add(freePortBut);
-        add(new Label());
+        add(new JLabel());
         add(changeSpeedBut);
     }
 }

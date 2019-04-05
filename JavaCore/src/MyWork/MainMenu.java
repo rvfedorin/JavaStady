@@ -62,8 +62,8 @@ public class MainMenu {
             tempItem.addActionListener(e -> {
                 try {
                     UIManager.setLookAndFeel(classNameLook);
-                } catch (Exception ex) {
-                    System.out.println(ex);
+                } catch (Exception exLaF) {
+                    System.out.println(exLaF);
                 }
                 SwingUtilities.updateComponentTreeUI(mainFrame);
                 mainFrame.pack();
