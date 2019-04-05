@@ -1,9 +1,14 @@
 package MyWork;
 
+import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
+
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import static MyWork.Config.*;
 
@@ -19,6 +24,8 @@ public class MainMenu {
     private JMenu switchMenu;
     private JMenuItem pathToSwItem;
     private JMenuItem allConnectSwItem;
+
+    private JMenu view;
 
     private JMenu helpMenu;
     private JMenuItem manualItem;
@@ -43,9 +50,25 @@ public class MainMenu {
         switchMenu.addMenuListener(new SwitchMenuListener());
         menuBar.add(switchMenu);
         pathToSwItem = switchMenu.add("Путь до свитча");
-        pathToSwItem.setEnabled(false);
         allConnectSwItem = switchMenu.add("Все подключения от свитча");
-        allConnectSwItem.setEnabled(false);
+
+        view = new JMenu("View");
+        menuBar.add(view);
+        UIManager.LookAndFeelInfo[] lookInfo = UIManager.getInstalledLookAndFeels();
+        for(UIManager.LookAndFeelInfo newLook: lookInfo){
+            String nameLook = newLook.getName();
+            String classNameLook = newLook.getClassName();
+            JMenuItem tempItem = view.add(nameLook);
+            tempItem.addActionListener(e -> {
+                try {
+                    UIManager.setLookAndFeel(classNameLook);
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
+                SwingUtilities.updateComponentTreeUI(mainFrame);
+                mainFrame.pack();
+            }); // ActionListener
+        } // for views
 
         helpMenu = new JMenu("Help");
         menuBar.add(helpMenu);
@@ -64,9 +87,15 @@ public class MainMenu {
             if(switchTF.getText().length() < 6) {
                 pathToSwItem.setEnabled(false);
                 allConnectSwItem.setEnabled(false);
+                pathToSwItem.setToolTipText("Необходимо предварительно указать IP свитча.");
+                allConnectSwItem.setToolTipText("Необходимо предварительно указать IP свитча.");
+                mainFrame.setVisible(true);
             } else {
                 pathToSwItem.setEnabled(true);
                 allConnectSwItem.setEnabled(true);
+                pathToSwItem.setToolTipText("Показывает цепочку пути до свитча с линками.");
+                allConnectSwItem.setToolTipText("Показывает все подключения от свитча по цепочке.");
+                mainFrame.setVisible(true);
             }
         } // menuSelected()
 
@@ -74,4 +103,5 @@ public class MainMenu {
         public void menuDeselected(MenuEvent e) {}
         public void menuCanceled(MenuEvent e) {}
     } // class SwitchMenuListener
+
 } // class MainMenu

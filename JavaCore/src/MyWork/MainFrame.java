@@ -1,7 +1,7 @@
 package MyWork;
 
 import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
-//import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import javax.swing.*;
 import java.awt.*;
