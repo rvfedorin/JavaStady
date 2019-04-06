@@ -17,6 +17,7 @@ class MainWindow extends JFrame {
     private final static int DEFAULT_WIDTH = 380;
     private final static int DEFAULT_HEIGHT = 380;
     MainPanel mainPanel;
+//    CurrentlyRunningPanel currentlyRunning;
     Customer customer;
     private MainMenu mainMenu;
 
@@ -25,7 +26,7 @@ class MainWindow extends JFrame {
 //            UIManager.setLookAndFeel(new NimbusLookAndFeel());
             UIManager.setLookAndFeel(new WindowsLookAndFeel());
         } catch (Exception ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (int) (dimension.getWidth() - getWidth())/3;
@@ -39,7 +40,9 @@ class MainWindow extends JFrame {
 
         mainMenu = new MainMenu(this);
         mainPanel = new MainPanel();
-        add(mainPanel);
+//        currentlyRunning = new CurrentlyRunningPanel();
+        add(mainPanel, BorderLayout.CENTER);
+//        add(currentlyRunning, BorderLayout.EAST);
 
         // RUN BUTTON //
         JPanel buttonPanel = new JPanel();
@@ -63,14 +66,14 @@ class MainPanel extends JPanel {
     private JPanel mbPanel;
     private JPanel rwrPanel;
 
+
+
     MainPanel() {
-//        setLayout(new BorderLayout());
         opticPanel = new MainPanelOptic();
         mbPanel = new MainPanelMB();
         rwrPanel = new MainPanelRWR();
 
         add(opticPanel);
-        add(mbPanel);
-        add(rwrPanel);
+
     }
-}
+} // class MainPanel

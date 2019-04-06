@@ -1,16 +1,13 @@
 package MyWork;
 
-import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import static MyWork.Config.*;
+import MyWork.MenuAction.*;
 
 public class MainMenu {
     private MainWindow mainFrame;
@@ -73,7 +70,9 @@ public class MainMenu {
         helpMenu = new JMenu("Help");
         menuBar.add(helpMenu);
         manualItem = helpMenu.add("Manual");
+        manualItem.addActionListener(e -> new ManualDialog(mainFrame));
         aboutItem = helpMenu.add("About");
+        aboutItem.addActionListener(e -> new AboutDialog(mainFrame));
         Image temp = new ImageIcon("ico.jpg").getImage();
         ImageIcon imageIcon = new ImageIcon(temp.getScaledInstance(20, 20, Image.SCALE_DEFAULT));
         aboutItem.setIcon(imageIcon);
@@ -105,3 +104,4 @@ public class MainMenu {
     } // class SwitchMenuListener
 
 } // class MainMenu
+
