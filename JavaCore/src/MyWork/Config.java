@@ -44,5 +44,4 @@ public abstract class Config {
     public static final String RUN_LOGIN = "admin";
     public static final String RUN_PASS = "admin";
 
-
 } // END Config

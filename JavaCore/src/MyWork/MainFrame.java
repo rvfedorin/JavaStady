@@ -14,9 +14,10 @@ public class MainFrame {
         // ************** AUTH ****************
         if (!authDialog.isSuccessAuth()) {
             System.exit(0);
-        }
+        } else {
         // ************** END AUTH ****************
-        mainWindow.setVisible(true);
+            mainWindow.setVisible(true);
+        }
     } // ** main()
 } // ** class MainFrame
 // ************************* MAIN OUT **********************************
