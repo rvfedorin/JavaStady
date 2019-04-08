@@ -1,17 +1,25 @@
 package MyWork;
 
 import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+//import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import javax.swing.*;
 import java.awt.*;
 
+// ************************ MAIN IN ************************************
 public class MainFrame {
     public static void main(String[] args) {
         MainWindow mainWindow = new MainWindow();
+        AuthDialog authDialog = new AuthDialog(mainWindow);
+        // ************** AUTH ****************
+        if (!authDialog.isSuccessAuth()) {
+            System.exit(0);
+        }
+        // ************** END AUTH ****************
         mainWindow.setVisible(true);
-    }
-} // class MainFrame
+    } // ** main()
+} // ** class MainFrame
+// ************************* MAIN OUT **********************************
 
 class MainWindow extends JFrame {
     private final static int DEFAULT_WIDTH = 380;
@@ -56,10 +64,10 @@ class MainWindow extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
         pack();
 
-    } // const
+    } // ************************ close const
 
 
-} // class MainWindow
+} // ************************ close class MainWindow
 
 class MainPanel extends JPanel {
     MainPanelOptic opticPanel;
@@ -76,4 +84,4 @@ class MainPanel extends JPanel {
         add(opticPanel);
 
     }
-} // class MainPanel
+} // ************************ close class MainPanel

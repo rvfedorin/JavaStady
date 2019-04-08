@@ -3,6 +3,8 @@ package MyWork.MenuAction;
 import javax.swing.*;
 import java.awt.*;
 
+import static MyWork.Config.*;
+
 public class AboutDialog extends JDialog {
     public AboutDialog(JFrame owner) {
         super(owner, "About", true);
@@ -12,7 +14,7 @@ public class AboutDialog extends JDialog {
         JPanel text = new JPanel();
         text.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         text.add(new JLabel("<html>" +
-                "<h3><i>Работа с клиентам v.1.0  </i></h3>" +
+                "<h3>Работа с клиентам v."+ VERSION +"  </h3>" +
                 "<hr>" +
                 "By Roman V. Fedorin" +
                 "</html>"));
