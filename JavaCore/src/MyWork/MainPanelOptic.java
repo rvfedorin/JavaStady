@@ -6,11 +6,11 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import static MyWork.Config.*;
+import static MyWork.ExtendedOpenFile.openSystemFile;
 
 public class MainPanelOptic extends JPanel {
     public InputPanel inputPanel;
@@ -175,12 +175,7 @@ class RightPartPanel extends JPanel {
         changeSpeedBut = new JButton("Файл скоростей.");
         changeSpeedBut.setEnabled(false);
         changeSpeedBut.addActionListener(e -> {
-            Desktop desktop = Desktop.getDesktop();
-            try {
-                desktop.open(new File(SPEEDS_FILE));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            openSystemFile();
         });
 
         citiesComboBox = new JComboBox<>();

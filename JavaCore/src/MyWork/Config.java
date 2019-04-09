@@ -41,7 +41,8 @@ public abstract class Config {
             UNTAGGED_S,
             ACT_ON_CISCO_S};
 
+    public static final String IV = "31415926";
     public static final String RUN_LOGIN = "admin";
-    public static final String RUN_PASS = "admin";
+    public static final String RUN_PASS = "jaNUpm9cNWvfct86RHRwwQ==";
 
 } // END Config

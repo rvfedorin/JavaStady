@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import static MyWork.Config.*;
+import static MyWork.CryptDecrypt.correct;
 
 class AuthDialog extends JDialog {
     private JTextField loginField;
@@ -66,7 +67,8 @@ class AuthDialog extends JDialog {
         } else {
             String login = loginField.getText().trim();
             String pass = String.valueOf(passField.getPassword());
-            if (login.equals(RUN_LOGIN) && pass.equals(RUN_PASS)) {
+
+            if (login.equals(RUN_LOGIN) && correct(pass, RUN_PASS)) {
                 okAuth = true;
             }
         }

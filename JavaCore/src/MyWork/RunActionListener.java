@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 
 import static MyWork.Config.*;
+import static MyWork.ExtendedOpenFile.readFile;
 
 public class RunActionListener implements ActionListener {
     private MainWindow mainFrame;
@@ -70,11 +71,15 @@ class ChangeSpeedThread extends Thread {
     }
     @Override
     public void run() {
-        File speedFile = new File(SPEEDS_FILE);
-        try (BufferedReader frSpeedFile = new BufferedReader(new FileReader(speedFile))) {
-            String line;
-            int i = 1;
-            do {
+        BufferedReader frSpeedFile = ExtendedOpenFile.readFile();
+        if (frSpeedFile != null) readFile(frSpeedFile);
+    } // ** run()
+
+    private void readFile(BufferedReader frSpeedFile) {
+        String line = "";
+        int i = 1;
+        do {
+            try {
                 line = frSpeedFile.readLine();
                 if(line != null) {
                     String key = line.split("-")[0];
@@ -83,13 +88,15 @@ class ChangeSpeedThread extends Thread {
                         System.out.println(">" + line.trim() + "<" + " строка " + i);
                         System.out.println("ОП " + citySpeed);
                         System.out.print(LINE);
-                        Thread.sleep(1000); // for test 
+
+                        Thread.sleep(1000); // for test
                     }
-                    i++;
                 } // if(line != null)
-            } while (line != null);
-        } catch (IOException | InterruptedException ex) {
-            ex.printStackTrace();
-        } // try
-    }
+            } catch (IOException | InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            i++;
+
+        } while (line != null);
+    } // ** readFile(BufferedReader frSpeedFile)
 }
