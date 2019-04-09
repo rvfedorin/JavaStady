@@ -51,6 +51,9 @@ public class MainMenu {
 
         view = new JMenu("View");
         menuBar.add(view);
+        JMenuItem logPrint = view.add("Set visible events");
+        logPrint.addActionListener(e -> mainFrame.eventPrintFrame.setVisible(true));
+        view.addSeparator();
         UIManager.LookAndFeelInfo[] lookInfo = UIManager.getInstalledLookAndFeels();
         for(UIManager.LookAndFeelInfo newLook: lookInfo){
             String nameLook = newLook.getName();

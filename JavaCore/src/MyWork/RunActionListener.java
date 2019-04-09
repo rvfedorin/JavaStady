@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.io.*;
 
 import static MyWork.Config.*;
-import static MyWork.ExtendedOpenFile.readFile;
 
 public class RunActionListener implements ActionListener {
     private MainWindow mainFrame;
@@ -55,7 +54,8 @@ public class RunActionListener implements ActionListener {
         } else if (action.equals(CHANGE_SPEED_S)) {
             // Меняем скорость
             System.out.println("Смена скорости.");
-            new ChangeSpeedThread("speedChange");
+            mainFrame.eventPrintFrame.printEvent("Смена скорости.");
+            new ChangeSpeedThread("speedChange", mainFrame.eventPrintFrame);
         } else {
             return;
         } // if selection action
@@ -64,9 +64,11 @@ public class RunActionListener implements ActionListener {
 } // class RunActionListener
 
 class ChangeSpeedThread extends Thread {
+    EventPrintFrame frameEvent;
 
-    ChangeSpeedThread(String name) {
+    ChangeSpeedThread(String name, EventPrintFrame printEvent) {
         super(name);
+        this.frameEvent = printEvent;
         this.start();
     }
     @Override
@@ -87,7 +89,11 @@ class ChangeSpeedThread extends Thread {
                     if(citySpeed != null) {
                         System.out.println(">" + line.trim() + "<" + " строка " + i);
                         System.out.println("ОП " + citySpeed);
-                        System.out.print(LINE);
+                        System.out.println(LINE);
+
+                        frameEvent.printEvent(">" + line.trim() + "<" + " строка " + i);
+                        frameEvent.printEvent("ОП " + citySpeed);
+                        frameEvent.printEvent(LINE);
 
                         Thread.sleep(1000); // for test
                     }

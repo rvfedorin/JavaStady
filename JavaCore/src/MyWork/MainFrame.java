@@ -6,6 +6,8 @@ import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 import javax.swing.*;
 import java.awt.*;
 
+import static MyWork.Config.LINE;
+
 // ************************ MAIN IN ************************************
 public class MainFrame {
     public static void main(String[] args) {
@@ -17,6 +19,9 @@ public class MainFrame {
         } else {
         // ************** END AUTH ****************
             mainWindow.setVisible(true);
+            mainWindow.eventPrintFrame.setVisible(true);
+            mainWindow.eventPrintFrame.printEvent("Success logged.");
+            mainWindow.eventPrintFrame.printEvent(LINE);
         }
     } // ** main()
 } // ** class MainFrame
@@ -27,6 +32,7 @@ class MainWindow extends JFrame {
     private final static int DEFAULT_HEIGHT = 380;
     MainPanel mainPanel;
 //    CurrentlyRunningPanel currentlyRunning;
+    EventPrintFrame eventPrintFrame;
     Customer customer;
     private MainMenu mainMenu;
 
@@ -50,6 +56,7 @@ class MainWindow extends JFrame {
         mainMenu = new MainMenu(this);
         mainPanel = new MainPanel();
 //        currentlyRunning = new CurrentlyRunningPanel();
+        eventPrintFrame = new EventPrintFrame();
         add(mainPanel, BorderLayout.CENTER);
 //        add(currentlyRunning, BorderLayout.EAST);
 
