@@ -3,7 +3,5 @@
 О-Ресурсстекло_пер/Orel-OSK  на 10 Мбит/с
 О-АтлантМ/Orel-Atlantm до 100 М
 
-Orel-test 7M
-Orel-test2 6M
 Orel-test3 3M
 Kr-test 512K

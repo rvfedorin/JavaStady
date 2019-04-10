@@ -1,6 +1,7 @@
 package MyWork;
 
-import MyWork.Tools.AllAboutSpeed;
+import MyWork.Tools.CiscoSpeedFormat;
+import MyWork.Tools.SpeedFileParser;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -87,6 +88,9 @@ class ChangeSpeedThread extends Thread {
                 line = frSpeedFile.readLine();
                 if(line != null && !line.matches("^\\s*$")) {
                     System.out.println(line);
+                    line = SpeedFileParser.getParsedString(line);
+                    System.out.println(line);
+
                     String[] formattedSpeed;
                     // get prefix of mnemokod
                     String key = line.split("-")[0];
@@ -94,7 +98,7 @@ class ChangeSpeedThread extends Thread {
                     // get OP
                     String citySpeed = CITIES.getOrDefault(key, null);
                     if (clientNewSpeed.length >= 2) {
-                        formattedSpeed = AllAboutSpeed.getFormattedSpeed("service-policy", clientNewSpeed[1]);
+                        formattedSpeed = CiscoSpeedFormat.getFormattedSpeed("service-policy", clientNewSpeed[1]);
                     } else {
                         frameEvent.printEvent("[!!!] Error parse line speed.");
                         return;

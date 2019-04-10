@@ -1,6 +1,6 @@
 package MyWork.Tools;
 
-public class AllAboutSpeed {
+public class CiscoSpeedFormat {
     private static final int KB = 1024;
 
     public static String[] getFormattedSpeed(String type, String speed) {
@@ -71,4 +71,4 @@ public class AllAboutSpeed {
     public String getpolicyBlock(String speed){
         return "";
     }
-} // **  class AllAboutSpeed
+} // **  class CiscoSpeedFormat
