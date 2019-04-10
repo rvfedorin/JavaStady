@@ -22,6 +22,7 @@ public abstract class Config {
     public static final String LINE = "===================================";
 
     public static final String SPEEDS_FILE = "speeds.txt";
+    public static final String LOG_FILE = "log.txt";
 
 
     public static final Map<String, String> CITIES;

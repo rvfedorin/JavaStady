@@ -23,6 +23,7 @@ public class MainMenu {
     private JMenuItem allConnectSwItem;
 
     private JMenu view;
+    JMenuItem logPrint;
 
     private JMenu helpMenu;
     private JMenuItem manualItem;
@@ -50,8 +51,9 @@ public class MainMenu {
         allConnectSwItem = switchMenu.add("Все подключения от свитча");
 
         view = new JMenu("View");
+        view.addMenuListener(new SwitchMenuListener());
         menuBar.add(view);
-        JMenuItem logPrint = view.add("Set visible events");
+        logPrint = view.add("Set visible events");
         logPrint.addActionListener(e -> mainFrame.eventPrintFrame.setVisible(true));
         view.addSeparator();
         UIManager.LookAndFeelInfo[] lookInfo = UIManager.getInstalledLookAndFeels();
@@ -63,7 +65,7 @@ public class MainMenu {
                 try {
                     UIManager.setLookAndFeel(classNameLook);
                 } catch (Exception exLaF) {
-                    System.out.println(exLaF);
+                    exLaF.printStackTrace();
                 }
                 SwingUtilities.updateComponentTreeUI(mainFrame);
                 mainFrame.pack();
@@ -98,6 +100,12 @@ public class MainMenu {
                 pathToSwItem.setToolTipText("Показывает цепочку пути до свитча с линками.");
                 allConnectSwItem.setToolTipText("Показывает все подключения от свитча по цепочке.");
                 mainFrame.setVisible(true);
+            }
+
+            if(mainFrame.eventPrintFrame.isVisible()){
+                logPrint.setEnabled(false);
+            } else {
+                logPrint.setEnabled(true);
             }
         } // menuSelected()
 

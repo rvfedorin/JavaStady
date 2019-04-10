@@ -1,5 +1,7 @@
 package MyWork;
 
+import MyWork.Tools.AllAboutSpeed;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -83,17 +85,53 @@ class ChangeSpeedThread extends Thread {
         do {
             try {
                 line = frSpeedFile.readLine();
-                if(line != null) {
+                if(line != null && !line.matches("^\\s*$")) {
+                    System.out.println(line);
+                    String[] formattedSpeed;
+                    // get prefix of mnemokod
                     String key = line.split("-")[0];
+                    String[] clientNewSpeed = line.split(" ");  // ** [0] mnemokod; [1] speed
+                    // get OP
                     String citySpeed = CITIES.getOrDefault(key, null);
+                    if (clientNewSpeed.length >= 2) {
+                        formattedSpeed = AllAboutSpeed.getFormattedSpeed("service-policy", clientNewSpeed[1]);
+                    } else {
+                        frameEvent.printEvent("[!!!] Error parse line speed.");
+                        return;
+                    }
+
+                    // ************** START REMOVE AFTER TESTS ********************************
                     if(citySpeed != null) {
                         System.out.println(">" + line.trim() + "<" + " строка " + i);
                         System.out.println("ОП " + citySpeed);
-                        System.out.println(LINE);
 
+                        if(formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
+                            for (String s : formattedSpeed) {
+                                System.out.println(s);
+                            }
+                        } else if(formattedSpeed != null) {
+                            System.out.println(formattedSpeed[0] + formattedSpeed[1]);
+                        } else {
+                            System.out.println("getFormattedSpeed return NULL!");
+                        }
+
+                        System.out.println(LINE);
+                        // ************** END REMOVE AFTER TESTS ********************************
+
+                        // ************** START PRINT EVENT ********************************
                         frameEvent.printEvent(">" + line.trim() + "<" + " строка " + i);
                         frameEvent.printEvent("ОП " + citySpeed);
+                        if(formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
+                            for (String s : formattedSpeed) {
+                                frameEvent.printEvent(s);
+                            }
+                        } else if(formattedSpeed != null) {
+                            frameEvent.printEvent(formattedSpeed[0] + formattedSpeed[1]);
+                        } else {
+                            frameEvent.printEvent("getFormattedSpeed return NULL!");
+                        }
                         frameEvent.printEvent(LINE);
+                        // ************** END PRINT EVENT ********************************
 
                         Thread.sleep(1000); // for test
                     }

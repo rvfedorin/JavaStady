@@ -14,7 +14,7 @@ public class MainFrame {
         MainWindow mainWindow = new MainWindow();
         AuthDialog authDialog = new AuthDialog(mainWindow);
         // ************** AUTH ****************
-        if (!authDialog.isSuccessAuth()) {
+        if (authDialog.isSuccessAuth()) {
             System.exit(0);
         } else {
         // ************** END AUTH ****************
