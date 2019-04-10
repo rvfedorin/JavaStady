@@ -1,7 +1,1 @@
-О-Агроком / Orel-Agrokom  на 10 Мбит/с
-О-Крантехмаш / Orel-Kran  на 5 Мбит/с
-О-Ресурсстекло_пер/Orel-OSK  на 10 Мбит/с
-О-АтлантМ/Orel-Atlantm до 100 М
-
-Orel-test3 3M
-Kr-test 512K
+клиенту  vrzh-ipkalinh на 4 Мбит/с с 01.04.2019 г.

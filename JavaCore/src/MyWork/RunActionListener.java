@@ -25,6 +25,7 @@ public class RunActionListener implements ActionListener {
         String[] allData = workPanel.getAllData();
         boolean fineData = true;
 
+        // checks if all data was filled
         for (String s: allData) {
             if (s.length() < 1) {
                 fineData = false;
@@ -67,7 +68,7 @@ public class RunActionListener implements ActionListener {
 } // class RunActionListener
 
 class ChangeSpeedThread extends Thread {
-    EventPrintFrame frameEvent;
+    private EventPrintFrame frameEvent;
 
     ChangeSpeedThread(String name, EventPrintFrame printEvent) {
         super(name);
@@ -82,48 +83,62 @@ class ChangeSpeedThread extends Thread {
 
     private void readFile(BufferedReader frSpeedFile) {
         String line = "";
-        int i = 1;
+
         do {
             try {
                 line = frSpeedFile.readLine();
                 if(line != null && !line.matches("^\\s*$")) {
-                    System.out.println(line);
+//                    System.out.println(line);
+                    String tempLine = line;
                     line = SpeedFileParser.getParsedString(line);
-                    System.out.println(line);
+//                    System.out.println(line);
 
                     String[] formattedSpeed;
                     // get prefix of mnemokod
                     String key = line.split("-")[0];
+                    // if first letter in lowercase
+                    if(key != null && !key.isEmpty()) {
+                        key = key.substring(0, 1).toUpperCase() + key.substring(1);
+                    } else {
+                        frameEvent.printEvent(tempLine);
+                        frameEvent.printEvent("[!!!] Error. City not found!");
+                        frameEvent.printEvent(LINE);
+                        continue;
+                    }
+
                     String[] clientNewSpeed = line.split(" ");  // ** [0] mnemokod; [1] speed
                     // get OP
-                    String citySpeed = CITIES.getOrDefault(key, null);
+                    String citySpeed = CITIES.getOrDefault(key, "--- Error. City not found! ---");
                     if (clientNewSpeed.length >= 2) {
                         formattedSpeed = CiscoSpeedFormat.getFormattedSpeed("service-policy", clientNewSpeed[1]);
                     } else {
+                        frameEvent.printEvent(tempLine);
                         frameEvent.printEvent("[!!!] Error parse line speed.");
-                        return;
+                        frameEvent.printEvent(LINE);
+                        continue;
                     }
 
-                    // ************** START REMOVE AFTER TESTS ********************************
                     if(citySpeed != null) {
-                        System.out.println(">" + line.trim() + "<" + " строка " + i);
-                        System.out.println("ОП " + citySpeed);
-
-                        if(formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
-                            for (String s : formattedSpeed) {
-                                System.out.println(s);
-                            }
-                        } else if(formattedSpeed != null) {
-                            System.out.println(formattedSpeed[0] + formattedSpeed[1]);
-                        } else {
-                            System.out.println("getFormattedSpeed return NULL!");
-                        }
-
-                        System.out.println(LINE);
+                        // ************** START REMOVE AFTER TESTS ********************************
+//                        System.out.println(">" + line.trim() + "<" + " строка " + i);
+//                        System.out.println("ОП " + citySpeed);
+//
+//                        if(formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
+//                            for (String s : formattedSpeed) {
+//                                System.out.println(s);
+//                            }
+//                        } else if(formattedSpeed != null) {
+//                            System.out.println(formattedSpeed[0] + formattedSpeed[1]);
+//                        } else {
+//                            System.out.println("getFormattedSpeed return NULL!");
+//                        }
+//
+//                        System.out.println(LINE);
                         // ************** END REMOVE AFTER TESTS ********************************
 
                         // ************** START PRINT EVENT ********************************
-                        frameEvent.printEvent(">" + line.trim() + "<" + " строка " + i);
+                        frameEvent.printEvent(tempLine);
+                        frameEvent.printEvent(line);
                         frameEvent.printEvent("ОП " + citySpeed);
                         if(formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
                             for (String s : formattedSpeed) {
@@ -143,7 +158,6 @@ class ChangeSpeedThread extends Thread {
             } catch (IOException | InterruptedException ex) {
                 ex.printStackTrace();
             }
-            i++;
 
         } while (line != null);
     } // ** readFile(BufferedReader frSpeedFile)
