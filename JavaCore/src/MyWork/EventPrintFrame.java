@@ -5,7 +5,7 @@ import java.awt.*;
 //import java.awt.*;
 
 public class EventPrintFrame extends JFrame {
-    public JTextArea textField;
+    public ExtendedTextArea textField;
 
     EventPrintFrame() {
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -19,7 +19,7 @@ public class EventPrintFrame extends JFrame {
 //        this.setLocation(x, y);
 
 
-        textField = new JTextArea(15, 70);
+        textField = new ExtendedTextArea(15, 70);
         textField.setFont(new Font("Arial", Font.PLAIN, 12));
         JScrollPane scrollPane = new JScrollPane(textField);
         JPanel panel = new JPanel();

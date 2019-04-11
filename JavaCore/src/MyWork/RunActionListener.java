@@ -1,13 +1,12 @@
 package MyWork;
 
-import MyWork.Tools.CiscoSpeedFormat;
-import MyWork.Tools.SpeedFileParser;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 
 import static MyWork.Config.*;
+import static MyWork.Tools.SpeedFileParser.getParsedString;
+import static MyWork.Tools.CiscoSpeedFormat.getFormattedSpeed;
 
 public class RunActionListener implements ActionListener {
     private MainWindow mainFrame;
@@ -90,7 +89,7 @@ class ChangeSpeedThread extends Thread {
                 if(line != null && !line.matches("^\\s*$")) {
 //                    System.out.println(line);
                     String tempLine = line;
-                    line = SpeedFileParser.getParsedString(line);
+                    line = getParsedString(line);
 //                    System.out.println(line);
 
                     String[] formattedSpeed;
@@ -101,24 +100,25 @@ class ChangeSpeedThread extends Thread {
                         key = key.substring(0, 1).toUpperCase() + key.substring(1);
                     } else {
                         frameEvent.printEvent(tempLine);
-                        frameEvent.printEvent("[!!!] Error. City not found!");
+                        frameEvent.printEvent("[!!!] Error. City key not found!");
                         frameEvent.printEvent(LINE);
                         continue;
                     }
 
                     String[] clientNewSpeed = line.split(" ");  // ** [0] mnemokod; [1] speed
                     // get OP
-                    String citySpeed = CITIES.getOrDefault(key, "--- Error. City not found! ---");
-                    if (clientNewSpeed.length >= 2) {
-                        formattedSpeed = CiscoSpeedFormat.getFormattedSpeed("service-policy", clientNewSpeed[1]);
-                    } else {
-                        frameEvent.printEvent(tempLine);
-                        frameEvent.printEvent("[!!!] Error parse line speed.");
-                        frameEvent.printEvent(LINE);
-                        continue;
-                    }
+                    String citySpeed = CITIES.getOrDefault(key, null);
 
-                    if(citySpeed != null) {
+                    if(citySpeed != null) { // if we have found city
+                        if (clientNewSpeed.length >= 2) {
+                            formattedSpeed = getFormattedSpeed("service-policy", clientNewSpeed[1]);
+                        } else {
+                            frameEvent.printEvent(tempLine);
+                            frameEvent.printEvent("[!!!] Error parse line speed.");
+                            frameEvent.printEvent(LINE);
+                            continue;
+                        }
+
                         // ************** START REMOVE AFTER TESTS ********************************
 //                        System.out.println(">" + line.trim() + "<" + " строка " + i);
 //                        System.out.println("ОП " + citySpeed);
@@ -158,7 +158,6 @@ class ChangeSpeedThread extends Thread {
             } catch (IOException | InterruptedException ex) {
                 ex.printStackTrace();
             }
-
         } while (line != null);
     } // ** readFile(BufferedReader frSpeedFile)
 }
