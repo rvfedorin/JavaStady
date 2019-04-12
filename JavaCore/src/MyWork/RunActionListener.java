@@ -49,18 +49,21 @@ public class RunActionListener implements ActionListener {
 
             mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
             System.out.println(mainFrame.customer);
+
         } else if (action.equals(DELETE_S)) {
             // Удаляем
             System.out.println("Удаление клиента: ");
             mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
             System.out.println(mainFrame.customer);
+
         } else if (action.equals(CHANGE_SPEED_S)) {
             // Меняем скорость
             System.out.println("Смена скорости.");
             mainFrame.eventPrintFrame.printEvent("Смена скорости.");
             new ChangeSpeedThread("speedChange", mainFrame.eventPrintFrame);
+
         } else {
-            return;
+            mainFrame.eventPrintFrame.printEvent("Не понятно.");
         } // if selection action
 
     } // actionPerformed(ActionEvent e)
@@ -159,5 +162,6 @@ class ChangeSpeedThread extends Thread {
                 ex.printStackTrace();
             }
         } while (line != null);
+        frameEvent.printEvent(BLOCK);
     } // ** readFile(BufferedReader frSpeedFile)
 }
