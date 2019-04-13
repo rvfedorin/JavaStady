@@ -28,8 +28,8 @@ public class MainFrame {
 // ************************* MAIN OUT **********************************
 
 class MainWindow extends JFrame {
-    private final static int DEFAULT_WIDTH = 380;
-    private final static int DEFAULT_HEIGHT = 380;
+//    private final static int DEFAULT_WIDTH = 380;
+//    private final static int DEFAULT_HEIGHT = 380;
     MainPanel mainPanel;
 //    CurrentlyRunningPanel currentlyRunning;
     EventPrintFrame eventPrintFrame;

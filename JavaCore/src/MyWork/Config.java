@@ -49,5 +49,7 @@ public abstract class Config {
     public static final String IV = "31415926";
     public static final String RUN_LOGIN = "admin";
     public static final String RUN_PASS = "jaNUpm9cNWvfct86RHRwwQ==";
+    public static final String INTRANET_CONNECT_LOGIN = "bXFDZHf5gYHnnQkHAQL4+A==";
+    public static final String INTRANET_CONNECT_PASS = "xXHPPl7DZLd/M+T0fm7O4w==";
 
 } // END Config

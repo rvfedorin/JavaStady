@@ -7,11 +7,14 @@ import javax.xml.bind.DatatypeConverter;
 import static MyWork.Config.*;
 
 public class CryptDecrypt {
+    private static final String LOGIN = "r.fedorin";
+    private static final String PASS = "L7hfTXmcYa";
+
     public static void main(String[] args) {
         // Configuration
-        String key	= "pass";
-        String secret = "text";
-        String secretCod = "hB3mOLnbtjKR/x48DIdUYQ==";
+        String key	= "kolbasa#";
+        String secret = "L7hfTXmcYa";
+        String secretCod = "bXFDZHf5gYHnnQkHAQL4+A==";
 
         String mode = "crypt"; // encrypt
 
@@ -26,7 +29,7 @@ public class CryptDecrypt {
         }
     } // ** main()
 
-    private static String getCrypt(String pass, String toCryptString) {
+    public static String getCrypt(String pass, String toCryptString) {
         SecretKeySpec secKey = new SecretKeySpec(pass.getBytes(), "Blowfish");
         byte[] encoding;
         try {
@@ -40,7 +43,7 @@ public class CryptDecrypt {
         return DatatypeConverter.printBase64Binary(encoding);
     }
 
-    private static String getEncrypt(String pass, String toEncryptString) {
+    public static String getEncrypt(String pass, String toEncryptString) {
         SecretKeySpec secKey = new SecretKeySpec(pass.getBytes(), "Blowfish");
         byte[] message;
         try {
