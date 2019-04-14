@@ -12,7 +12,7 @@ import static MyWork.Tools.ConvertRussian.convertToRus;
 import static MyWork.Config.*;
 
 public class ConnectToIntranet {
-    private static final String PASS = "passpass#";
+    private static final String PASS = "passpass$";
 
     private static final String url = "https://intranet.ptl.ru/AutorizUser.php";
     private static final String connectionURL = "https://intranet.ptl.ru/connection/";
@@ -24,10 +24,12 @@ public class ConnectToIntranet {
         loginCookies.put("ActiveRegName", "Ростов-на-Дону");
 
         getBody(connectionURL, loginCookies); // list of connection in region ActiveReg
-        String customer = findCustomer(loginCookies, "RND-MegaTel");
+        String customer = findCustomer(loginCookies, "RND-Panda");
         String customerConnect = findCustomerConnect(loginCookies, "1"); // id - number client in previous getBody()
 
         System.out.println(convertToRus(customer));
+        System.out.println(LINE);
+        System.out.println(customerConnect);
     }
 
     public static Map<String, String> connectAndGetCookie(String url){
@@ -89,8 +91,9 @@ public class ConnectToIntranet {
         if (response == null || response.body() == null)
             result = "Error findCustomer()";
         else
-            result = response.body();
-
+            result = getMapResponse(response.body()).getOrDefault(
+                    "result",
+                    "Error from getMapResponse");
 
         return result;
     }
@@ -118,6 +121,27 @@ public class ConnectToIntranet {
             result = "Error findCustomer()";
         else
             result = response.body();
+        return result;
+    }
+
+    private static Map<String, String> getMapResponse(String toParse) {
+        // keys = status, result;
+        toParse = toParse.replaceAll(",\"", "xXxX\"");
+        toParse = toParse.trim();
+        toParse = toParse.substring(1, toParse.length()-1);
+
+        String[] sAr = toParse.split("xXxX");
+        Map<String, String> result = new HashMap<>();
+
+        for (String ss: sAr) {
+            String[] temp = ss.split("\":");
+
+            if(temp.length == 2)
+                result.put(temp[0].replaceAll("\"", "").trim(), temp[1]);
+            else
+                result.put("Error", ss);
+        }
+
         return result;
     }
 
