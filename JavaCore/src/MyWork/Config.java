@@ -3,6 +3,8 @@ package MyWork;
 import java.util.HashMap;
 import java.util.Map;
 
+import MyWork.NodesClass.Region;
+
 public abstract class Config {
     public static final String VERSION = "1.0";
 
@@ -29,13 +31,22 @@ public abstract class Config {
     public static final String LOG_FILE = "log.txt";
 
 
-    public static final Map<String, String> CITIES;
+    public static final Map<String, Region> CITIES;
     static {
         CITIES = new HashMap<>();
-        CITIES.put("Orel", "Orel");
-        CITIES.put("Kr", "Kursk");
-        CITIES.put("Mag", "Magnitogorsk");
-        CITIES.put("Vrzh", "Voronezh");
+        CITIES.put("Orel", new Region("Orel", "Orel", "1"));
+        CITIES.put("Kr", new Region("Kr", "Kursk", "2"));
+        CITIES.put("Mag", new Region("Mag", "Magnitogorsk", "3"));
+        CITIES.put("Vrzh", new Region("Vrzh", "Voronezh", "4"));
+    }
+
+    public static final Map<String, String> CITIES_BY_NAME;
+    static {
+        CITIES_BY_NAME = new HashMap<>();
+        CITIES_BY_NAME.put("Orel", "Orel");
+        CITIES_BY_NAME.put("Kursk", "Kr");
+        CITIES_BY_NAME.put("Magnitogorsk", "Mag");
+        CITIES_BY_NAME.put("Voronezh", "Vrzh");
     }
 
     public static String[] LABELS = {

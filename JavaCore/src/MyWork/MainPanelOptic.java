@@ -1,5 +1,7 @@
 package MyWork;
 
+import MyWork.NodesClass.Region;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -47,7 +49,7 @@ public class MainPanelOptic extends JPanel {
             private void act() {
                 String key = mnemokod.getText().trim().split(MNEMOKOD_DELIMITER_S)[0];
                 if (CITIES.containsKey(key)){
-                    rightPanel.citiesComboBox.setSelectedItem(CITIES.get(key));
+                    rightPanel.citiesComboBox.setSelectedItem(CITIES.get(key).getCity());
                     MainPanelOptic.this.setVisible(false);
                     MainPanelOptic.this.setVisible(true);
                 }  // if
@@ -121,7 +123,7 @@ class InputPanel extends JPanel {
             } else {
                 JTextField tempTextField = new ExtendedTextField(18);
                 tempTextField.setBorder(BorderFactory.createCompoundBorder(
-                        new CustomeBorder(),
+                        new CustomBorder(),
                         BorderFactory.createEmptyBorder(0,2,0,2)
 
                 ));
@@ -183,8 +185,8 @@ class RightPartPanel extends JPanel {
 //        citiesComboBox.setPreferredSize(new Dimension(80, 6));
 //        citiesComboBox.setPrototypeDisplayValue("XX");
 
-        for(String c: CITIES.values()) {
-            citiesComboBox.addItem(c);
+        for(Region c: CITIES.values()) {
+            citiesComboBox.addItem(c.getCity());
         }
 
         add(citiesComboBox);

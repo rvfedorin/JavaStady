@@ -1,4 +1,4 @@
-package MyWork.WebIntranet;
+package MyWork.Intranet;
 
 import MyWork.CryptDecrypt;
 import org.jsoup.Connection;
@@ -13,22 +13,26 @@ import java.util.regex.Pattern;
 import static MyWork.Tools.ConvertRussian.convertToRus;
 import static MyWork.Config.*;
 
-public class ConnectToIntranet {
-    private static final String PASS = "!purumpumpum!";
+public class WebIntranet {
+    private static String PASS = "qwertyu!@#";
 
-    private static final String url = "https://intranet.ptl.ru/AutorizUser.php";
+    private static final String authURL = "https://intranet.ptl.ru/AutorizUser.php";
     private static final String connectionURL = "https://intranet.ptl.ru/connection/";
     private static final String editClientURL = "https://intranet.ptl.ru/connection/EditClient.php";
 
+    public WebIntranet(char[] key) {
+        PASS = String.valueOf(key);
+    }
+
     public static void main(String[] args) {
-        Map<String, String> loginCookies = connectAndGetCookie(url);
+        Map<String, String> loginCookies = connectAndGetCookie(authURL);
         loginCookies.put("ActiveReg", "6");
-        loginCookies.put("ActiveRegName", "Ростов-на-Дону");
+//        loginCookies.put("ActiveRegName", "Ростов-на-Дону");
 
         getBody(connectionURL, loginCookies); // list of connection in region ActiveReg
 
         // return Map with keys: status, where, row, mnemokod, ipCl, vlan, address, ipCon, tel, description;
-        Map<String, String> customer = findCustomer(loginCookies, "RND-Panda");
+        Map<String, String> customer = findCustomer(loginCookies, "msk-testMB");
 
         String customerConnect = findCustomerConnect(loginCookies, "1"); // id - number client in previous getBody()
 
@@ -55,7 +59,7 @@ public class ConnectToIntranet {
             return error;
         }
         return login.cookies();
-    } // ** connectAndGetCookie(url)
+    } // ** connectAndGetCookie(authURL)
 
     public static String getBody(String url, Map<String,String> cookie) {
         Connection.Response response;
@@ -159,27 +163,6 @@ public class ConnectToIntranet {
             result = response.body();
         return result;
     }
-
-//    private static Map<String, String> getMapResponse(String toParse) {
-//        // keys = status, result;
-//        toParse = toParse.replaceAll(",\"", "xXxX\"");
-//        toParse = toParse.trim();
-//        toParse = toParse.substring(1, toParse.length()-1);
-//
-//        String[] sAr = toParse.split("xXxX");
-//        Map<String, String> result = new HashMap<>();
-//
-//        for (String ss: sAr) {
-//            String[] temp = ss.split("\":");
-//
-//            if(temp.length == 2)
-//                result.put(temp[0].replaceAll("\"", "").trim(), temp[1]);
-//            else
-//                result.put("Error", ss);
-//        }
-//
-//        return result;
-//    }
 
     private static String getTextInTD(String s) {
         Pattern inTd = Pattern.compile("<td>(.*)<\\\\/td>");

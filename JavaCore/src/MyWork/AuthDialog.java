@@ -74,4 +74,8 @@ class AuthDialog extends JDialog {
         }
         return okAuth;
     }
+
+    char[] getPass(){
+        return passField.getPassword();
+    }
 } // ***** class AuthDialog

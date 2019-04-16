@@ -1,5 +1,8 @@
 package MyWork;
 
+import MyWork.NodesClass.Customer;
+import MyWork.NodesClass.Region;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -110,7 +113,7 @@ class ChangeSpeedThread extends Thread {
 
                     String[] clientNewSpeed = line.split(" ");  // ** [0] mnemokod; [1] speed
                     // get OP
-                    String citySpeed = CITIES.getOrDefault(key, null);
+                    Region citySpeed = CITIES.getOrDefault(key, null);
 
                     if(citySpeed != null) { // if we have found city
                         if (clientNewSpeed.length >= 2) {
@@ -142,7 +145,7 @@ class ChangeSpeedThread extends Thread {
                         // ************** START PRINT EVENT ********************************
                         frameEvent.printEvent(tempLine);
                         frameEvent.printEvent(line);
-                        frameEvent.printEvent("ОП " + citySpeed);
+                        frameEvent.printEvent("ОП " + citySpeed.getCity());
                         if(formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
                             for (String s : formattedSpeed) {
                                 frameEvent.printEvent(s);

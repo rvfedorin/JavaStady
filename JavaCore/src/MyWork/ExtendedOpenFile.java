@@ -34,7 +34,7 @@ public class ExtendedOpenFile {
         return readFile(SPEEDS_FILE);
     } // ** readFile()
 
-
+    // open file in text editor
     public static void openSystemFile(String fileName) {
         File speedFile = new File(fileName);
         Desktop desktop = Desktop.getDesktop();

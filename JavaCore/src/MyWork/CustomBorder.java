@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
 @SuppressWarnings("serial")
-public class CustomeBorder extends AbstractBorder {
+public class CustomBorder extends AbstractBorder {
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y,
                             int width, int height) {

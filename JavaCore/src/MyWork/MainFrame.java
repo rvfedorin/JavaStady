@@ -1,5 +1,6 @@
 package MyWork;
 
+import MyWork.NodesClass.Customer;
 import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 //import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
@@ -13,6 +14,7 @@ public class MainFrame {
     public static void main(String[] args) {
         MainWindow mainWindow = new MainWindow();
         AuthDialog authDialog = new AuthDialog(mainWindow);
+
         // ************** AUTH ****************
         if (authDialog.isSuccessAuth()) {
             System.exit(0);
