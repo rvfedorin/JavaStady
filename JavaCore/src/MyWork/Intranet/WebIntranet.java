@@ -15,21 +15,19 @@ import static MyWork.Config.*;
 
 public class WebIntranet {
     private static String PASS = "qwertyu!@#";
-
-    private static final String authURL = "https://intranet.ptl.ru/AutorizUser.php";
-    private static final String connectionURL = "https://intranet.ptl.ru/connection/";
-    private static final String editClientURL = "https://intranet.ptl.ru/connection/EditClient.php";
+    private static Map<String, String> loginCookies;
 
     public WebIntranet(char[] key) {
         PASS = String.valueOf(key);
     }
 
     public static void main(String[] args) {
-        Map<String, String> loginCookies = connectAndGetCookie(authURL);
+//        WebIntranet webIntranet = new WebIntranet("qwertyu!@#".toCharArray());
+        loginCookies = connectAndGetCookie(AUTH_URL);
         loginCookies.put("ActiveReg", "6");
 //        loginCookies.put("ActiveRegName", "Ростов-на-Дону");
 
-        getBody(connectionURL, loginCookies); // list of connection in region ActiveReg
+        getBody(CONNECTION_URL, loginCookies); // list of connection in region ActiveReg
 
         // return Map with keys: status, where, row, mnemokod, ipCl, vlan, address, ipCon, tel, description;
         Map<String, String> customer = findCustomer(loginCookies, "msk-testMB");
@@ -58,8 +56,13 @@ public class WebIntranet {
             error.put("Error", ex.toString());
             return error;
         }
-        return login.cookies();
-    } // ** connectAndGetCookie(authURL)
+        loginCookies = login.cookies();
+        return getLoginCookies();
+    } // ** connectAndGetCookie(AUTH_URL)
+
+    public static Map<String, String> getLoginCookies() {
+        return loginCookies;
+    }
 
     public static String getBody(String url, Map<String,String> cookie) {
         Connection.Response response;
@@ -90,7 +93,7 @@ public class WebIntranet {
 
         try {
             response = Jsoup
-                    .connect(editClientURL)
+                    .connect(EDIT_CLIENT_URL)
                     .cookies(cookie)
                     .method(Connection.Method.POST)
                     .data("Client-mod", "search")
@@ -147,7 +150,7 @@ public class WebIntranet {
 
         try {
             response = Jsoup
-                    .connect(editClientURL)
+                    .connect(EDIT_CLIENT_URL)
                     .cookies(cookie)
                     .method(Connection.Method.POST)
                     .data("Client-mod", "GetMap")

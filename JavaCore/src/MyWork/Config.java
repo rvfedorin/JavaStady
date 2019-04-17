@@ -8,6 +8,8 @@ import MyWork.NodesClass.Region;
 public abstract class Config {
     public static final String VERSION = "1.0";
 
+/////////////// **************** START GUI STRINGS ************* ////////////////////////
+//
     public static final String CREATE_S = "Создать";
     public static final String DELETE_S = "Удалить";
     public static final String CHANGE_SPEED_S = "Сменить скорость";
@@ -26,6 +28,8 @@ public abstract class Config {
             "\n*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=" +
             "\n*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=" +
             "\n*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=\n";
+//
+/////////////// **************** END GUI STRINGS ************* ////////////////////////
 
     public static final String SPEEDS_FILE = "speeds.txt";
     public static final String LOG_FILE = "log.txt";
@@ -57,10 +61,22 @@ public abstract class Config {
             UNTAGGED_S,
             ACT_ON_CISCO_S};
 
+/////////////// **************** START PASS STRINGS ************* ////////////////////////
+//
     public static final String IV = "31415926";
     public static final String RUN_LOGIN = "admin";
     public static final String RUN_PASS = "jaNUpm9cNWvfct86RHRwwQ==";
     public static final String INTRANET_CONNECT_LOGIN = "bXFDZHf5gYHnnQkHAQL4+A==";
     public static final String INTRANET_CONNECT_PASS = "xXHPPl7DZLd/M+T0fm7O4w==";
+//
+/////////////// **************** END PASS STRINGS ************* ////////////////////////
+
+/////////////// **************** START WEB INTRANET ************* ////////////////////////
+//
+    public static final String AUTH_URL = "https://intranet.ptl.ru/AutorizUser.php";
+    public static final String CONNECTION_URL = "https://intranet.ptl.ru/connection/";
+    public static final String EDIT_CLIENT_URL = "https://intranet.ptl.ru/connection/EditClient.php";
+//
+////////////// **************** END WEB INTRANET ************* ////////////////////////
 
 } // END Config
