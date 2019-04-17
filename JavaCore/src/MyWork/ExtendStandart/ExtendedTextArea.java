@@ -1,4 +1,4 @@
-package MyWork;
+package MyWork.ExtendStandart;
 
 import java.awt.event.*;
 import javax.swing.*;

@@ -1,5 +1,7 @@
 package MyWork;
 
+import MyWork.ExtendStandart.ExtendedTextArea;
+
 import javax.swing.*;
 import java.awt.*;
 //import java.awt.*;

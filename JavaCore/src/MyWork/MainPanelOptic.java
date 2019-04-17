@@ -1,10 +1,10 @@
 package MyWork;
 
+import MyWork.ExtendStandart.AdapterDocumentListener;
+import MyWork.ExtendStandart.ExtendedTextField;
 import MyWork.NodesClass.Region;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static MyWork.Config.*;
-import static MyWork.ExtendedOpenFile.openSystemFile;
+import static MyWork.ExtendStandart.ExtendedOpenFile.openSystemFile;
 
 public class MainPanelOptic extends JPanel {
     public InputPanel inputPanel;
@@ -38,20 +38,18 @@ public class MainPanelOptic extends JPanel {
 
         // START Change city by mnemokod //////////////////////////////////////////////////
         JTextField mnemokod = (JTextField) inputPanel.allTF.get(MNEMOKOD_S);
-        mnemokod.getDocument().addDocumentListener(new DocumentListener() {
+        mnemokod.getDocument().addDocumentListener(new AdapterDocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {act();}
-            @Override
-            public void removeUpdate(DocumentEvent e) {act();}
-            @Override
-            public void changedUpdate(DocumentEvent e) {act();}
-
-            private void act() {
+            public void act() {
                 String key = mnemokod.getText().trim().split(MNEMOKOD_DELIMITER_S)[0];
+                if(key.length() > 1)
+                    key = key.toLowerCase();
+                    key = key.substring(0,1).toUpperCase() + key.substring(1);
+
                 if (CITIES.containsKey(key)){
                     rightPanel.citiesComboBox.setSelectedItem(CITIES.get(key).getCity());
-                    MainPanelOptic.this.setVisible(false);
-                    MainPanelOptic.this.setVisible(true);
+//                    MainPanelOptic.this.setVisible(false);
+//                    MainPanelOptic.this.setVisible(true);
                 }  // if
             }  // act()
         }); // DocumentListener()

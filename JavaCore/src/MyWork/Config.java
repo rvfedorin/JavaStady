@@ -61,6 +61,13 @@ public abstract class Config {
             UNTAGGED_S,
             ACT_ON_CISCO_S};
 
+/////////////// **************** START UNIX SETTINGS ************* ////////////////////////
+//
+
+    public static final String CLIENTS_CONF = "/etc/Clients.conf";
+//
+/////////////// **************** END UNIX SETTINGS ************* ////////////////////////
+
 /////////////// **************** START PASS STRINGS ************* ////////////////////////
 //
     public static final String IV = "31415926";

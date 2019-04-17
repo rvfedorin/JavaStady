@@ -14,7 +14,7 @@ import static MyWork.Tools.ConvertRussian.convertToRus;
 import static MyWork.Config.*;
 
 public class WebIntranet {
-    private static String PASS = "qwertyu!@#";
+    private static String PASS = "!@##@!";
     private static Map<String, String> loginCookies;
 
     public WebIntranet(char[] key) {
@@ -30,7 +30,7 @@ public class WebIntranet {
         getBody(CONNECTION_URL, loginCookies); // list of connection in region ActiveReg
 
         // return Map with keys: status, where, row, mnemokod, ipCl, vlan, address, ipCon, tel, description;
-        Map<String, String> customer = findCustomer(loginCookies, "msk-testMB");
+        Map<String, String> customer = findCustomer(loginCookies, "RND-Panda");
 
         String customerConnect = findCustomerConnect(loginCookies, "1"); // id - number client in previous getBody()
 

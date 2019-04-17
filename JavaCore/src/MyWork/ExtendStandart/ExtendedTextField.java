@@ -1,4 +1,4 @@
-package MyWork;
+package MyWork.ExtendStandart;
 /**
  * Extended JTextField which provides cut/copy/paste/delete/selectAll actions
  * via a popup menu. This provides similar operations to the windows system.
