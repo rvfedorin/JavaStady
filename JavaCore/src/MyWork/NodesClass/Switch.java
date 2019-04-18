@@ -48,7 +48,8 @@ public class Switch {
 
         String create = "create vlan " + customer.getMnemokod() + " tag " + customer.getVlan();
         String confTag = "conf vlan " + customer.getMnemokod() + " add tagged " + pUp + pDown;
-        if(customer.getUntagged()) {
+
+        if(customer.getUntagged() && getIp().contains(customer.getIPswitch())) {
             String confUntag = "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();
             System.out.println(confUntag);
         }
