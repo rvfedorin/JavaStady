@@ -1,4 +1,4 @@
-package MyWork;
+package MyWork.ExtendStandart;
 
 import javax.swing.border.AbstractBorder;
 import java.awt.*;

@@ -2,6 +2,7 @@ package MyWork;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import MyWork.NodesClass.Region;
 
@@ -30,6 +31,9 @@ public abstract class Config {
             "\n*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=\n";
 //
 /////////////// **************** END GUI STRINGS ************* ////////////////////////
+
+    public static final String SEPARATOR_CONNECTION = " <=> ";
+    public static final Pattern SWITCH_PATTERN = Pattern.compile("DES|switch|D-Link|DGS");
 
     public static final String SPEEDS_FILE = "speeds.txt";
     public static final String LOG_FILE = "log.txt";

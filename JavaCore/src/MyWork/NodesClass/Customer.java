@@ -15,8 +15,6 @@ public class Customer {
 
         boolean fineData = true;
         String[] allData = new String[]{city, mnemokod, vlan, IPswitch, port, untagged};
-        String prefix = CITIES_BY_NAME.getOrDefault(city, "none");
-        boolean hasCity = CITIES.containsKey(prefix);
 
         for (String s: allData) {
             if (s.length() < 1) {
@@ -25,6 +23,8 @@ public class Customer {
             }
         } // for
 
+        String prefix = CITIES_BY_NAME.getOrDefault(city, "none");
+        boolean hasCity = CITIES.containsKey(prefix);
         if(!hasCity){
             fineData = false;
             System.out.println("City not found.");

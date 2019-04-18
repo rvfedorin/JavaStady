@@ -3,10 +3,13 @@ package MyWork;
 import MyWork.ExtendStandart.ExtendedOpenFile;
 import MyWork.NodesClass.Customer;
 import MyWork.NodesClass.Region;
+import MyWork.NodesClass.Switch;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static MyWork.Config.*;
 import static MyWork.Tools.SpeedFileParser.getParsedString;
@@ -45,19 +48,29 @@ public class RunActionListener implements ActionListener {
         String city = allData[6];
         String action = allData[7];
 
+        String pathFromIntranet = "95.80.127.253(<\\/th> <td>Cisco ASR1001 <\\/td> ) [0] <=> [1] 172.17.199.254(<\\/th> <td>D-Link DGS-3120-24TC<) [22] <=> [10] 172.17.199.250(<\\/th> <td>D-Link DES-3200-10 Fa) [2] <=>  172.17.196.2(DGSSkyMAN R5000-Omxb\\\" >\\n         ) [0] <=> [0] 172.17.196.78(<\\/th> <td>SkyMAN R5000-Sm\\/5.30) [0] <=> \n";
+
         if (action.equals(CREATE_S)) {
-            // Создаём
             if (Boolean.valueOf(createCis)) System.out.println("С созданием на Cisco.");
 
             System.out.println("Создание клиента: ");
 
+            // Создаём
             mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
+            for(String connectData: pathFromIntranet.split(SEPARATOR_CONNECTION)) {
+                if(SWITCH_PATTERN.matcher(connectData).find())
+                    new DoClientOnSwitchThread(connectData, false, mainFrame.customer, CREATE_S).start();
+            }
             System.out.println(mainFrame.customer);
 
         } else if (action.equals(DELETE_S)) {
             // Удаляем
             System.out.println("Удаление клиента: ");
             mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
+            for(String connectData: pathFromIntranet.split(SEPARATOR_CONNECTION)) {
+                if(SWITCH_PATTERN.matcher(connectData).find())
+                    new DoClientOnSwitchThread(connectData, false, mainFrame.customer, DELETE_S).start();
+            }
             System.out.println(mainFrame.customer);
 
         } else if (action.equals(CHANGE_SPEED_S)) {
@@ -170,3 +183,66 @@ class ChangeSpeedThread extends Thread {
     } // ** readFile(BufferedReader frSpeedFile)
 }
 
+class DoClientOnSwitchThread extends Thread {
+    private Customer aCustomer;
+    private Switch aSwitch;
+    private boolean correct = true;
+    private String aToDo;
+
+    DoClientOnSwitchThread(String dataSwitch, boolean root, Customer customer, String toDo) {
+        aCustomer = customer;
+        aToDo = toDo; // delete or create CREATE_S or DELETE_S
+        String upPort = "";
+        String ipSw = "";
+        String downPort = "";
+
+        Pattern fullConnect = Pattern.compile("\\[(.*)] (\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\) \\[(.*)]");
+        Pattern withoutUpPort = Pattern.compile("(\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\) \\[(.*)]");
+        Pattern withoutDownPort = Pattern.compile("\\[(.*)] (\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\)");
+
+        Matcher fullConnectM = fullConnect.matcher(dataSwitch);
+        Matcher withoutUpPortM = withoutUpPort.matcher(dataSwitch);
+        Matcher withoutDownPortM = withoutDownPort.matcher(dataSwitch);
+
+        if(fullConnectM.find()) {
+            upPort = fullConnectM.group(1);
+            ipSw = fullConnectM.group(2);
+            downPort = fullConnectM.group(3);
+        } else if(withoutUpPortM.find()) {
+            upPort = "null";
+            ipSw = withoutUpPortM.group(1);
+            downPort = withoutUpPortM.group(2);
+        } else if(withoutDownPortM.find()) {
+            upPort = withoutDownPortM.group(1);
+            ipSw = withoutDownPortM.group(2);
+            downPort = "null";
+
+        } else {
+            System.out.println(dataSwitch);
+            correct = false;
+            System.out.println("CreateClientOnSwitch -> Error pattern.");
+        }
+
+        if(correct) {
+            aSwitch = new Switch(ipSw, upPort, downPort, root);
+            if (aToDo.equals(CREATE_S)) {
+                System.out.println("Create on sw" + aSwitch.getIp());
+            } else if (aToDo.equals(DELETE_S)) {
+                System.out.println("Delete on sw" + aSwitch.getIp());
+            }
+        } // ** if correct
+    } // ** constructor
+
+    @Override
+    public void run() {
+        super.run();
+        try {
+            sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if(correct)
+            System.out.println(aSwitch);
+    }
+} // ** class DoClientOnSwitchThread

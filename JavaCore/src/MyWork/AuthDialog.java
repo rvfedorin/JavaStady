@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import static MyWork.Config.*;
-import static MyWork.CryptDecrypt.correct;
+import static MyWork.Tools.CryptDecrypt.correct;
 
 class AuthDialog extends JDialog {
     private JTextField loginField;

@@ -1,4 +1,4 @@
-package MyWork;
+package MyWork.Tools;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;

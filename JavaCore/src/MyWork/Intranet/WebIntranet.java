@@ -1,6 +1,6 @@
 package MyWork.Intranet;
 
-import MyWork.CryptDecrypt;
+import MyWork.Tools.CryptDecrypt;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
@@ -14,7 +14,7 @@ import static MyWork.Tools.ConvertRussian.convertToRus;
 import static MyWork.Config.*;
 
 public class WebIntranet {
-    private static String PASS = "!@##@!";
+    private static String PASS = "Q_Q";
     private static Map<String, String> loginCookies;
 
     public WebIntranet(char[] key) {
@@ -177,9 +177,10 @@ public class WebIntranet {
     }
 
     private static String ParsePath(String s) {
-        String leftPort = "";
-        String rightPort = "";
-        String ip = "";
+        String leftPort;
+        String rightPort;
+        String ip;
+        String model;
 
         StringBuilder path = new StringBuilder();
 
@@ -187,22 +188,32 @@ public class WebIntranet {
             leftPort = "";
             rightPort = "";
             ip = "";
+            model = "";
 //            System.out.println(temp);
 
             String[] row = temp.split("<br>");
+            Pattern modelP = Pattern.compile("\\u041c\\u043e\\u0434\\u0435\\u043b\\u044c:(.{32})");
             Pattern port = Pattern.compile("\\[.*]");
             Pattern ipP = Pattern.compile("\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3}");
 
             if (row.length > 1) {
+                Matcher modelM = modelP.matcher(row[0]);
                 Matcher leftPortM = port.matcher(row[0]);
                 Matcher ipMatch = ipP.matcher(row[1]);
                 Matcher rightPortM = port.matcher(row[1]);
 
+                if(modelM.find()) {
+                    String toReplace = "\\s\\s|<\\\\/th>|<td>|<\\\\/td>|<\\\\/tr>|\\\\n\\\\\"|>|<";
+                    String toReplace2 = "^[\\d\\s-]";
+                    model = modelM.group(1);
+                    model = model.replaceAll(toReplace, "");
+                    model = model.replaceAll(toReplace2, "");
+                }
                 if(leftPortM.find()) leftPort = leftPortM.group();
                 if(ipMatch.find()) ip = ipMatch.group();
                 if(rightPortM.find()) rightPort = rightPortM.group();
 
-                path.append(leftPort + " " + ip + " " + rightPort + " <=> ");
+                path.append(leftPort + " " + ip + "(" + model + ")" + " " + rightPort + " <=> ");
             } // ** if(row.length > 1)
         } // ** for
 

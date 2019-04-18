@@ -1,6 +1,7 @@
 package MyWork;
 
 import MyWork.ExtendStandart.AdapterDocumentListener;
+import MyWork.ExtendStandart.CustomBorder;
 import MyWork.ExtendStandart.ExtendedTextField;
 import MyWork.NodesClass.Region;
 
