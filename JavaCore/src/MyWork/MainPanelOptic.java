@@ -42,10 +42,14 @@ public class MainPanelOptic extends JPanel {
         mnemokod.getDocument().addDocumentListener(new AdapterDocumentListener() {
             @Override
             public void act() {
-                String key = mnemokod.getText().trim().split(MNEMOKOD_DELIMITER_S)[0];
-                if(key.length() > 1)
-                    key = key.toLowerCase();
-                    key = key.substring(0,1).toUpperCase() + key.substring(1);
+                String key = "";
+                String text = mnemokod.getText();
+                if (text.length() > 0) {
+                    key = text.trim().split(MNEMOKOD_DELIMITER_S)[0];
+                    if (key.length() > 1)
+                        key = key.toLowerCase();
+                    key = key.substring(0, 1).toUpperCase() + key.substring(1);
+                }
 
                 if (CITIES.containsKey(key)){
                     rightPanel.citiesComboBox.setSelectedItem(CITIES.get(key).getCity());

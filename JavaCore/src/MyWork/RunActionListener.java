@@ -227,6 +227,7 @@ class DoClientOnSwitchThread extends Thread {
             aSwitch = new Switch(ipSw, upPort, downPort, root);
             if (aToDo.equals(CREATE_S)) {
                 System.out.println("Create on sw" + aSwitch.getIp());
+                aSwitch.createClient(aCustomer);
             } else if (aToDo.equals(DELETE_S)) {
                 System.out.println("Delete on sw" + aSwitch.getIp());
             }

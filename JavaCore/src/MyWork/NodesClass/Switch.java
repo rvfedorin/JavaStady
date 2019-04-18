@@ -38,4 +38,25 @@ public class Switch {
     public boolean isRoot() {
         return root;
     }
+
+    public String createClient(Customer customer) {
+        String pDown = "";
+        String pUp = "";
+        if(!getDownPort().contains("null")) pDown = "," + getDownPort();
+        if(!getDownPort().contains("null") && getUpPort().contains("null")) pDown = getDownPort();
+        if(!getUpPort().contains("null")) pUp = getUpPort();
+
+        String create = "create vlan " + customer.getMnemokod() + " tag " + customer.getVlan();
+        String confTag = "conf vlan " + customer.getMnemokod() + " add tagged " + pUp + pDown;
+        if(customer.getUntagged()) {
+            String confUntag = "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();
+            System.out.println(confUntag);
+        }
+
+        System.out.println(create);
+        System.out.println(confTag);
+
+
+        return "Ok";
+    }
 } // ** class Switch

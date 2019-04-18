@@ -8,7 +8,7 @@ public class Customer {
     private String vlan;
     private String IPswitch;
     private String port;
-    private String untagged;
+    private boolean untagged;
 
     public Customer(String city, String mnemokod, String vlan, String IPswitch, String port, String untagged)
             throws IllegalArgumentException{
@@ -36,10 +36,34 @@ public class Customer {
             this.vlan = vlan;
             this.IPswitch = IPswitch;
             this.port = port;
-            this.untagged = untagged;
+            this.untagged = Boolean.valueOf(untagged);
         } else {
             throw new IllegalArgumentException("<< class Customer: Not all field are filled. >>");
         } // if (fineData)
+    }
+
+    public Region getCity() {
+        return city;
+    }
+
+    public String getMnemokod() {
+        return mnemokod;
+    }
+
+    public String getVlan() {
+        return vlan;
+    }
+
+    public String getIPswitch() {
+        return IPswitch;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public boolean getUntagged() {
+        return untagged;
     }
 
     @Override
