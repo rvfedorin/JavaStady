@@ -24,6 +24,8 @@ public class MainFrame {
             mainWindow.eventPrintFrame.setVisible(true);
             mainWindow.eventPrintFrame.printEvent("Success logged.");
             mainWindow.eventPrintFrame.printEvent(LINE);
+
+            mainWindow.currentlyRunning.setVisible(true);
         }
     } // ** main()
 } // ** class MainFrame
@@ -33,7 +35,7 @@ class MainWindow extends JFrame {
 //    private final static int DEFAULT_WIDTH = 380;
 //    private final static int DEFAULT_HEIGHT = 380;
     MainPanel mainPanel;
-//    CurrentlyRunningPanel currentlyRunning;
+    CurrentlyRunningFrame currentlyRunning;
     EventPrintFrame eventPrintFrame;
     Customer customer;
     private MainMenu mainMenu;
@@ -57,10 +59,9 @@ class MainWindow extends JFrame {
 
         mainMenu = new MainMenu(this);
         mainPanel = new MainPanel();
-//        currentlyRunning = new CurrentlyRunningPanel();
+        currentlyRunning = new CurrentlyRunningFrame(this);
         eventPrintFrame = new EventPrintFrame();
         add(mainPanel, BorderLayout.CENTER);
-//        add(currentlyRunning, BorderLayout.EAST);
 
         // RUN BUTTON //
         JPanel buttonPanel = new JPanel();

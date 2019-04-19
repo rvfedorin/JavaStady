@@ -24,6 +24,7 @@ public class MainMenu {
 
     private JMenu view;
     JMenuItem logPrint;
+    JMenuItem currentRunning;
 
     private JMenu helpMenu;
     private JMenuItem manualItem;
@@ -51,11 +52,14 @@ public class MainMenu {
         allConnectSwItem = switchMenu.add("Все подключения от свитча");
 
         view = new JMenu("View");
-        view.addMenuListener(new SwitchMenuListener());
+        view.addMenuListener(new ViewMenuListener());
         menuBar.add(view);
         logPrint = view.add("Set visible events");
         logPrint.addActionListener(e -> mainFrame.eventPrintFrame.setVisible(true));
+        currentRunning = view.add("Set visible currents processes");
+        currentRunning.addActionListener(e -> mainFrame.currentlyRunning.setVisible(true));
         view.addSeparator();
+
         UIManager.LookAndFeelInfo[] lookInfo = UIManager.getInstalledLookAndFeels();
         for(UIManager.LookAndFeelInfo newLook: lookInfo){
             String nameLook = newLook.getName();
@@ -88,7 +92,7 @@ public class MainMenu {
         @Override
         public void menuSelected(MenuEvent e) {
             JTextField switchTF = (JTextField) mainFrame.mainPanel.opticPanel.inputPanel.allTF.get(IP_SWITCH_S);
-            if(switchTF.getText().length() < 6) {
+            if (switchTF.getText().length() < 6) {
                 pathToSwItem.setEnabled(false);
                 allConnectSwItem.setEnabled(false);
                 pathToSwItem.setToolTipText("Необходимо предварительно указать IP свитча.");
@@ -101,13 +105,27 @@ public class MainMenu {
                 allConnectSwItem.setToolTipText("Показывает все подключения от свитча по цепочке.");
                 mainFrame.setVisible(true);
             }
-
-            if(mainFrame.eventPrintFrame.isVisible()){
-                logPrint.setEnabled(false);
-            } else {
-                logPrint.setEnabled(true);
-            }
         } // menuSelected()
+        @Override
+        public void menuDeselected(MenuEvent e) {}
+        public void menuCanceled(MenuEvent e) {}
+    }
+
+        class ViewMenuListener implements MenuListener {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                if(mainFrame.eventPrintFrame.isVisible()){
+                    logPrint.setEnabled(false);
+                } else {
+                    logPrint.setEnabled(true);
+                }
+
+                if(mainFrame.currentlyRunning.isVisible()){
+                    currentRunning.setEnabled(false);
+                } else {
+                    currentRunning.setEnabled(true);
+                }
+            } // menuSelected()
 
         @Override
         public void menuDeselected(MenuEvent e) {}

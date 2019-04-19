@@ -9,6 +9,7 @@ import java.awt.*;
 public class EventPrintFrame extends JFrame {
     public ExtendedTextArea textField;
 
+
     EventPrintFrame() {
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setResizable(false);

@@ -26,6 +26,7 @@ public class RunActionListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         MainPanelOptic workPanel = mainFrame.mainPanel.opticPanel;
+        CurrentlyRunningFrame runningFrame = mainFrame.currentlyRunning;
 
         //getAllData() return String[]{mnemokod, vlan, IPswitch, port, untagged, createCis, city, action}
         String[] allData = workPanel.getAllData();
@@ -58,8 +59,14 @@ public class RunActionListener implements ActionListener {
             // Создаём
             mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
             for(String connectData: pathFromIntranet.split(SEPARATOR_CONNECTION)) {
-                if(SWITCH_PATTERN.matcher(connectData).find())
-                    new DoClientOnSwitchThread(connectData, false, mainFrame.customer, CREATE_S).start();
+                if(SWITCH_PATTERN.matcher(connectData).find()) {
+                    new DoClientOnSwitchThread(
+                            connectData,
+                            false,
+                            mainFrame.customer,
+                            CREATE_S,
+                            runningFrame).start();
+                }
             }
             System.out.println(mainFrame.customer);
 
@@ -69,7 +76,12 @@ public class RunActionListener implements ActionListener {
             mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
             for(String connectData: pathFromIntranet.split(SEPARATOR_CONNECTION)) {
                 if(SWITCH_PATTERN.matcher(connectData).find())
-                    new DoClientOnSwitchThread(connectData, false, mainFrame.customer, DELETE_S).start();
+                    new DoClientOnSwitchThread(
+                            connectData,
+                            false,
+                            mainFrame.customer,
+                            DELETE_S,
+                            runningFrame).start();
             }
             System.out.println(mainFrame.customer);
 
@@ -188,10 +200,13 @@ class DoClientOnSwitchThread extends Thread {
     private Switch aSwitch;
     private boolean correct = true;
     private String aToDo;
+    int idLine;
+    CurrentlyRunningFrame runningFrame;
 
-    DoClientOnSwitchThread(String dataSwitch, boolean root, Customer customer, String toDo) {
+    DoClientOnSwitchThread(String dataSwitch, boolean root, Customer customer, String toDo, CurrentlyRunningFrame fr) {
         aCustomer = customer;
         aToDo = toDo; // delete or create CREATE_S or DELETE_S
+        runningFrame = fr;
         String upPort = "";
         String ipSw = "";
         String downPort = "";
@@ -226,24 +241,26 @@ class DoClientOnSwitchThread extends Thread {
         if(correct) {
             aSwitch = new Switch(ipSw, upPort, downPort, root);
             if (aToDo.equals(CREATE_S)) {
-                System.out.println("Create on sw" + aSwitch.getIp());
+                System.out.println("Create on sw " + aSwitch.getIp());
                 aSwitch.createClient(aCustomer);
             } else if (aToDo.equals(DELETE_S)) {
-                System.out.println("Delete on sw" + aSwitch.getIp());
+                System.out.println("Delete on sw " + aSwitch.getIp());
             }
         } // ** if correct
     } // ** constructor
 
     @Override
     public void run() {
+        idLine = runningFrame.addLine(aToDo + " на свитче " + aSwitch.getIp(), this);
         super.run();
         try {
-            sleep(100);
+            sleep(1000);
+            if(correct)
+                System.out.println(aSwitch);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            runningFrame.removeLine(idLine);
         }
-
-        if(correct)
-            System.out.println(aSwitch);
     }
 } // ** class DoClientOnSwitchThread
