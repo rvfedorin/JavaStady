@@ -69,12 +69,12 @@ public class Customer {
     @Override
     public String toString() {
         String s = LINE + "\n" +
-                   "ОП подключения: " + city.getCity() + "\n" +
-                   "Клиент: " + mnemokod + "\n" +
-                   "Номер vlan: " + vlan + "\n" +
-                   "IP свитча: " + IPswitch + "\n" +
-                   "Порт подключения: " + port + "\n" +
-                   "Растагирование: " + untagged + "\n" +
+                   "ОП подключения: " + getCity().getCity() + "\n" +
+                   "Клиент: " + getMnemokod() + "\n" +
+                   "Номер vlan: " + getVlan() + "\n" +
+                   "IP свитча: " + getIPswitch() + "\n" +
+                   "Порт подключения: " + getPort() + "\n" +
+                   "Растагирование: " + getUntagged() + "\n" +
                    LINE + "\n";
         return s;
     }

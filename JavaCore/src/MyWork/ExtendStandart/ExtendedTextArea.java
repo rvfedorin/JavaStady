@@ -1,5 +1,6 @@
 package MyWork.ExtendStandart;
 
+import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -12,8 +13,7 @@ public class ExtendedTextArea extends JTextArea {
         {
             super(rows, columns);
             initialize();
-
-
+            setFont(new Font("Arial", Font.PLAIN, 12));
             // START CTRL+Z CTRL+Y REALIZATION
             undoRedo(this);
             // END CTRL+Z CTRL+Y REALIZATION

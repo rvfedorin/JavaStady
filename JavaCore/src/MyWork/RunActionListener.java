@@ -8,6 +8,7 @@ import MyWork.NodesClass.Switch;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,61 +56,61 @@ public class RunActionListener implements ActionListener {
             if (Boolean.valueOf(createCis)) System.out.println("С созданием на Cisco.");
 
             System.out.println("Создание клиента: ");
-
             // Создаём
             mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
-            for(String connectData: pathFromIntranet.split(SEPARATOR_CONNECTION)) {
-                if(SWITCH_PATTERN.matcher(connectData).find()) {
-                    new DoClientOnSwitchThread(
-                            connectData,
-                            false,
-                            mainFrame.customer,
-                            CREATE_S,
-                            runningFrame).start();
-                }
-            }
+            new Thread(
+                    new ControlDoOnPathThreads(pathFromIntranet,  mainFrame.customer, CREATE_S, runningFrame)
+            ).start();
+
             System.out.println(mainFrame.customer);
 
         } else if (action.equals(DELETE_S)) {
             // Удаляем
             System.out.println("Удаление клиента: ");
             mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
-            for(String connectData: pathFromIntranet.split(SEPARATOR_CONNECTION)) {
-                if(SWITCH_PATTERN.matcher(connectData).find())
-                    new DoClientOnSwitchThread(
-                            connectData,
-                            false,
-                            mainFrame.customer,
-                            DELETE_S,
-                            runningFrame).start();
-            }
+
+            new Thread(
+                    new ControlDoOnPathThreads(pathFromIntranet, mainFrame.customer, DELETE_S, runningFrame
+            )).start();
+
             System.out.println(mainFrame.customer);
 
         } else if (action.equals(CHANGE_SPEED_S)) {
             // Меняем скорость
             System.out.println("Смена скорости.");
             mainFrame.eventPrintFrame.printEvent("Смена скорости.");
-            new ChangeSpeedThread("speedChange", mainFrame.eventPrintFrame);
+            new ChangeSpeedThread("speedChange", mainFrame.eventPrintFrame, runningFrame);
 
         } else {
             mainFrame.eventPrintFrame.printEvent("Не понятно.");
-        } // if selection action
+        } // ** if selection action
 
-    } // actionPerformed(ActionEvent e)
-} // class RunActionListener
+    } // ** actionPerformed(ActionEvent e)
+} //
+// ** class RunActionListener
 
 class ChangeSpeedThread extends Thread {
     private EventPrintFrame frameEvent;
+    private CurrentlyRunningFrame runningFrame;
 
-    ChangeSpeedThread(String name, EventPrintFrame printEvent) {
+    ChangeSpeedThread(String name, EventPrintFrame printEvent, CurrentlyRunningFrame fr) {
         super(name);
         this.frameEvent = printEvent;
+        this.runningFrame = fr;
         this.start();
     }
     @Override
     public void run() {
-        BufferedReader frSpeedFile = ExtendedOpenFile.readFile();
-        if (frSpeedFile != null) readFile(frSpeedFile);
+        int idLineOnCurrentProcess = runningFrame.addLine("Смена скоростей.", this);
+        try {
+            BufferedReader frSpeedFile = ExtendedOpenFile.readFile();
+            if (frSpeedFile != null) readFile(frSpeedFile);
+        } catch (Exception ex) {
+            System.out.println("Error in ChangeSpeedThread -> run()");
+            throw ex;
+        } finally {
+            runningFrame.removeLine(idLineOnCurrentProcess);
+        }
     } // ** run()
 
     private void readFile(BufferedReader frSpeedFile) {
@@ -195,13 +196,52 @@ class ChangeSpeedThread extends Thread {
     } // ** readFile(BufferedReader frSpeedFile)
 }
 
+class ControlDoOnPathThreads implements Runnable {
+    private String ToDo;
+    private String pathFromIntranet;
+    private Customer customer;
+    private CurrentlyRunningFrame fr;
+
+    ControlDoOnPathThreads(String pathFromIntranet, Customer customer, String toDo, CurrentlyRunningFrame fr) {
+        this.ToDo = toDo;
+        this.pathFromIntranet = pathFromIntranet;
+        this.customer = customer;
+        this.fr = fr;
+    }
+
+    @Override
+    public void run() {
+        ArrayList<DoClientOnSwitchThread> allThreadsSwitch = new ArrayList<>(); // threads connections to switches
+        for(String connectData: pathFromIntranet.split(SEPARATOR_CONNECTION)) {
+            if(SWITCH_PATTERN.matcher(connectData).find()) {
+                boolean root = false; // CHECK IF ROOT
+                DoClientOnSwitchThread tempThr = new DoClientOnSwitchThread(
+                        connectData,
+                        root,
+                        customer,
+                        ToDo,
+                        fr);
+                tempThr.start();
+                allThreadsSwitch.add(tempThr);
+            }
+        } // ** for(all switches)
+
+        for(Thread thread: allThreadsSwitch) {
+            try {
+                thread.join();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        } // ** for(all join)
+    } // ** run()
+} // ** class ControlDoOnPathThreads
+
 class DoClientOnSwitchThread extends Thread {
     private Customer aCustomer;
     private Switch aSwitch;
     private boolean correct = true;
     private String aToDo;
-    int idLine;
-    CurrentlyRunningFrame runningFrame;
+    private CurrentlyRunningFrame runningFrame;
 
     DoClientOnSwitchThread(String dataSwitch, boolean root, Customer customer, String toDo, CurrentlyRunningFrame fr) {
         aCustomer = customer;
@@ -251,7 +291,8 @@ class DoClientOnSwitchThread extends Thread {
 
     @Override
     public void run() {
-        idLine = runningFrame.addLine(aToDo + " на свитче " + aSwitch.getIp(), this);
+        String message = aToDo + " на свитче " + aSwitch.getIp();
+        int idLineOnCurrentProcess = runningFrame.addLine(message, this);
         super.run();
         try {
             sleep(1000);
@@ -260,7 +301,7 @@ class DoClientOnSwitchThread extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            runningFrame.removeLine(idLine);
+            runningFrame.removeLine(idLineOnCurrentProcess);
         }
     }
 } // ** class DoClientOnSwitchThread

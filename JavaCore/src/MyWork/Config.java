@@ -40,7 +40,7 @@ public abstract class Config {
 //
 /////////////// **************** END GUI STRINGS ************* ////////////////////////
 
-    
+
     public static final String SEPARATOR_CONNECTION = " <=> ";
     public static final Pattern SWITCH_PATTERN = Pattern.compile("DES|switch|D-Link|DGS");
 

@@ -3,16 +3,13 @@ package MyWork;
 import MyWork.ExtendStandart.ExtendedTextArea;
 
 import javax.swing.*;
-import java.awt.*;
-//import java.awt.*;
 
 public class EventPrintFrame extends JFrame {
     public ExtendedTextArea textField;
 
-
     EventPrintFrame() {
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        this.setResizable(false);
+//        this.setResizable(false);
         this.setTitle("Events");
         this.setLocation(this.getX()+10, this.getY()+10);
 
@@ -21,14 +18,10 @@ public class EventPrintFrame extends JFrame {
 //        int y = (int) (dimension.getHeight() - getHeight())/4;
 //        this.setLocation(x, y);
 
-
         textField = new ExtendedTextArea(15, 70);
-        textField.setFont(new Font("Arial", Font.PLAIN, 12));
         JScrollPane scrollPane = new JScrollPane(textField);
-        JPanel panel = new JPanel();
-        panel.add(scrollPane);
 
-        this.add(panel);
+        this.add(scrollPane);
         this.pack();
 
 //        this.setVisible(true);
