@@ -29,9 +29,18 @@ public abstract class Config {
             "\n*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=" +
             "\n*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=" +
             "\n*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=\n";
+
+    public static String[] LABELS = {
+            MNEMOKOD_S,
+            NUMBER_VLAN_S,
+            IP_SWITCH_S,
+            PORT_S,
+            UNTAGGED_S,
+            ACT_ON_CISCO_S};
 //
 /////////////// **************** END GUI STRINGS ************* ////////////////////////
 
+    
     public static final String SEPARATOR_CONNECTION = " <=> ";
     public static final Pattern SWITCH_PATTERN = Pattern.compile("DES|switch|D-Link|DGS");
 
@@ -42,28 +51,40 @@ public abstract class Config {
     public static final Map<String, Region> CITIES;
     static {
         CITIES = new HashMap<>();
-        CITIES.put("Orel", new Region("Orel", "Orel", "1"));
-        CITIES.put("Kr", new Region("Kr", "Kursk", "2"));
-        CITIES.put("Mag", new Region("Mag", "Magnitogorsk", "3"));
-        CITIES.put("Vrzh", new Region("Vrzh", "Voronezh", "4"));
+        CITIES.put("Orel", new Region("Orel", "Orel", "23"));
+        CITIES.put("Kr", new Region("Kr", "Kursk", "24"));
+        CITIES.put("Mag", new Region("Mag", "Magnitogorsk", "46"));
+        CITIES.put("Vrzh", new Region("Vrzh", "Voronezh", "47"));
+
+        CITIES.put("Bel", new Region("Bel", "Belgorod", "38"));
+        CITIES.put("Lp", new Region("Lp", "Lipetsk", "39"));
+        CITIES.put("Raz", new Region("Raz", "Ryazan", "40"));
+        CITIES.put("Chel", new Region("Chel", "Chelyabinsk", "41"));
+
+        CITIES.put("Br", new Region("Br", "Bryansk", "7"));
+        CITIES.put("Kq", new Region("Kq", "Kaluga", "8"));
+        CITIES.put("Tul", new Region("Tul", "Tula", "9"));
+        CITIES.put("Sm", new Region("Sm", "Smolensk", "10"));
+
+        CITIES.put("Kol", new Region("Kol", "Kolomna", "42"));
+        CITIES.put("Kd", new Region("Kd", "Krasnodar", "43"));
+        CITIES.put("Rnd", new Region("Rnd", "Rostov", "6"));
+        CITIES.put("Vol", new Region("Vol", "Volgograd", "45"));
+
+        CITIES.put("Ek", new Region("Ek", "Ekaterinburg", "25"));
+        CITIES.put("St", new Region("St", "Stavropol", "26"));
+
+        CITIES.put("Net", new Region("Net", "Net", "999"));
+
     }
 
     public static final Map<String, String> CITIES_BY_NAME;
     static {
         CITIES_BY_NAME = new HashMap<>();
-        CITIES_BY_NAME.put("Orel", "Orel");
-        CITIES_BY_NAME.put("Kursk", "Kr");
-        CITIES_BY_NAME.put("Magnitogorsk", "Mag");
-        CITIES_BY_NAME.put("Voronezh", "Vrzh");
+        CITIES.forEach((k, v) -> CITIES_BY_NAME.put(k, v.getCity()));
     }
 
-    public static String[] LABELS = {
-            MNEMOKOD_S,
-            NUMBER_VLAN_S,
-            IP_SWITCH_S,
-            PORT_S,
-            UNTAGGED_S,
-            ACT_ON_CISCO_S};
+
 
 /////////////// **************** START UNIX SETTINGS ************* ////////////////////////
 //
