@@ -50,9 +50,10 @@ public class RunActionListener implements ActionListener {
         String city = allData[6];
         String action = allData[7];
 
+        // obtained from WebIntranet
         String pathFromIntranet = "95.80.127.253(<\\/th> <td>Cisco ASR1001 <\\/td> ) [0] <=> [1] 172.17.199.254(<\\/th> <td>D-Link DGS-3120-24TC<) [22] <=> [10] 172.17.199.250(<\\/th> <td>D-Link DES-3200-10 Fa) [2] <=>  172.17.196.2(DGSSkyMAN R5000-Omxb\\\" >\\n         ) [0] <=> [0] 172.17.196.78(<\\/th> <td>SkyMAN R5000-Sm\\/5.30) [0] <=> \n";
 
-        if (action.equals(CREATE_S)) {
+        if (fineData && action.equals(CREATE_S)) {
             if (Boolean.valueOf(createCis)) System.out.println("С созданием на Cisco.");
 
             System.out.println("Создание клиента: ");
@@ -64,7 +65,7 @@ public class RunActionListener implements ActionListener {
 
             System.out.println(mainFrame.customer);
 
-        } else if (action.equals(DELETE_S)) {
+        } else if (fineData && action.equals(DELETE_S)) {
             // Удаляем
             System.out.println("Удаление клиента: ");
             mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
@@ -82,7 +83,7 @@ public class RunActionListener implements ActionListener {
             new ChangeSpeedThread("speedChange", mainFrame.eventPrintFrame, runningFrame);
 
         } else {
-            mainFrame.eventPrintFrame.printEvent("Не понятно.");
+            mainFrame.eventPrintFrame.printEvent("Получены не все данные. RunActionListener -> actionPerformed()");
         } // ** if selection action
 
     } // ** actionPerformed(ActionEvent e)
