@@ -1,5 +1,6 @@
 package MyWork;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -39,6 +40,10 @@ public abstract class Config {
             ACT_ON_CISCO_S};
 //
 /////////////// **************** END GUI STRINGS ************* ////////////////////////
+
+    private static final Dimension DIMENSION = Toolkit.getDefaultToolkit().getScreenSize();
+    public static final Double X_SCREEN_SIZE = DIMENSION.getWidth();
+    public static final Double Y_SCREEN_SIZE = DIMENSION.getHeight();
 
     public static final String INTRANET_TYPE = "Web"; // Web or Excel
     public static final String SEPARATOR_CONNECTION = " <=> ";

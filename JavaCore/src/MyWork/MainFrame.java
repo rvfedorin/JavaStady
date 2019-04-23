@@ -6,7 +6,7 @@ import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 import javax.swing.*;
 import java.awt.*;
 
-import static MyWork.Config.LINE;
+import static MyWork.Config.*;
 
 // ************************ MAIN IN ************************************
 public class MainFrame {
@@ -45,9 +45,9 @@ class MainWindow extends JFrame {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        int x = (int) (dimension.getWidth() - getWidth())/3;
-        int y = (int) (dimension.getHeight() - getHeight())/3;
+
+        int x = (int) (X_SCREEN_SIZE - getWidth())/3;
+        int y = (int) (Y_SCREEN_SIZE - getHeight())/3;
         setLocation(x, y);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
