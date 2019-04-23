@@ -61,30 +61,29 @@ public abstract class Config {
     static {
         CITIES = new HashMap<>();
         CITIES.put("Orel", new Region("Orel", "Orel", "23", "213.170.117.254"));
-        CITIES.put("Kr", new Region("Kr", "Kursk", "24"));
-        CITIES.put("Mag", new Region("Mag", "Magnitogorsk", "46"));
-        CITIES.put("Vrzh", new Region("Vrzh", "Voronezh", "47"));
+        CITIES.put("Kr", new Region("Kr", "Kursk", "24", "88.86.91.254"));
+        CITIES.put("Mag", new Region("Mag", "Magnitogorsk", "46", "79.175.33.254"));
+        CITIES.put("Vrzh", new Region("Vrzh", "Voronezh", "47", "95.80.106.254"));
 
-        CITIES.put("Bel", new Region("Bel", "Belgorod", "38"));
-        CITIES.put("Lp", new Region("Lp", "Lipetsk", "39"));
-        CITIES.put("Raz", new Region("Raz", "Ryazan", "40"));
-        CITIES.put("Chel", new Region("Chel", "Chelyabinsk", "41"));
+        CITIES.put("Bel", new Region("Bel", "Belgorod", "38", "79.175.22.254"));
+        CITIES.put("Lp", new Region("Lp", "Lipetsk", "39", "79.175.50.254"));
+        CITIES.put("Raz", new Region("Raz", "Ryazan", "40", "88.86.64.254"));
+        CITIES.put("Chel", new Region("Chel", "Chelyabinsk", "41", "79.175.32.254"));
 
-        CITIES.put("Br", new Region("Br", "Bryansk", "7"));
-        CITIES.put("Kq", new Region("Kq", "Kaluga", "8"));
-        CITIES.put("Tul", new Region("Tul", "Tula", "9"));
-        CITIES.put("Sm", new Region("Sm", "Smolensk", "10"));
+        CITIES.put("Br", new Region("Br", "Bryansk", "7", "79.175.53.254"));
+        CITIES.put("Kq", new Region("Kq", "Kaluga", "8", "213.170.124.254"));
+        CITIES.put("Tul", new Region("Tul", "Tula", "9", "213.170.119.254"));
+        CITIES.put("Sm", new Region("Sm", "Smolensk", "10", "95.80.95.254"));
 
-        CITIES.put("Kol", new Region("Kol", "Kolomna", "42"));
-        CITIES.put("Kd", new Region("Kd", "Krasnodar", "43"));
-        CITIES.put("Rnd", new Region("Rnd", "Rostov", "6"));
-        CITIES.put("Vol", new Region("Vol", "Volgograd", "45"));
+        CITIES.put("Kol", new Region("Kol", "Kolomna", "42", "88.86.77.38"));
+        CITIES.put("Kd", new Region("Kd", "Krasnodar", "43", "79.175.41.254"));
+        CITIES.put("Rnd", new Region("Rnd", "Rostov", "6", "95.80.127.254"));
+        CITIES.put("Vol", new Region("Vol", "Volgograd", "45", "79.175.30.254"));
 
-        CITIES.put("Ek", new Region("Ek", "Ekaterinburg", "25"));
-        CITIES.put("St", new Region("St", "Stavropol", "26"));
+        CITIES.put("Ek", new Region("Ek", "Ekaterinburg", "25", "79.175.48.254"));
+        CITIES.put("St", new Region("St", "Stavropol", "26", "95.80.94.254"));
 
         CITIES.put("Net", new Region("Net", "Net", "999"));
-
     }
 
     public static final Map<String, String> CITIES_BY_NAME;
