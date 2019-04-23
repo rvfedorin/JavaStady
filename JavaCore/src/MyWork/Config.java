@@ -40,9 +40,13 @@ public abstract class Config {
 //
 /////////////// **************** END GUI STRINGS ************* ////////////////////////
 
-
+    public static final String INTRANET_TYPE = "Web"; // Web or Excel
     public static final String SEPARATOR_CONNECTION = " <=> ";
     public static final Pattern SWITCH_PATTERN = Pattern.compile("DES|switch|D-Link|DGS");
+    public static final Pattern RWR_SECTOR_PATTERN = Pattern.compile("Omx");
+    public static final Pattern RWR_CLIENT_PATTERN = Pattern.compile("Sm");
+    public static final Pattern CISCO_PATTERN = Pattern.compile("cisco");
+    public static final Pattern MIKROTIK_PATTERN = Pattern.compile("mikrotik");
 
     public static final String SPEEDS_FILE = "speeds.txt";
     public static final String LOG_FILE = "log.txt";
@@ -51,7 +55,7 @@ public abstract class Config {
     public static final Map<String, Region> CITIES;
     static {
         CITIES = new HashMap<>();
-        CITIES.put("Orel", new Region("Orel", "Orel", "23"));
+        CITIES.put("Orel", new Region("Orel", "Orel", "23", "213.170.117.254"));
         CITIES.put("Kr", new Region("Kr", "Kursk", "24"));
         CITIES.put("Mag", new Region("Mag", "Magnitogorsk", "46"));
         CITIES.put("Vrzh", new Region("Vrzh", "Voronezh", "47"));

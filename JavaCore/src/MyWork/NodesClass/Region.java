@@ -19,6 +19,16 @@ public class Region {
         setLanMB("");
     }
 
+    public Region(String prefix, String city, String id, String unix) {
+        setPrefix(prefix);
+        setCity(city);
+        setId(id);
+        setCoreSwitch("");
+        setCoreCisco("");
+        setCoreUnix(unix);
+        setLanMB("");
+    }
+
     public String getCity() {
         return city;
     }

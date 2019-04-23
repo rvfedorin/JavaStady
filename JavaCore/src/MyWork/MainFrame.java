@@ -2,7 +2,6 @@ package MyWork;
 
 import MyWork.NodesClass.Customer;
 import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
-//import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,7 +41,6 @@ class MainWindow extends JFrame {
 
     MainWindow(){
         try {
-//            UIManager.setLookAndFeel(new NimbusLookAndFeel());
             UIManager.setLookAndFeel(new WindowsLookAndFeel());
         } catch (Exception ex) {
             ex.printStackTrace();

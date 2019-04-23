@@ -15,6 +15,7 @@ public class MainMenu {
 
     private JMenu toolsMenu;
     private JMenuItem workBDItem;
+    private JMenuItem clientSettings;
     private JMenuItem multiDelVlanItem;
     private JMenuItem multiCreateVlanItem;
 
@@ -42,6 +43,10 @@ public class MainMenu {
         toolsMenu = new JMenu("Tools");
         menuBar.add(toolsMenu);
         workBDItem = toolsMenu.add("Работа с БД");
+        toolsMenu.addSeparator();
+        clientSettings = toolsMenu.add("Полные настройки клиента.");
+        clientSettings.addActionListener(e -> new ClientFullSettings(mainFrame.eventPrintFrame));
+        toolsMenu.addSeparator();
         multiDelVlanItem = toolsMenu.add("Массовое создание vlan");
         multiCreateVlanItem = toolsMenu.add("Массовое удаление vlan");
 
