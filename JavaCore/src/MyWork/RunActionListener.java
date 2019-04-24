@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +29,7 @@ public class RunActionListener implements ActionListener {
 
         MainPanelOptic workPanel = mainFrame.mainPanel.opticPanel;
         CurrentlyRunningFrame runningFrame = mainFrame.currentlyRunning;
+        EventPrintFrame eventPrint = mainFrame.eventPrintFrame;
 
         //getAllData() return String[]{mnemokod, vlan, IPswitch, port, untagged, createCis, city, action}
         String[] allData = workPanel.getAllData();
@@ -41,49 +43,59 @@ public class RunActionListener implements ActionListener {
             }
         } // for
 
-        String mnemokod = allData[0];
-        String vlan = allData[1];
-        String IPswitch = allData[2];
-        String port = allData[3];
-        String untagged = allData[4];
-        String createCis = allData[5];
-        String city = allData[6];
-        String action = allData[7];
+        String mnemokod = allData[0].trim();
+        String vlan = allData[1].trim();
+        String IPswitch = allData[2].trim();
+        String port = allData[3].trim();
+        String untagged = allData[4].trim();
+        String createCis = allData[5].trim();
+        String city = allData[6].trim();
+        String action = allData[7].trim();
 
         // obtained from WebIntranet
         String pathFromIntranet = "95.80.127.253(<\\/th> <td>Cisco ASR1001 <\\/td> ) [0] <=> [1] 172.17.199.254(<\\/th> <td>D-Link DGS-3120-24TC<) [22] <=> [10] 172.17.199.250(<\\/th> <td>D-Link DES-3200-10 Fa) [2] <=>  172.17.196.2(DGSSkyMAN R5000-Omxb\\\" >\\n         ) [0] <=> [0] 172.17.196.78(<\\/th> <td>SkyMAN R5000-Sm\\/5.30) [0] <=> \n";
 
+        if (fineData)
+            try {
+                mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
+            } catch (IllegalArgumentException ex) {
+                fineData = false;
+                eventPrint.printEvent("[Error] " + ex.toString() + " " + city);
+            }
+
         if (fineData && action.equals(CREATE_S)) {
-            if (Boolean.valueOf(createCis)) System.out.println("С созданием на Cisco.");
+            if (Boolean.valueOf(createCis))
+                System.out.println("С созданием на Cisco.");
 
             System.out.println("Создание клиента: ");
+            eventPrint.printEvent("Создание клиента: ");
             // Создаём
-            mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
             new Thread(
                     new ControlDoOnPathThreads(pathFromIntranet,  mainFrame.customer, CREATE_S, runningFrame)
             ).start();
 
             System.out.println(mainFrame.customer);
+            eventPrint.printEvent(mainFrame.customer.toString());
 
         } else if (fineData && action.equals(DELETE_S)) {
             // Удаляем
             System.out.println("Удаление клиента: ");
-            mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
-
+            eventPrint.printEvent("Удаление клиента: ");
             new Thread(
                     new ControlDoOnPathThreads(pathFromIntranet, mainFrame.customer, DELETE_S, runningFrame
             )).start();
 
             System.out.println(mainFrame.customer);
+            eventPrint.printEvent(mainFrame.customer.toString());
 
         } else if (action.equals(CHANGE_SPEED_S)) {
             // Меняем скорость
             System.out.println("Смена скорости.");
-            mainFrame.eventPrintFrame.printEvent("Смена скорости.");
-            new ChangeSpeedThread("speedChange", mainFrame.eventPrintFrame, runningFrame);
+            eventPrint.printEvent("Смена скорости.");
+            new ChangeSpeedThread("speedChange", eventPrint, runningFrame);
 
         } else {
-            mainFrame.eventPrintFrame.printEvent("Получены не все данные. RunActionListener -> actionPerformed()");
+            eventPrint.printEvent("Получены не все данные. RunActionListener -> actionPerformed()");
         } // ** if selection action
 
     } // ** actionPerformed(ActionEvent e)
@@ -202,12 +214,14 @@ class ControlDoOnPathThreads implements Runnable {
     private String pathFromIntranet;
     private Customer customer;
     private CurrentlyRunningFrame fr;
+    private ConcurrentHashMap<String, String> resultMap;
 
     ControlDoOnPathThreads(String pathFromIntranet, Customer customer, String toDo, CurrentlyRunningFrame fr) {
         this.ToDo = toDo;
         this.pathFromIntranet = pathFromIntranet;
         this.customer = customer;
         this.fr = fr;
+        this.resultMap = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -221,7 +235,8 @@ class ControlDoOnPathThreads implements Runnable {
                         root,
                         customer,
                         ToDo,
-                        fr);
+                        fr,
+                        resultMap);
                 tempThr.start();
                 allThreadsSwitch.add(tempThr);
             }
@@ -243,11 +258,18 @@ class DoClientOnSwitchThread extends Thread {
     private boolean correct = true;
     private String aToDo;
     private CurrentlyRunningFrame runningFrame;
+    ConcurrentHashMap<String, String> resultMap;
 
-    DoClientOnSwitchThread(String dataSwitch, boolean root, Customer customer, String toDo, CurrentlyRunningFrame fr) {
-        aCustomer = customer;
-        aToDo = toDo; // delete or create CREATE_S or DELETE_S
-        runningFrame = fr;
+    DoClientOnSwitchThread(String dataSwitch,
+                           boolean root,
+                           Customer customer,
+                           String toDo,
+                           CurrentlyRunningFrame fr,
+                           ConcurrentHashMap<String, String> resultMap) {
+        this.aCustomer = customer;
+        this.aToDo = toDo; // delete or create CREATE_S or DELETE_S
+        this.runningFrame = fr;
+        this.resultMap = resultMap;
         String upPort = "";
         String ipSw = "";
         String downPort = "";
@@ -274,35 +296,39 @@ class DoClientOnSwitchThread extends Thread {
             downPort = "null";
 
         } else {
-            System.out.println(dataSwitch);
             correct = false;
+            resultMap.put(ipSw, "[Error] " + dataSwitch + "\n[Error] CreateClientOnSwitch -> Error pattern.");
+            System.out.println(dataSwitch);
             System.out.println("CreateClientOnSwitch -> Error pattern.");
         }
-
-        if(correct) {
+        if(correct)
             aSwitch = new Switch(ipSw, upPort, downPort, root);
-            if (aToDo.equals(CREATE_S)) {
-                System.out.println("Create on sw " + aSwitch.getIp());
-                aSwitch.createClient(aCustomer);
-            } else if (aToDo.equals(DELETE_S)) {
-                System.out.println("Delete on sw " + aSwitch.getIp());
-            }
-        } // ** if correct
+
     } // ** constructor
 
     @Override
     public void run() {
-        String message = aToDo + " на свитче " + aSwitch.getIp();
-        int idLineOnCurrentProcess = runningFrame.addLine(message, this);
+        int idLineOnCurrentProcess = -1;
         super.run();
         try {
-            sleep(1000);
-            if(correct)
-                System.out.println(aSwitch);
+            if(correct) {
+                String message = aToDo + " на свитче " + aSwitch.getIp();
+                idLineOnCurrentProcess = runningFrame.addLine(message, this);
+                sleep(1000);
+                if (aToDo.equals(CREATE_S)) {
+                    System.out.println("Create on sw " + aSwitch.getIp());
+                    aSwitch.createClient(aCustomer);
+                    resultMap.put(aSwitch.getIp(), "Success " + CREATE_S);
+                } else if (aToDo.equals(DELETE_S)) {
+                    System.out.println("Delete on sw " + aSwitch.getIp());
+                    resultMap.put(aSwitch.getIp(), "Success " + DELETE_S);
+                }
+            } // ** if correct
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            runningFrame.removeLine(idLineOnCurrentProcess);
+            if(idLineOnCurrentProcess > 0)
+                runningFrame.removeLine(idLineOnCurrentProcess);
         }
     }
 } // ** class DoClientOnSwitchThread

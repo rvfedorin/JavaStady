@@ -89,7 +89,7 @@ public abstract class Config {
     public static final Map<String, String> CITIES_BY_NAME;
     static {
         CITIES_BY_NAME = new HashMap<>();
-        CITIES.forEach((k, v) -> CITIES_BY_NAME.put(k, v.getCity()));
+        CITIES.forEach((k, v) -> CITIES_BY_NAME.put(v.getCity(), k));
     }
 
 

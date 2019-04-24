@@ -37,9 +37,13 @@ public class CurrentlyRunningFrame extends JFrame{
         panelTop.add(enableBut);
         enableBut.addActionListener(e -> {
             if(state) {
-                state = false;
-                status.setText("<<< ВЫКЛЮЧЕНО >>>");
-                enableBut.setText("Enable");
+                if(labels.isEmpty()) {
+                    state = false;
+                    status.setText("<<< ВЫКЛЮЧЕНО >>>");
+                    enableBut.setText("Enable");
+                } else {
+                    status.setText("<<< ВЫКЛЮЧЕНО. Очередь не пуста. >>>");
+                }
             } else {
                 state = true;
                 status.setText("<<< ВКЛЮЧЕНО >>>");

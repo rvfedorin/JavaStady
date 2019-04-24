@@ -26,8 +26,8 @@ public class Customer {
         String prefix = CITIES_BY_NAME.getOrDefault(city, "none");
         boolean hasCity = CITIES.containsKey(prefix);
         if(!hasCity){
-            fineData = false;
             System.out.println("City not found.");
+            throw new IllegalArgumentException("<< class Customer: City not found. >>");
         }
 
         if (fineData) {
