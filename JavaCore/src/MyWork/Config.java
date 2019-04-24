@@ -46,7 +46,7 @@ public abstract class Config {
     public static final Double Y_SCREEN_SIZE = DIMENSION.getHeight();
 
     public static final String INTRANET_TYPE = "Web"; // Web or Excel
-    public static final String SEPARATOR_CONNECTION = " <=> ";
+    public static final String SEPARATOR_CONNECTION = "<=>";
     public static final Pattern SWITCH_PATTERN = Pattern.compile("DES|switch|D-Link|DGS");
     public static final Pattern RWR_SECTOR_PATTERN = Pattern.compile("Omx");
     public static final Pattern RWR_CLIENT_PATTERN = Pattern.compile("Sm");

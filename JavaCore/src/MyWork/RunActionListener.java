@@ -69,9 +69,14 @@ public class RunActionListener implements ActionListener {
 
             System.out.println("Создание клиента: ");
             eventPrint.printEvent("Создание клиента: ");
+            pathFromIntranet = pathFromIntranet.replaceAll("<\\\\/th>|<\\\\/td>|\\\\n|<td>|\\n|\\\\\"|\\s+", "");
             // Создаём
-            new Thread(
-                    new ControlDoOnPathThreads(pathFromIntranet,  mainFrame.customer, CREATE_S, runningFrame)
+            new Thread(new ControlDoOnPathThreads(
+                            pathFromIntranet,
+                            mainFrame.customer,
+                            CREATE_S,
+                            runningFrame,
+                            eventPrint)
             ).start();
 
             System.out.println(mainFrame.customer);
@@ -81,9 +86,13 @@ public class RunActionListener implements ActionListener {
             // Удаляем
             System.out.println("Удаление клиента: ");
             eventPrint.printEvent("Удаление клиента: ");
-            new Thread(
-                    new ControlDoOnPathThreads(pathFromIntranet, mainFrame.customer, DELETE_S, runningFrame
-            )).start();
+            new Thread(new ControlDoOnPathThreads(
+                            pathFromIntranet,
+                            mainFrame.customer,
+                            DELETE_S,
+                            runningFrame,
+                            eventPrint)
+            ).start();
 
             System.out.println(mainFrame.customer);
             eventPrint.printEvent(mainFrame.customer.toString());
@@ -95,7 +104,7 @@ public class RunActionListener implements ActionListener {
             new ChangeSpeedThread("speedChange", eventPrint, runningFrame);
 
         } else {
-            eventPrint.printEvent("Получены не все данные. RunActionListener -> actionPerformed()");
+            eventPrint.printEvent("[Error] Получены не все данные. RunActionListener -> actionPerformed()");
         } // ** if selection action
 
     } // ** actionPerformed(ActionEvent e)
@@ -214,19 +223,27 @@ class ControlDoOnPathThreads implements Runnable {
     private String pathFromIntranet;
     private Customer customer;
     private CurrentlyRunningFrame fr;
+    private EventPrintFrame eventPrint;
     private ConcurrentHashMap<String, String> resultMap;
 
-    ControlDoOnPathThreads(String pathFromIntranet, Customer customer, String toDo, CurrentlyRunningFrame fr) {
+    ControlDoOnPathThreads(String pathFromIntranet,
+                           Customer customer,
+                           String toDo,
+                           CurrentlyRunningFrame fr,
+                           EventPrintFrame eventPr) {
         this.ToDo = toDo;
         this.pathFromIntranet = pathFromIntranet;
         this.customer = customer;
         this.fr = fr;
+        this.eventPrint = eventPr;
         this.resultMap = new ConcurrentHashMap<>();
     }
 
     @Override
     public void run() {
         ArrayList<DoClientOnSwitchThread> allThreadsSwitch = new ArrayList<>(); // threads connections to switches
+        eventPrint.printEvent(pathFromIntranet.replaceAll("\\(.*\\)", ""));
+
         for(String connectData: pathFromIntranet.split(SEPARATOR_CONNECTION)) {
             if(SWITCH_PATTERN.matcher(connectData).find()) {
                 boolean root = false; // CHECK IF ROOT
@@ -237,7 +254,9 @@ class ControlDoOnPathThreads implements Runnable {
                         ToDo,
                         fr,
                         resultMap);
+                tempThr.setName("Do on " + connectData);
                 tempThr.start();
+                eventPrint.printEvent("Do on " + connectData);
                 allThreadsSwitch.add(tempThr);
             }
         } // ** for(all switches)
@@ -274,9 +293,13 @@ class DoClientOnSwitchThread extends Thread {
         String ipSw = "";
         String downPort = "";
 
-        Pattern fullConnect = Pattern.compile("\\[(.*)] (\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\) \\[(.*)]");
-        Pattern withoutUpPort = Pattern.compile("(\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\) \\[(.*)]");
-        Pattern withoutDownPort = Pattern.compile("\\[(.*)] (\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\)");
+//        Pattern fullConnect = Pattern.compile("\\[(.*)] (\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\) \\[(.*)]");
+//        Pattern withoutUpPort = Pattern.compile("(\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\) \\[(.*)]");
+//        Pattern withoutDownPort = Pattern.compile("\\[(.*)] (\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\)");
+
+        Pattern fullConnect = Pattern.compile("\\[(.*)](\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\)\\[(.*)]");
+        Pattern withoutUpPort = Pattern.compile("(\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\)\\[(.*)]");
+        Pattern withoutDownPort = Pattern.compile("\\[(.*)](\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\)");
 
         Matcher fullConnectM = fullConnect.matcher(dataSwitch);
         Matcher withoutUpPortM = withoutUpPort.matcher(dataSwitch);

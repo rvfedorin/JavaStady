@@ -213,7 +213,7 @@ public class WebIntranet {
                 if(ipMatch.find()) ip = ipMatch.group();
                 if(rightPortM.find()) rightPort = rightPortM.group();
 
-                path.append(leftPort + " " + ip + "(" + model + ")" + " " + rightPort + " <=> ");
+                path.append(leftPort + " " + ip + "(" + model + ")" + " " + rightPort + SEPARATOR_CONNECTION);
             } // ** if(row.length > 1)
         } // ** for
 
