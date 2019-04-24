@@ -24,7 +24,7 @@ public class MainFrame {
             mainWindow.eventPrintFrame.printEvent("Success logged.");
             mainWindow.eventPrintFrame.printEvent(LINE);
 
-            mainWindow.currentlyRunning.setVisible(true);
+//            mainWindow.currentlyRunning.setVisible(false);
         }
     } // ** main()
 } // ** class MainFrame
