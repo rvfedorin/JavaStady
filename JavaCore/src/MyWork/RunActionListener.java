@@ -4,14 +4,13 @@ import MyWork.ExtendStandart.ExtendedOpenFile;
 import MyWork.NodesClass.Customer;
 import MyWork.NodesClass.Region;
 import MyWork.NodesClass.Switch;
+import MyWork.Tools.Formatting;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static MyWork.Config.*;
 import static MyWork.Tools.SpeedFileParser.getParsedString;
@@ -242,53 +241,58 @@ class ControlDoOnPathThreads implements Runnable {
     @Override
     public void run() {
         ArrayList<DoClientOnSwitchThread> allThreadsSwitch = new ArrayList<>(); // threads connections to switches
-        eventPrint.printEvent(pathFromIntranet.replaceAll("\\(.*\\)", ""));
-
 
         String[] piecesOfPath = pathFromIntranet.split(SEPARATOR_CONNECTION);
-        String[] ipList = new String[piecesOfPath.length];
-        int i = 0;
-        for(String connectData: piecesOfPath) {
-
-            Matcher ipM = IP_PATTERN.matcher(connectData);
-            String ip = "";
-            if(ipM.find()) {
-                ip = ipM.group();
-                ipList[i] = ip;
+        String[] connectionList = Formatting.formatPath(pathFromIntranet);
+        if(connectionList != null) {// connectionList 2P192.168.1.1P12
+            StringBuilder humanPath = new StringBuilder();
+            for (String s : connectionList) {
+                String[] cellConnect = s.split(SEPARATOR_PORT);
+                humanPath.append("[" + cellConnect[0] + "]" + cellConnect[1] +"[" + cellConnect[2] + "] <=>");
+            }
+            eventPrint.printEvent(humanPath.toString());
+            eventPrint.printEvent(LINE);
+            int i = 0;
+            for (String connectData : piecesOfPath) {
+                String ip;
+                ip = connectionList[i].split(SEPARATOR_PORT)[1];
                 i++;
-            }
+                if (SWITCH_PATTERN.matcher(connectData).find()) {
+                    boolean root = false; // <<------------------------------------- NEED CHECK IF ROOT
+                    DoClientOnSwitchThread tempThr = new DoClientOnSwitchThread(
+                            connectionList[i],
+                            root,
+                            customer,
+                            ToDo,
+                            fr,
+                            resultMap);
+                    tempThr.setName("Do on " + connectData);
+                    tempThr.start();
+                    eventPrint.printEvent("Do on " + ip);
+                    allThreadsSwitch.add(tempThr);
+                } else if (MIKROTIK_PATTERN.matcher(connectData).find()) {
+                    System.out.println("ДЕЛАЕМ НА МИКРОТИКЕ");
+                }
+            } // ** for(all switches)
 
-            if(SWITCH_PATTERN.matcher(connectData).find()) {
-                boolean root = false; // <<------------------------------------- NEED CHECK IF ROOT
-                DoClientOnSwitchThread tempThr = new DoClientOnSwitchThread(
-                        connectData,
-                        root,
-                        customer,
-                        ToDo,
-                        fr,
-                        resultMap);
-                tempThr.setName("Do on " + connectData);
-                tempThr.start();
-                eventPrint.printEvent("Do on " + ip);
-                allThreadsSwitch.add(tempThr);
-            } else if(MIKROTIK_PATTERN.matcher(connectData).find()) {
-                System.out.println("ДЕЛАЕМ НА МИКРОТИКЕ");
-            }
-        } // ** for(all switches)
+            for (Thread thread : allThreadsSwitch) {
+                try {
+                    thread.join();
+                } catch (InterruptedException ex) {
+                    eventPrint.printEvent("[Error] ControlDoOnPathThreads -->> run()");
+                    ex.printStackTrace();
+                }
+            } // ** for(all join)
 
-        for(Thread thread: allThreadsSwitch) {
-            try {
-                thread.join();
-            } catch (InterruptedException ex) {
-                eventPrint.printEvent("[Error] ControlDoOnPathThreads -->> run()");
-                ex.printStackTrace();
-            }
-        } // ** for(all join)
-
-        for(String ip: ipList) {
-            String result = resultMap.getOrDefault(ip, "[Error] "+ ip +" not found in queue.");
-            eventPrint.printEvent(result);
-        } // ** for on path
+            for (String PortIpPort : connectionList) {
+                String ip = PortIpPort.split(SEPARATOR_PORT)[1];
+                String result = resultMap.getOrDefault(ip, "[Error] " + ip + " not found in queue.");
+                eventPrint.printEvent(result);
+            } // ** for on path
+            eventPrint.printEvent(BLOCK);
+        } else {
+            eventPrint.printEvent("[Error] wrong path format ControlDoOnPathThreads -> run()");
+        }// main if
 
     } // ** run()
 } // ** class ControlDoOnPathThreads
@@ -311,43 +315,14 @@ class DoClientOnSwitchThread extends Thread {
         this.aToDo = toDo; // delete or create CREATE_S or DELETE_S
         this.runningFrame = fr;
         this.resultMap = resultMap;
-        String upPort = "";
-        String ipSw = "";
-        String downPort = "";
 
-//        Pattern fullConnect = Pattern.compile("\\[(.*)] (\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\) \\[(.*)]");
-//        Pattern withoutUpPort = Pattern.compile("(\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\) \\[(.*)]");
-//        Pattern withoutDownPort = Pattern.compile("\\[(.*)] (\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})\\(.*\\)");
-
-        Pattern fullConnect = Pattern.compile("\\[(.*)](" + IP_PATTERN + ")\\(.*\\)\\[(.*)]");
-        Pattern withoutUpPort = Pattern.compile("(" + IP_PATTERN + ")\\(.*\\)\\[(.*)]");
-        Pattern withoutDownPort = Pattern.compile("\\[(.*)](" + IP_PATTERN + ")\\(.*\\)");
-
-        Matcher fullConnectM = fullConnect.matcher(dataSwitch);
-        Matcher withoutUpPortM = withoutUpPort.matcher(dataSwitch);
-        Matcher withoutDownPortM = withoutDownPort.matcher(dataSwitch);
-
-        if(fullConnectM.find()) {
-            upPort = fullConnectM.group(1);
-            ipSw = fullConnectM.group(2);
-            downPort = fullConnectM.group(3);
-        } else if(withoutUpPortM.find()) {
-            upPort = "null";
-            ipSw = withoutUpPortM.group(1);
-            downPort = withoutUpPortM.group(2);
-        } else if(withoutDownPortM.find()) {
-            upPort = withoutDownPortM.group(1);
-            ipSw = withoutDownPortM.group(2);
-            downPort = "null";
-
-        } else {
-            correct = false;
-            resultMap.put(ipSw, "[Error] " + dataSwitch + "\n[Error] CreateClientOnSwitch -> Error pattern.");
-            System.out.println(dataSwitch);
-            System.out.println("CreateClientOnSwitch -> Error pattern.");
-        }
-        if(correct)
+        String[] connection = dataSwitch.split(SEPARATOR_PORT);
+        if(connection.length == 3 && correct) {
+            String upPort = connection[0];
+            String ipSw = connection[1];
+            String downPort = connection[2];
             aSwitch = new Switch(ipSw, upPort, downPort, root);
+        }
 
     } // ** constructor
 
@@ -361,7 +336,6 @@ class DoClientOnSwitchThread extends Thread {
                 idLineOnCurrentProcess = runningFrame.addLine(message, this);
                 sleep(1000);
                 if (aToDo.equals(CREATE_S)) { // <-------------------- CREATE
-                    System.out.println("Create on sw " + aSwitch.getIp());
                     String result = aSwitch.createClient(aCustomer);
                     if(result.equals(SUCCESS_S))
                         result = "Success " + aSwitch.getIp() + " " + result + " " + CREATE_S;
