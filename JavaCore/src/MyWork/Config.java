@@ -52,6 +52,7 @@ public abstract class Config {
     public static final Pattern RWR_CLIENT_PATTERN = Pattern.compile("Sm");
     public static final Pattern CISCO_PATTERN = Pattern.compile("cisco");
     public static final Pattern MIKROTIK_PATTERN = Pattern.compile("mikrotik");
+    public static final Pattern IP_PATTERN = Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
 
     public static final String SPEEDS_FILE = "speeds.txt";
     public static final String LOG_FILE = "log.txt";
@@ -92,7 +93,7 @@ public abstract class Config {
         CITIES.forEach((k, v) -> CITIES_BY_NAME.put(v.getCity(), k));
     }
 
-
+    public static final String SUCCESS_S = "Ok";
 
 /////////////// **************** START UNIX SETTINGS ************* ////////////////////////
 //

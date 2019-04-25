@@ -1,5 +1,7 @@
 package MyWork.NodesClass;
 
+import static MyWork.Config.SUCCESS_S;
+
 public class Switch {
     private String ip;
     private String upPort;
@@ -16,10 +18,10 @@ public class Switch {
     @Override
     public String toString() {
         return "Switch{" +
-                "ip='" + ip + '\'' +
-                ", upPort='" + upPort + '\'' +
-                ", downPort='" + downPort + '\'' +
-                ", root=" + root +
+                "ip='" + getIp() + '\'' +
+                ", upPort='" + getUpPort() + '\'' +
+                ", downPort='" + getDownPort() + '\'' +
+                ", root=" + isRoot() +
                 '}';
     }
 
@@ -51,13 +53,12 @@ public class Switch {
 
         if(customer.getUntagged() && getIp().contains(customer.getIPswitch())) {
             String confUntag = "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();
-            System.out.println(confUntag);
+//            System.out.println(confUntag);
         }
 
-        System.out.println(create);
-        System.out.println(confTag);
+//        System.out.println(create);
+//        System.out.println(confTag);
 
-
-        return "Ok";
+        return SUCCESS_S;
     }
 } // ** class Switch
