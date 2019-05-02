@@ -25,7 +25,6 @@ public class Test {
     } // ** randomEngLet
 
     private static void randomRus(String str) {
-        int count = 20;
         int row = 10;
         Map<Character, Integer> countLet = new HashMap<>();
 
