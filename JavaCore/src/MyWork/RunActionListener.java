@@ -35,7 +35,7 @@ public class RunActionListener implements ActionListener {
         boolean fineData = true;
 
         // checks if all data was filled
-        for (String s: allData) {
+        for (String s : allData) {
             if (s.length() < 1) {
                 fineData = false;
                 break;
@@ -71,11 +71,11 @@ public class RunActionListener implements ActionListener {
             pathFromIntranet = pathFromIntranet.replaceAll("<\\\\/th>|<\\\\/td>|\\\\n|<td>|\\n|\\\\\"|\\s+", "");
             // Создаём
             new Thread(new ControlDoOnPathThreads(
-                            pathFromIntranet,
-                            mainFrame.customer,
-                            CREATE_S,
-                            runningFrame,
-                            eventPrint)
+                    pathFromIntranet,
+                    mainFrame.customer,
+                    CREATE_S,
+                    runningFrame,
+                    eventPrint)
             ).start();
 
             System.out.println(mainFrame.customer);
@@ -86,11 +86,11 @@ public class RunActionListener implements ActionListener {
             System.out.println("Удаление клиента: ");
             eventPrint.printEvent("Удаление клиента: ");
             new Thread(new ControlDoOnPathThreads(
-                            pathFromIntranet,
-                            mainFrame.customer,
-                            DELETE_S,
-                            runningFrame,
-                            eventPrint)
+                    pathFromIntranet,
+                    mainFrame.customer,
+                    DELETE_S,
+                    runningFrame,
+                    eventPrint)
             ).start();
 
             System.out.println(mainFrame.customer);
@@ -120,6 +120,7 @@ class ChangeSpeedThread extends Thread {
         this.runningFrame = fr;
         this.start();
     }
+
     @Override
     public void run() {
         int idLineOnCurrentProcess = runningFrame.addLine("Смена скоростей.", this);
@@ -140,7 +141,7 @@ class ChangeSpeedThread extends Thread {
         do {
             try {
                 line = frSpeedFile.readLine();
-                if(line != null && !line.matches("^\\s*$")) {
+                if (line != null && !line.matches("^\\s*$")) {
 //                    System.out.println(line);
                     String tempLine = line;
                     line = getParsedString(line);
@@ -150,7 +151,7 @@ class ChangeSpeedThread extends Thread {
                     // get prefix of mnemokod
                     String key = line.split("-")[0];
                     // if first letter in lowercase
-                    if(key != null && !key.isEmpty()) {
+                    if (key != null && !key.isEmpty()) {
                         key = key.substring(0, 1).toUpperCase() + key.substring(1);
                     } else {
                         frameEvent.printEvent(tempLine);
@@ -163,7 +164,7 @@ class ChangeSpeedThread extends Thread {
                     // get OP
                     Region citySpeed = CITIES.getOrDefault(key, null);
 
-                    if(citySpeed != null) { // if we have found city
+                    if (citySpeed != null) { // if we have found city
                         if (clientNewSpeed.length >= 2) {
                             formattedSpeed = getFormattedSpeed("service-policy", clientNewSpeed[1]);
                         } else {
@@ -194,11 +195,11 @@ class ChangeSpeedThread extends Thread {
                         frameEvent.printEvent(tempLine);
                         frameEvent.printEvent(line);
                         frameEvent.printEvent("ОП " + citySpeed.getCity());
-                        if(formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
+                        if (formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
                             for (String s : formattedSpeed) {
                                 frameEvent.printEvent(s);
                             }
-                        } else if(formattedSpeed != null) {
+                        } else if (formattedSpeed != null) {
                             frameEvent.printEvent(formattedSpeed[0] + formattedSpeed[1]);
                         } else {
                             frameEvent.printEvent("getFormattedSpeed return NULL!");
@@ -244,11 +245,11 @@ class ControlDoOnPathThreads implements Runnable {
 
         String[] piecesOfPath = pathFromIntranet.split(SEPARATOR_CONNECTION);
         String[] connectionList = Formatting.formatPath(pathFromIntranet);
-        if(connectionList != null) {// connectionList 2P192.168.1.1P12
+        if (connectionList != null) {// connectionList 2P192.168.1.1P12
             StringBuilder humanPath = new StringBuilder();
             for (String s : connectionList) {
                 String[] cellConnect = s.split(SEPARATOR_PORT);
-                humanPath.append("[" + cellConnect[0] + "]" + cellConnect[1] +"[" + cellConnect[2] + "] <=>");
+                humanPath.append("[" + cellConnect[0] + "]" + cellConnect[1] + "[" + cellConnect[2] + "] <=>");
             }
             eventPrint.printEvent(humanPath.toString());
             eventPrint.printEvent(LINE);
@@ -317,7 +318,7 @@ class DoClientOnSwitchThread extends Thread {
         this.resultMap = resultMap;
 
         String[] connection = dataSwitch.split(SEPARATOR_PORT);
-        if(connection.length == 3 && correct) {
+        if (connection.length == 3 && correct) {
             String upPort = connection[0];
             String ipSw = connection[1];
             String downPort = connection[2];
@@ -331,13 +332,13 @@ class DoClientOnSwitchThread extends Thread {
         int idLineOnCurrentProcess = -1;
         super.run();
         try {
-            if(correct) {
+            if (correct) {
                 String message = aToDo + " на свитче " + aSwitch.getIp();
                 idLineOnCurrentProcess = runningFrame.addLine(message, this);
                 sleep(1000);
                 if (aToDo.equals(CREATE_S)) { // <-------------------- CREATE
                     String result = aSwitch.createClient(aCustomer);
-                    if(result.equals(SUCCESS_S))
+                    if (result.equals(SUCCESS_S))
                         result = "Success " + aSwitch.getIp() + " " + result + " " + CREATE_S;
                     else
                         result = "[Error] " + result + " " + CREATE_S;
@@ -352,7 +353,7 @@ class DoClientOnSwitchThread extends Thread {
             resultMap.put(aSwitch.getIp(), "[Error] " + e.toString());
             e.printStackTrace();
         } finally {
-            if(idLineOnCurrentProcess > 0)
+            if (idLineOnCurrentProcess > 0)
                 runningFrame.removeLine(idLineOnCurrentProcess);
         }
     }
