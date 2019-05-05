@@ -3,13 +3,14 @@ import java.util.Map;
 
 public class GenLetters {
     public static void main(String[] args) {
-        String eng = "ABCDEFGHabcdefgHJKLMNOPQRSTUVhjklmnopqrstuv";
+        String engPart = "ABCDEFGHabcdefgHJKLMNOPQRSTUVhjklmnopqrstuv";
+        String eng = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
         String rus = "ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ";
         int count = 20;
         int row = 10;
 
-//        randomEngLet(eng, row, count);
-        randomRus(rus);
+        randomEngLet(eng, row, count);
+//        randomRus(rus);
 
     }
 
