@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 import static MyWork.Config.*;
 import static MyWork.Tools.SpeedFileParser.getParsedString;
@@ -241,11 +241,12 @@ class ControlDoOnPathThreads implements Runnable {
 
     @Override
     public void run() {
-        ArrayList<DoClientOnSwitchThread> allThreadsSwitch = new ArrayList<>(); // threads connections to switches
+        ArrayList<Future> allThreadsSwitch = new ArrayList<>(); // threads connections to switches
 
         String[] piecesOfPath = pathFromIntranet.split(SEPARATOR_CONNECTION);
         String[] connectionList = Formatting.formatPath(pathFromIntranet);
         if (connectionList != null) {// connectionList 2P192.168.1.1P12
+            ExecutorService pool = Executors.newCachedThreadPool();
             StringBuilder humanPath = new StringBuilder();
             for (String s : connectionList) {
                 String[] cellConnect = s.split(SEPARATOR_PORT);
@@ -254,6 +255,7 @@ class ControlDoOnPathThreads implements Runnable {
             eventPrint.printEvent(humanPath.toString());
             eventPrint.printEvent(LINE);
             int i = 0;
+
             for (String connectData : piecesOfPath) {
                 String ip;
                 ip = connectionList[i].split(SEPARATOR_PORT)[1];
@@ -267,19 +269,18 @@ class ControlDoOnPathThreads implements Runnable {
                             ToDo,
                             fr,
                             resultMap);
-                    tempThr.setName("Do on " + connectData);
-                    tempThr.start();
+                    Future task = pool.submit(tempThr);
                     eventPrint.printEvent("Do on " + ip);
-                    allThreadsSwitch.add(tempThr);
+                    allThreadsSwitch.add(task);
                 } else if (MIKROTIK_PATTERN.matcher(connectData).find()) {
                     System.out.println("ДЕЛАЕМ НА МИКРОТИКЕ");
                 }
             } // ** for(all switches)
 
-            for (Thread thread : allThreadsSwitch) {
+            for (Future task : allThreadsSwitch) {
                 try {
-                    thread.join();
-                } catch (InterruptedException ex) {
+                    task.get();
+                } catch (ExecutionException | InterruptedException ex) {
                     eventPrint.printEvent("[Error] ControlDoOnPathThreads -->> run()");
                     ex.printStackTrace();
                 }
@@ -291,6 +292,8 @@ class ControlDoOnPathThreads implements Runnable {
                 eventPrint.printEvent(result);
             } // ** for on path
             eventPrint.printEvent(BLOCK);
+
+            pool.shutdown();
         } else {
             eventPrint.printEvent("[Error] wrong path format ControlDoOnPathThreads -> run()");
         }// main if
@@ -298,13 +301,13 @@ class ControlDoOnPathThreads implements Runnable {
     } // ** run()
 } // ** class ControlDoOnPathThreads
 
-class DoClientOnSwitchThread extends Thread {
+class DoClientOnSwitchThread implements Runnable {
     private Customer aCustomer;
     private Switch aSwitch;
     private boolean correct = true;
     private String aToDo;
     private CurrentlyRunningFrame runningFrame;
-    ConcurrentHashMap<String, String> resultMap;
+    private ConcurrentHashMap<String, String> resultMap;
 
     DoClientOnSwitchThread(String dataSwitch,
                            boolean root,
@@ -330,12 +333,13 @@ class DoClientOnSwitchThread extends Thread {
     @Override
     public void run() {
         int idLineOnCurrentProcess = -1;
-        super.run();
+//        super.run();
         try {
             if (correct) {
+                Thread.currentThread().setName("Do on " + aSwitch.getIp());
                 String message = aToDo + " на свитче " + aSwitch.getIp();
-                idLineOnCurrentProcess = runningFrame.addLine(message, this);
-                sleep(1000);
+                idLineOnCurrentProcess = runningFrame.addLine(message, Thread.currentThread());
+                Thread.sleep(1000);
                 if (aToDo.equals(CREATE_S)) { // <-------------------- CREATE
                     String result = aSwitch.createClient(aCustomer);
                     if (result.equals(SUCCESS_S))
