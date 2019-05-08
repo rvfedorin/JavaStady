@@ -73,8 +73,7 @@ public class CurrentlyRunningFrame extends JFrame{
 
             sumPanel.add(row);
             labels.put(String.valueOf(idNumber), row);
-//        sumPanel.repaint();
-            this.setVisible(true);
+            sumPanel.validate();
 
             return idNumber;
         } else {
