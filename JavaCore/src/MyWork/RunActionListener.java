@@ -250,7 +250,8 @@ class ControlDoOnPathThreads implements Runnable {
             StringBuilder humanPath = new StringBuilder();
             for (String s : connectionList) {
                 String[] cellConnect = s.split(SEPARATOR_PORT);
-                humanPath.append("[" + cellConnect[0] + "]" + cellConnect[1] + "[" + cellConnect[2] + "] <=>");
+                String node = "[" + cellConnect[0] + "]" + cellConnect[1] + "[" + cellConnect[2] + "] <=>";
+                humanPath.append(node);
             }
             eventPrint.printEvent(humanPath.toString());
             eventPrint.printEvent(LINE);
