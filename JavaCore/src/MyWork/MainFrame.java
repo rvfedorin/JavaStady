@@ -2,6 +2,7 @@ package MyWork;
 
 import MyWork.NodesClass.Customer;
 import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
+import org.intellij.lang.annotations.JdkConstants;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,6 +38,8 @@ class MainWindow extends JFrame {
     CurrentlyRunningFrame currentlyRunning;
     EventPrintFrame eventPrintFrame;
     Customer customer;
+    JLabel statusPanel;
+
     private MainMenu mainMenu;
 
     MainWindow(){
@@ -70,7 +73,11 @@ class MainWindow extends JFrame {
         buttonPanel.add(runButton);
         // END RUN BUTTON //
 
-        add(buttonPanel, BorderLayout.SOUTH);
+        mainPanel.add(buttonPanel); // !! MAIN PANEL
+
+        statusPanel = new JLabel("Ready.");
+        statusPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,0));
+        add(statusPanel, BorderLayout.SOUTH);
         pack();
 
     } // ************************ close const
@@ -86,6 +93,8 @@ class MainPanel extends JPanel {
 
 
     MainPanel() {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBorder(BorderFactory.createEmptyBorder(2,4,2,0));
         opticPanel = new MainPanelOptic();
         mbPanel = new MainPanelMB();
         rwrPanel = new MainPanelRWR();

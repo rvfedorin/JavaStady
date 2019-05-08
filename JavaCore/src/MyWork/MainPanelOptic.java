@@ -54,8 +54,6 @@ public class MainPanelOptic extends JPanel {
 
                 if (CITIES.containsKey(key)){
                     rightPanel.citiesComboBox.setSelectedItem(CITIES.get(key).getCity());
-//                    MainPanelOptic.this.setVisible(false);
-//                    MainPanelOptic.this.setVisible(true);
                 }  // if
             }  // act()
         }); // DocumentListener()
@@ -185,15 +183,17 @@ class RightPartPanel extends JPanel {
         });
 
         citiesComboBox = new JComboBox<>();
-        citiesComboBox.setBorder(BorderFactory.createEmptyBorder(0, 13, 0, 0));
-//        citiesComboBox.setPreferredSize(new Dimension(80, 6));
-//        citiesComboBox.setPrototypeDisplayValue("XX");
+        citiesComboBox.setBorder(BorderFactory.createEmptyBorder(0, 14, 0, 0));
+        citiesComboBox.setPreferredSize(new Dimension(100, 20));
+
+        JPanel comboPanel = new JPanel(new BorderLayout());
+        comboPanel.add(citiesComboBox, BorderLayout.NORTH);
 
         for(Region c: CITIES.values()) {
             citiesComboBox.addItem(c.getCity());
         }
 
-        add(citiesComboBox);
+        add(comboPanel);
         add(freeVlanBut);
         add(new JLabel());
         add(freePortBut);

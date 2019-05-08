@@ -354,6 +354,7 @@ class DoClientOnSwitchThread implements Runnable {
                     resultMap.put(aSwitch.getIp(), "Success " + " " + DELETE_S);
                 }
             } // ** if correct
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             resultMap.put(aSwitch.getIp(), "[Error] " + e.toString());
             e.printStackTrace();

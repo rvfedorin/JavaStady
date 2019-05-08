@@ -1,7 +1,5 @@
 package MyWork;
 
-import com.sun.xml.internal.messaging.saaj.soap.JpegDataContentHandler;
-
 import javax.swing.*;
 import java.awt.*;
 //import java.util.ArrayList;
@@ -9,19 +7,19 @@ import java.util.HashMap;
 
 public class CurrentlyRunningFrame extends JFrame{
     private int idNumber;
-    private MainWindow mainWindow;
     private JPanel sumPanel;
-//    private ArrayList<Thread> threads;
     private HashMap<String, JPanel> labels;
     private boolean state = false;
+//    private MainWindow mainWindow;
+//    private ArrayList<Thread> threads;
 
     CurrentlyRunningFrame(MainWindow mWin){
         idNumber = 0;
-        mainWindow = mWin;
+//        mainWindow = mWin;
 //        threads = new ArrayList<>();
         labels = new HashMap<>();
-        int xLoc = mainWindow.getX() + 400;
-        int yLoc = mainWindow.getY() - 6;
+        int xLoc = mWin.getX() + 400;
+        int yLoc = mWin.getY() - 6;
         setLocation(xLoc, yLoc);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setTitle("Выполняющиеся процессы: ");
