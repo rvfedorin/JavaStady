@@ -5,6 +5,8 @@ public class Region {
     private String prefix;
     private String id;
     private String coreSwitch;
+    private String rootPort;
+    private String devCellId;
     private String coreCisco;
     private String coreUnix;
     private String lanMB;
@@ -14,19 +16,23 @@ public class Region {
         setCity(city);
         setId(id);
         setCoreSwitch("");
+        setRootPort("");
+        setDevCellId("");
         setCoreCisco("");
         setCoreUnix("");
         setLanMB("");
     }
 
-    public Region(String prefix, String city, String id, String unix) {
+    public Region(String prefix, String city, String id, String unix, String coreSwitch, String rootPort, String devCellId, String lanMB) {
         setPrefix(prefix);
         setCity(city);
         setId(id);
-        setCoreSwitch("");
+        setCoreSwitch(coreSwitch);
+        setRootPort(rootPort);
+        setDevCellId(devCellId);
         setCoreCisco("");
         setCoreUnix(unix);
-        setLanMB("");
+        setLanMB(lanMB); // 95.80.120.44X172.17.239.129X172.16.44.235X28
     }
 
     public String getCity() {
@@ -45,8 +51,16 @@ public class Region {
         return coreSwitch;
     }
 
+    public String getDevCellId() {
+        return devCellId;
+    }
+
     public String getCoreCisco() {
         return coreCisco;
+    }
+
+    public String getRootPort() {
+        return rootPort;
     }
 
     public String getCoreUnix() {
@@ -57,7 +71,7 @@ public class Region {
         return lanMB;
     }
 
-///////// SETTERS /////////////////////////////
+    ///////// SETTERS /////////////////////////////
     public void setCity(String city) {
         this.city = city;
     }
@@ -72,6 +86,14 @@ public class Region {
 
     public void setCoreSwitch(String coreSwitch) {
         this.coreSwitch = coreSwitch;
+    }
+
+    public void setRootPort(String rootPort) {
+        this.rootPort = rootPort;
+    }
+
+    public void setDevCellId(String devCellId) {
+        this.devCellId = devCellId;
     }
 
     public void setCoreCisco(String coreCisco) {

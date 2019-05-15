@@ -1,6 +1,9 @@
 package MyWork;
 
 import MyWork.ExtendStandart.ExtendedOpenFile;
+import MyWork.Intranet.ExcelIntranet;
+import MyWork.Intranet.Intranet;
+import MyWork.Intranet.WebIntranet;
 import MyWork.NodesClass.Customer;
 import MyWork.NodesClass.Region;
 import MyWork.NodesClass.Switch;
@@ -13,6 +16,7 @@ import java.util.ArrayList;
 import java.util.concurrent.*;
 
 import static MyWork.Config.*;
+import static MyWork.Config.INTRANET_TYPE.EXCEL;
 import static MyWork.Tools.SpeedFileParser.getParsedString;
 import static MyWork.Tools.CiscoSpeedFormat.getFormattedSpeed;
 
@@ -51,9 +55,6 @@ public class RunActionListener implements ActionListener {
         String city = allData[6].trim();
         String action = allData[7].trim();
 
-        // obtained from WebIntranet
-        String pathFromIntranet = "95.80.127.253(<\\/th> <td>Cisco ASR1001 <\\/td> ) [0] <=> [1] 172.17.199.254(<\\/th> <td>D-Link DGS-3120-24TC<) [22] <=> [10] 172.17.199.250(<\\/th> <td>D-Link DES-3200-10 Fa) [2] <=>  172.17.196.2(DGSSkyMAN R5000-Omxb\\\" >\\n         ) [0] <=> [0] 172.17.196.78(<\\/th> <td>SkyMAN R5000-Sm\\/5.30) [0] <=> \n";
-
         if (fineData)
             try {
                 mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
@@ -61,6 +62,26 @@ public class RunActionListener implements ActionListener {
                 fineData = false;
                 eventPrint.printEvent("[Error] " + ex.toString() + " " + city);
             }
+
+        Intranet intranet = null;
+        String pathFromIntranet = null;
+
+        if (CURRENT_INTRANET_TYPE == EXCEL) {
+            try {
+                intranet = new ExcelIntranet(mainFrame.customer.getCity());
+            } catch (FileNotFoundException ex) {
+                eventPrint.printEvent(ex.toString());
+            }
+        } else {
+            intranet = new WebIntranet(mainFrame.authDialog.getPass(), mainFrame.customer.getCity());
+        }
+
+        if(intranet != null) {
+            pathFromIntranet = intranet.getFullPath(mainFrame.customer.getIPswitch());
+        } else {
+            fineData = false;
+        }
+
 
         if (fineData && action.equals(CREATE_S)) {
             if (Boolean.valueOf(createCis))

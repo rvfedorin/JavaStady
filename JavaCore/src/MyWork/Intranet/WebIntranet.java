@@ -1,6 +1,8 @@
 package MyWork.Intranet;
 
+import MyWork.NodesClass.Region;
 import MyWork.Tools.CryptDecrypt;
+
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
@@ -13,35 +15,32 @@ import java.util.regex.Pattern;
 import static MyWork.Tools.ConvertRussian.convertToRus;
 import static MyWork.Config.*;
 
-public class WebIntranet {
-    private static String PASS = "Q_Q";
-    private static Map<String, String> loginCookies;
+public class WebIntranet extends Intranet{
+    private static String PASS;
+    private Map<String, String> loginCookies;
+    private final String ID = "1"; // ** is always 1?
 
-    public WebIntranet(char[] key) {
+    public WebIntranet(char[] key, Region reg) {
         PASS = String.valueOf(key);
+        region = reg;
+        loginCookies = connectAndGetCookie(AUTH_URL);
+        loginCookies.put("ActiveReg", region.getId());
+        getBody(CONNECTION_URL, loginCookies); // list of connection in region ActiveReg
+        //        loginCookies.put("ActiveRegName", "Ростов-на-Дону"); // NO MATTER YET
     }
 
     public static void main(String[] args) {
-//        WebIntranet webIntranet = new WebIntranet("qwertyu!@#".toCharArray());
-        loginCookies = connectAndGetCookie(AUTH_URL);
-        loginCookies.put("ActiveReg", "6");
-//        loginCookies.put("ActiveRegName", "Ростов-на-Дону");
+        WebIntranet webIntranet = new WebIntranet("123!@#".toCharArray(), CITIES.get("Rnd"));
+        String mnemokod = "RND-Panda";
 
-        getBody(CONNECTION_URL, loginCookies); // list of connection in region ActiveReg
-
-        // return Map with keys: status, where, row, mnemokod, ipCl, vlan, address, ipCon, tel, description;
-        Map<String, String> customer = findCustomer(loginCookies, "RND-Panda");
-
-        String customerConnect = findCustomerConnect(loginCookies, "1"); // id - number client in previous getBody()
-
-        if(customer != null && !customer.get("status").contains("Error")) {
-            System.out.println(customer);
-        }
         System.out.println(LINE);
-        System.out.println(ParsePath(convertToRus(customerConnect)));
+        System.out.println(webIntranet.getFullPath(mnemokod));
+        //{ipCon=172.17.196.78 - rwr, mnemokod=RND-Panda, ipCl=88.86.80.23, address=ул. Володарского 2-я, 76, vlan=vlan321, description=, tel=, row=1, status=200}
+        //===================================
+        // 95.80.127.253(Cisco ASR1001  ) [0]<=>[1] 172.17.199.254(D-Link DGS-3120-24TC) [22]<=>[10] 172.17.199.250(D-Link DES-3200-10 Fa) [2]<=> 172.17.196.2(SkyMAN R5000-Omxb\" \n ) [0]<=>[0] 172.17.196.78(SkyMAN R5000-Sm\/5.30) [0]<=>
     }
 
-    public static Map<String, String> connectAndGetCookie(String url){
+    private Map<String, String> connectAndGetCookie(String url){
         Connection.Response login;
         // Auth
         try {
@@ -60,11 +59,11 @@ public class WebIntranet {
         return getLoginCookies();
     } // ** connectAndGetCookie(AUTH_URL)
 
-    public static Map<String, String> getLoginCookies() {
+    private Map<String, String> getLoginCookies() {
         return loginCookies;
     }
 
-    public static String getBody(String url, Map<String,String> cookie) {
+    private static String getBody(String url, Map<String,String> cookie) {
         Connection.Response response;
         String result;
         try {
@@ -81,23 +80,24 @@ public class WebIntranet {
         else
             result = response.body();
         return result;
-    } // ** getBody(utl, cookie)
+    } // ** getBody(url, cookie)
 
-    public static Map<String, String> findCustomer(Map<String, String> cookie, String data) {
+    public Map<String, String> findCustomer(String mnemokod) {
         // return Map with keys: status, where, row, mnemokod, ipCl, vlan, address, ipCon, tel, description;
+
         Connection.Response response;
         Map<String, String> result = new HashMap<>();
 
-        cookie.put("ActivePage", "1");
-        cookie.put("LimitElems", "10");
+        loginCookies.put("ActivePage", "1");
+        loginCookies.put("LimitElems", "10");
 
         try {
             response = Jsoup
                     .connect(EDIT_CLIENT_URL)
-                    .cookies(cookie)
+                    .cookies(loginCookies)
                     .method(Connection.Method.POST)
                     .data("Client-mod", "search")
-                    .data("data", data)
+                    .data("data", mnemokod)
                     .execute();
         } catch (IOException ex) {
             result.put("status", "Error. " + ex.toString());
@@ -138,32 +138,44 @@ public class WebIntranet {
             }// ** if fine body
         } // if get response
 //        System.out.println(result);
+
         return result;
     }
 
-    public static String findCustomerConnect(Map<String, String> cookie, String id) {
+    public String findCustomerConnect(String mnemokod) {
         Connection.Response response;
         String result;
+        Map<String, String> customer;
 
-        cookie.put("ActivePage", "1");
-        cookie.put("LimitElems", "10");
+        customer = findCustomer(mnemokod);
+
+        if(customer == null || customer.get("status").contains("Error")) {
+            result = "Error findCustomer()";
+            return result;   // <-----   NOT FOUND CUSTOMER
+        }
+
+        loginCookies.put("ActivePage", "1");
+        loginCookies.put("LimitElems", "10");
 
         try {
             response = Jsoup
                     .connect(EDIT_CLIENT_URL)
-                    .cookies(cookie)
+                    .cookies(loginCookies)
                     .method(Connection.Method.POST)
                     .data("Client-mod", "GetMap")
-                    .data("id", id)
+                    .data("id", ID)
                     .execute();
+
         } catch (IOException ex) {
-            return "Error. " + ex.toString();
+            return "Error. " + ex.toString();   // ** <---- Error connection EXIT
         }
 
         if (response == null || response.body() == null)
             result = "Error findCustomer()";
-        else
+        else {
             result = response.body();
+        }
+
         return result;
     }
 
@@ -220,4 +232,14 @@ public class WebIntranet {
         return path.toString();
     } // ** ParsePath(String s)
 
+    @Override
+    public String getFullPath(String mnemokod) {
+
+        return ParsePath(convertToRus(findCustomerConnect(mnemokod)));
+    }
+
+    @Override
+    public String allConnectionFromSwitch(String switchIP) {
+        return null;
+    }
 } // ** class

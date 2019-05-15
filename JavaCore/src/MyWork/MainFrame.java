@@ -2,7 +2,6 @@ package MyWork;
 
 import MyWork.NodesClass.Customer;
 import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
-import org.intellij.lang.annotations.JdkConstants;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,21 +11,23 @@ import static MyWork.Config.*;
 // ************************ MAIN IN ************************************
 public class MainFrame {
     public static void main(String[] args) {
-        MainWindow mainWindow = new MainWindow();
-        AuthDialog authDialog = new AuthDialog(mainWindow);
+        EventQueue.invokeLater(()-> {
+            MainWindow mainWindow = new MainWindow();
+//            AuthDialog authDialog = new AuthDialog(mainWindow);
 
-        // ************** AUTH ****************
-        if (authDialog.isSuccessAuth()) {
-            System.exit(0);
-        } else {
-        // ************** END AUTH ****************
-            mainWindow.setVisible(true);
-            mainWindow.eventPrintFrame.setVisible(true);
-            mainWindow.eventPrintFrame.printEvent("Success logged.");
-            mainWindow.eventPrintFrame.printEvent(LINE);
+            // ************** AUTH ****************
+            if (mainWindow.authDialog.isSuccessAuth()) {
+                System.exit(0);
+            } else {
+                // ************** END AUTH ****************
+                mainWindow.setVisible(true);
+                mainWindow.eventPrintFrame.setVisible(true);
+                mainWindow.eventPrintFrame.printEvent("Success logged.");
+                mainWindow.eventPrintFrame.printEvent(LINE);
 
 //            mainWindow.currentlyRunning.setVisible(false);
-        }
+            }
+        }); // ** EventQueue.invokeLater
     } // ** main()
 } // ** class MainFrame
 // ************************* MAIN OUT **********************************
@@ -34,6 +35,7 @@ public class MainFrame {
 class MainWindow extends JFrame {
 //    private final static int DEFAULT_WIDTH = 380;
 //    private final static int DEFAULT_HEIGHT = 380;
+    AuthDialog authDialog;
     MainPanel mainPanel;
     CurrentlyRunningFrame currentlyRunning;
     EventPrintFrame eventPrintFrame;
@@ -58,6 +60,7 @@ class MainWindow extends JFrame {
 //        setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setResizable(false);
 
+        authDialog = new AuthDialog(this);
         mainMenu = new MainMenu(this);
         mainPanel = new MainPanel();
         currentlyRunning = new CurrentlyRunningFrame(this);
