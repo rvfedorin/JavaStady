@@ -6,6 +6,7 @@ import MyWork.Intranet.ExcelIntranet;
 import MyWork.Intranet.Intranet;
 import MyWork.Intranet.WebIntranet;
 import MyWork.NodesClass.Region;
+import MyWork.Verifiers.IPVerifier;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +33,7 @@ public class FullPathToSw extends JFrame {
         this.setLocation(x, y);
 
         this.setTitle("Маршрут до свитча.");
+        this.setResizable(false);
 
         JComboBox<String> citiesComboBox = new JComboBox<>();
         citiesComboBox.setPreferredSize(new Dimension(100, 20));
@@ -44,17 +46,20 @@ public class FullPathToSw extends JFrame {
         ipSwJL.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
 
         ExtendedTextField ipSwField = new ExtendedTextField(20);
+        ipSwField.setInputVerifier(new IPVerifier(ipSwField));
 
         JCheckBox withLinksField = new JCheckBox("Показать с линками");
         withLinksField.setSelected(true);
 
         JButton okButton = new JButton("ok");
         okButton.addActionListener(e -> {
-            ipSw = ipSwField.getText();
-            withLinks = withLinksField.isSelected();
-            city = CITIES_BY_NAME.get(citiesComboBox.getItemAt(citiesComboBox.getSelectedIndex()));
-            getFullPathToSw();
-            this.dispose();
+            if(ipSwField.getInputVerifier().verify(ipSwField)) {
+                ipSw = ipSwField.getText();
+                withLinks = withLinksField.isSelected();
+                city = CITIES_BY_NAME.get(citiesComboBox.getItemAt(citiesComboBox.getSelectedIndex()));
+                getFullPathToSw();
+                this.dispose();
+            }
         });
 
         JPanel inputPanel = new JPanel(new GridLayout(2,1));

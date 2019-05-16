@@ -4,6 +4,7 @@ import MyWork.ExtendStandart.AdapterDocumentListener;
 import MyWork.ExtendStandart.CustomBorder;
 import MyWork.ExtendStandart.ExtendedTextField;
 import MyWork.NodesClass.Region;
+import MyWork.Verifiers.IPVerifier;
 
 import javax.swing.*;
 import java.awt.*;
@@ -127,21 +128,14 @@ class InputPanel extends JPanel {
                 tempTextField.setBorder(BorderFactory.createCompoundBorder(
                         new CustomBorder(),
                         BorderFactory.createEmptyBorder(0,2,0,2)
-
                 ));
+
                 allTF.put(lab, tempTextField);
             } // if
         } // for(String lab: labels)
 
         JTextField ipSwitchListen = (JTextField) allTF.get(IP_SWITCH_S);
-        ipSwitchListen.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(ipSwitchListen.getText().trim().length() > 8) {
-
-                }
-            }
-        });
+        ipSwitchListen.setInputVerifier(new IPVerifier(ipSwitchListen));
 
         JPanel inp = new JPanel(new GridLayout(LABELS.length, 1, 1, 1));
         JPanel lab = new JPanel(new GridLayout(LABELS.length, 1, 1, 1));

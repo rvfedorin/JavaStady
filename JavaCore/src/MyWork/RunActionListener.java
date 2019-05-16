@@ -55,7 +55,10 @@ public class RunActionListener implements ActionListener {
         String city = allData[6].trim();
         String action = allData[7].trim();
 
-        if (fineData)
+        Intranet intranet = null;
+        String pathFromIntranet = null;
+
+        if (fineData) {
             try {
                 mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
             } catch (IllegalArgumentException ex) {
@@ -63,24 +66,24 @@ public class RunActionListener implements ActionListener {
                 eventPrint.printEvent("[Error] " + ex.toString() + " " + city);
             }
 
-        Intranet intranet = null;
-        String pathFromIntranet = null;
 
-        if (CURRENT_INTRANET_TYPE == EXCEL) {
-            try {
-                intranet = new ExcelIntranet(mainFrame.customer.getCity());
-            } catch (FileNotFoundException ex) {
-                eventPrint.printEvent(ex.toString());
+
+            if (CURRENT_INTRANET_TYPE == EXCEL) {
+                try {
+                    intranet = new ExcelIntranet(mainFrame.customer.getCity());
+                } catch (FileNotFoundException ex) {
+                    eventPrint.printEvent(ex.toString());
+                }
+            } else {
+                intranet = new WebIntranet(mainFrame.authDialog.getPass(), mainFrame.customer.getCity());
             }
-        } else {
-            intranet = new WebIntranet(mainFrame.authDialog.getPass(), mainFrame.customer.getCity());
-        }
 
-        if(intranet != null) {
-            pathFromIntranet = intranet.getFullPath(mainFrame.customer.getIPswitch());
-        } else {
-            fineData = false;
-        }
+            if (intranet != null) {
+                pathFromIntranet = intranet.getFullPath(mainFrame.customer.getIPswitch());
+            } else {
+                fineData = false;
+            }
+        } // ** if (fineData)
 
 
         if (fineData && action.equals(CREATE_S)) {
