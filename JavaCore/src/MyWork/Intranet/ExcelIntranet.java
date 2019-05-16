@@ -23,7 +23,9 @@ public class ExcelIntranet extends Intranet {
     public ExcelIntranet(Region reg) throws FileNotFoundException {
         boolean found = false;
         region = reg;
+        if(region == null) throw new FileNotFoundException("Region not found dir.");
         File[] dir = new File(INTRANETS_PATH + region.getCity()).listFiles();
+        if(dir == null) throw new FileNotFoundException("Intranet " + region.getCity() + " not found dir.");
         for (File f : dir) {
             if (f.getName().contains(region.getCity() + ".xls")) {
                 fileXLS = f;
@@ -41,8 +43,8 @@ public class ExcelIntranet extends Intranet {
 
     public static void main(String[] args) {
         try {
-            ExcelIntranet intranet = new ExcelIntranet(CITIES.get("Orel"));
-            String path = intranet.getFullPath("172.17.154.86");
+            ExcelIntranet intranet = new ExcelIntranet(CITIES.get("Kr"));
+            String path = intranet.getFullPath("172.17.0.154");
             System.out.println(path);
             // 28-172.16.48.254-11--25-172.16.44.237-26--10-172.16.42.246-7--1-172.17.239.110-10--10-172.16.48.158-8--1-172.17.154.86
             // [28] 172.16.48.254() [11] <=> [25] 172.16.44.237() [26] <=> [10] 172.16.42.246() [7] <=> [1] 172.17.239.110() [10] <=> [10] 172.16.48.158() [8] <=> [1] 172.17.154.86()
@@ -65,23 +67,28 @@ public class ExcelIntranet extends Intranet {
             if (cellDevIP != null && cellDevIP.getStringCellValue().equals(ipDev)) {
                 String ip = cellDevIP.getStringCellValue();
                 String from = row.getCell(cellID + 1).getStringCellValue().replaceAll("\\d/", "");
-                if (from.trim().length() < 8) continue;
+                if (from.trim().length() < 8) { // ** START if connect UP is broken
+                    if(ip.equals(region.getCoreSwitch())) { // ** check if it is broken because it id root sw
+                        connect = "[" + region.getRootPort() + "] " + region.getCoreSwitch() + "(switch)";
+                        break;
+                    } else {
+                        continue;
+                    }
+                } // ** END if connect UP is broken
 
                 Matcher ipM = IP_PATTERN.matcher(ip);
 
                 Matcher fromM = Pattern.compile("(\\d{1,2}).*?(" + IP_PATTERN + ").*?(\\d{1,2})").matcher(from);
                 if (fromM.find() && ipM.find()) {
-                    connect = findConnect(fromM.group(2)) + " [" + fromM.group(1) + "] " + SEPARATOR_CONNECTION + " [" + fromM.group(3) + "] " + ipM.group() + "()";
+                    connect = findConnect(fromM.group(2)) + " [" + fromM.group(1) + "] " + SEPARATOR_CONNECTION + " [" + fromM.group(3) + "] " + ipM.group() + "(switch)";
                 } else {
                     if(ipDev.equals(region.getCoreSwitch()))
                         connect = "[" + region.getRootPort() + "] " + region.getCoreSwitch() + "()";
                     else
                         connect = "[Error] Broken path";
-
                 }
             }
         } // ** while
-
         if(connect.length() < 8)
             connect = "[Error] Broken path [[" + ipDev + "]]";
 

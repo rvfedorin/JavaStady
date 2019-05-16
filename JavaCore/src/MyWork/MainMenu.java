@@ -51,9 +51,10 @@ public class MainMenu {
         multiCreateVlanItem = toolsMenu.add("Массовое удаление vlan");
 
         switchMenu = new JMenu("Switch");
-        switchMenu.addMenuListener(new SwitchMenuListener());
+//        switchMenu.addMenuListener(new SwitchMenuListener());
         menuBar.add(switchMenu);
         pathToSwItem = switchMenu.add("Путь до свитча");
+        pathToSwItem.addActionListener(e -> new FullPathToSw(mainFrame.eventPrintFrame, mainFrame.authDialog.getPass()));
         allConnectSwItem = switchMenu.add("Все подключения от свитча");
 
         view = new JMenu("View");

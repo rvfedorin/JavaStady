@@ -281,7 +281,7 @@ class ControlDoOnPathThreads implements Runnable {
             for (String connectData : piecesOfPath) {
                 String ip;
                 ip = connectionList[i].split(SEPARATOR_PORT)[1];
-                i++;
+
                 if (SWITCH_PATTERN.matcher(connectData).find()) {
                     boolean root = false; // <<------------------------------------- NEED CHECK IF ROOT
                     DoClientOnSwitchThread tempThr = new DoClientOnSwitchThread(
@@ -297,6 +297,7 @@ class ControlDoOnPathThreads implements Runnable {
                 } else if (MIKROTIK_PATTERN.matcher(connectData).find()) {
                     System.out.println("ДЕЛАЕМ НА МИКРОТИКЕ");
                 }
+                i++;
             } // ** for(all switches)
 
             for (Future task : allThreadsSwitch) {
