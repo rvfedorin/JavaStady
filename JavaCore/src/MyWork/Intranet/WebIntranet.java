@@ -239,7 +239,7 @@ public class WebIntranet extends Intranet{
     }
 
     @Override
-    public String allConnectionFromSwitch(String switchIP) {
+    public String allConnectionFromSwitch(String switchIP, boolean onlySw) {
         return null;
     }
 } // ** class

@@ -59,6 +59,8 @@ public class MainMenu {
                 new FullPathToSw(mainFrame.eventPrintFrame, mainFrame.authDialog.getPass())
         );
         allConnectSwItem = switchMenu.add("Все подключения от свитча");
+        allConnectSwItem.addActionListener(e->
+                new AllConnectionFromSw(mainFrame.eventPrintFrame, mainFrame.authDialog.getPass()));
 
         view = new JMenu("View");
         view.addMenuListener(new ViewMenuListener());

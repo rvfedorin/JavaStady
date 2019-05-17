@@ -6,5 +6,5 @@ public abstract class Intranet {
     Region region;
 
     public abstract String getFullPath(String ipDev);
-    public abstract String allConnectionFromSwitch(String switchIP);
+    public abstract String allConnectionFromSwitch(String switchIP, boolean onlySw);
 }

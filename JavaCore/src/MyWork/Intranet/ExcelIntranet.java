@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,9 +25,9 @@ public class ExcelIntranet extends Intranet {
     public ExcelIntranet(Region reg) throws FileNotFoundException {
         boolean found = false;
         region = reg;
-        if(region == null) throw new FileNotFoundException("Region not found dir.");
+        if (region == null) throw new FileNotFoundException("Region not found dir.");
         File[] dir = new File(INTRANETS_PATH + region.getCity()).listFiles();
-        if(dir == null) throw new FileNotFoundException("Intranet " + region.getCity() + " not found dir.");
+        if (dir == null) throw new FileNotFoundException("Intranet " + region.getCity() + " not found dir.");
         for (File f : dir) {
             if (f.getName().contains(region.getCity() + ".xls")) {
                 fileXLS = f;
@@ -44,11 +46,14 @@ public class ExcelIntranet extends Intranet {
     public static void main(String[] args) {
         try {
             ExcelIntranet intranet = new ExcelIntranet(CITIES.get("Kr"));
-            String path = intranet.getFullPath("172.17.0.154");
-            System.out.println(path);
+//            String path = intranet.getFullPath("172.17.0.154");
+//            System.out.println(path);
             // 28-172.16.48.254-11--25-172.16.44.237-26--10-172.16.42.246-7--1-172.17.239.110-10--10-172.16.48.158-8--1-172.17.154.86
             // [28] 172.16.48.254() [11] <=> [25] 172.16.44.237() [26] <=> [10] 172.16.42.246() [7] <=> [1] 172.17.239.110() [10] <=> [10] 172.16.48.158() [8] <=> [1] 172.17.154.86()
 
+            //172.17.150.238
+            String allConnection = intranet.allConnectionFromSwitch("172.17.110.122", false);
+            System.out.println(allConnection);
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -68,7 +73,7 @@ public class ExcelIntranet extends Intranet {
                 String ip = cellDevIP.getStringCellValue();
                 String from = row.getCell(cellID + 1).getStringCellValue().replaceAll("\\d/", "");
                 if (from.trim().length() < 8) { // ** START if connect UP is broken
-                    if(ip.equals(region.getCoreSwitch())) { // ** check if it is broken because it id root sw
+                    if (ip.equals(region.getCoreSwitch())) { // ** check if it is broken because it id root sw
                         connect = "[" + region.getRootPort() + "] " + region.getCoreSwitch() + "(switch)";
                         break;
                     } else {
@@ -82,14 +87,14 @@ public class ExcelIntranet extends Intranet {
                 if (fromM.find() && ipM.find()) {
                     connect = findConnect(fromM.group(2)) + " [" + fromM.group(1) + "] " + SEPARATOR_CONNECTION + " [" + fromM.group(3) + "] " + ipM.group() + "(switch)";
                 } else {
-                    if(ipDev.equals(region.getCoreSwitch()))
+                    if (ipDev.equals(region.getCoreSwitch()))
                         connect = "[" + region.getRootPort() + "] " + region.getCoreSwitch() + "()";
                     else
                         connect = "[Error] Broken path";
                 }
             }
         } // ** while
-        if(connect.length() < 8)
+        if (connect.length() < 8)
             connect = "[Error] Broken path [[" + ipDev + "]]";
 
         return connect;
@@ -100,8 +105,89 @@ public class ExcelIntranet extends Intranet {
         return findConnect(ipDev);
     }
 
+    private Set<String> allIPConnected(String ipSw) {
+        Set<String> allIP = new HashSet<>();
+        String ipToAdd;
+
+        if (!IP_PATTERN.matcher(ipSw).find()) return allIP;
+        allIP.add(ipSw);
+
+        int cellID = Integer.valueOf(region.getDevCellId());
+
+        Iterator<Row> rows = workbook.getSheetAt(0).rowIterator();
+        while (rows.hasNext()) {
+            Row row = rows.next();
+            Cell connecting = row.getCell(cellID + 1);
+            String cellData;
+            try {
+                cellData = connecting.getStringCellValue();
+            } catch (IllegalStateException | NullPointerException ex) {
+                continue;
+            }
+            if (cellData.contains(ipSw)) {
+                ipToAdd = row.getCell(cellID).getStringCellValue();
+                allIP.addAll(allIPConnected(ipToAdd));
+//                System.out.print(ipToAdd);
+//                System.out.println("  -->> " + cellData);
+            }
+        } // ** while (rows.hasNext())
+        return allIP;
+    } // ** allIPConnected(String ipSw)
+
+    private String getCustomerOnIP(String IP) {
+        String customers = "";
+        Iterator<Row> rows = workbook.getSheetAt(0).rowIterator();
+        int cellID = Integer.valueOf(region.getDevCellId());
+
+        while (rows.hasNext()) {
+            Row row = rows.next();
+            Cell cell = row.getCell(cellID);
+            String cellData;
+            try {
+                cellData = cell.getStringCellValue();
+            } catch (IllegalStateException | NullPointerException ex) {
+                continue;
+            }
+            if (cellData.contains(IP)) {
+                int emptyLine = 0;
+                while (emptyLine < 3) {
+                    row = rows.next();
+                    String customerMnemo;
+                    try {
+                        customerMnemo = row.getCell(0).getStringCellValue();
+                    } catch (IllegalStateException | NullPointerException ex) {
+                        emptyLine++;
+                        continue;
+                    }
+                    if (customerMnemo.startsWith(region.getPrefix())) {
+                        customers += "\t" + customerMnemo + "\n";
+                    } else {
+                        emptyLine++;
+                    }
+                }
+                break;
+            } // ** if(cellData.contains(IP))
+        } // ** while (rows.hasNext())
+
+        return customers;
+    } // ** getCustomerOnIP(String IP)
+
     @Override
-    public String allConnectionFromSwitch(String switchIP) {
-        return null;
+    public String allConnectionFromSwitch(String switchIP, boolean onlySw) {
+        String result = "";
+        Set<String> allIP = new HashSet<>();
+        allIP.add(switchIP);
+        allIP.addAll(allIPConnected(switchIP));
+        if (onlySw) {
+            for (String ip : allIP) {
+                result += ip + "; \n";
+            }
+        } else {
+            for (String ip : allIP) {
+                result += ip + "\n";
+                result += getCustomerOnIP(ip);
+            }
+        }
+        return result;
     }
 } // ** class ExcelIntranet
