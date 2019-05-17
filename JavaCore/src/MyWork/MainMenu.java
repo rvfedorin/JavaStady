@@ -7,6 +7,7 @@ import javax.swing.event.MenuListener;
 import java.awt.*;
 
 import static MyWork.Config.*;
+
 import MyWork.MenuAction.*;
 
 public class MainMenu {
@@ -54,7 +55,9 @@ public class MainMenu {
 //        switchMenu.addMenuListener(new SwitchMenuListener());
         menuBar.add(switchMenu);
         pathToSwItem = switchMenu.add("Путь до свитча");
-        pathToSwItem.addActionListener(e -> new FullPathToSw(mainFrame.eventPrintFrame, mainFrame.authDialog.getPass()));
+        pathToSwItem.addActionListener(e ->
+                new FullPathToSw(mainFrame.eventPrintFrame, mainFrame.authDialog.getPass())
+        );
         allConnectSwItem = switchMenu.add("Все подключения от свитча");
 
         view = new JMenu("View");
@@ -67,7 +70,7 @@ public class MainMenu {
         view.addSeparator();
 
         UIManager.LookAndFeelInfo[] lookInfo = UIManager.getInstalledLookAndFeels();
-        for(UIManager.LookAndFeelInfo newLook: lookInfo){
+        for (UIManager.LookAndFeelInfo newLook : lookInfo) {
             String nameLook = newLook.getName();
             String classNameLook = newLook.getClassName();
             JMenuItem tempItem = view.add(nameLook);
@@ -112,30 +115,37 @@ public class MainMenu {
                 mainFrame.setVisible(true);
             }
         } // menuSelected()
+
         @Override
-        public void menuDeselected(MenuEvent e) {}
-        public void menuCanceled(MenuEvent e) {}
+        public void menuDeselected(MenuEvent e) {
+        }
+
+        public void menuCanceled(MenuEvent e) {
+        }
     }
 
-        class ViewMenuListener implements MenuListener {
-            @Override
-            public void menuSelected(MenuEvent e) {
-                if(mainFrame.eventPrintFrame.isVisible()){
-                    logPrint.setEnabled(false);
-                } else {
-                    logPrint.setEnabled(true);
-                }
+    class ViewMenuListener implements MenuListener {
+        @Override
+        public void menuSelected(MenuEvent e) {
+            if (mainFrame.eventPrintFrame.isVisible()) {
+                logPrint.setEnabled(false);
+            } else {
+                logPrint.setEnabled(true);
+            }
 
-                if(mainFrame.currentlyRunning.isVisible()){
-                    currentRunning.setEnabled(false);
-                } else {
-                    currentRunning.setEnabled(true);
-                }
-            } // menuSelected()
+            if (mainFrame.currentlyRunning.isVisible()) {
+                currentRunning.setEnabled(false);
+            } else {
+                currentRunning.setEnabled(true);
+            }
+        } // menuSelected()
 
         @Override
-        public void menuDeselected(MenuEvent e) {}
-        public void menuCanceled(MenuEvent e) {}
+        public void menuDeselected(MenuEvent e) {
+        }
+
+        public void menuCanceled(MenuEvent e) {
+        }
     } // class SwitchMenuListener
 
 } // class MainMenu

@@ -5,7 +5,7 @@ import MyWork.ExtendStandart.ExtendedTextField;
 import MyWork.Intranet.ExcelIntranet;
 import MyWork.Intranet.Intranet;
 import MyWork.Intranet.WebIntranet;
-import MyWork.NodesClass.Region;
+import MyWork.NodesClass.CitiesComboBox;
 import MyWork.Verifiers.IPVerifier;
 
 import javax.swing.*;
@@ -35,12 +35,8 @@ public class FullPathToSw extends JFrame {
         this.setTitle("Маршрут до свитча.");
         this.setResizable(false);
 
-        JComboBox<String> citiesComboBox = new JComboBox<>();
+        CitiesComboBox citiesComboBox = new CitiesComboBox();
         citiesComboBox.setPreferredSize(new Dimension(100, 20));
-
-        for(Region c: CITIES.values()) {
-            citiesComboBox.addItem(c.getCity());
-        }
 
         JLabel ipSwJL = new JLabel("IP свитча: ");
         ipSwJL.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));

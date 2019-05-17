@@ -3,6 +3,7 @@ package MyWork;
 import MyWork.ExtendStandart.AdapterDocumentListener;
 import MyWork.ExtendStandart.CustomBorder;
 import MyWork.ExtendStandart.ExtendedTextField;
+import MyWork.NodesClass.CitiesComboBox;
 import MyWork.NodesClass.Region;
 import MyWork.Verifiers.IPVerifier;
 
@@ -161,7 +162,7 @@ class RightPartPanel extends JPanel {
     public JButton freeVlanBut;
     public JButton freePortBut;
     public JButton changeSpeedBut;
-    public JComboBox<String> citiesComboBox;
+    public CitiesComboBox citiesComboBox;
 
     RightPartPanel() {
 
@@ -176,16 +177,10 @@ class RightPartPanel extends JPanel {
             openSystemFile();
         });
 
-        citiesComboBox = new JComboBox<>();
-        citiesComboBox.setBorder(BorderFactory.createEmptyBorder(0, 14, 0, 0));
-        citiesComboBox.setPreferredSize(new Dimension(100, 20));
+        citiesComboBox = new CitiesComboBox();
 
         JPanel comboPanel = new JPanel(new BorderLayout());
         comboPanel.add(citiesComboBox, BorderLayout.NORTH);
-
-        for(Region c: CITIES.values()) {
-            citiesComboBox.addItem(c.getCity());
-        }
 
         add(comboPanel);
         add(freeVlanBut);
