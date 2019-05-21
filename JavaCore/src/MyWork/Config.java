@@ -97,6 +97,7 @@ public abstract class Config {
     }
 
     public static final String SUCCESS_S = "Ok";
+    public static final String ERROR_S = "[Error]";
 
 /////////////// **************** START UNIX SETTINGS ************* ////////////////////////
 //
@@ -112,6 +113,7 @@ public abstract class Config {
     public static final String RUN_PASS = "jaNUpm9cNWvfct86RHRwwQ==";
     public static final String INTRANET_CONNECT_LOGIN = "bXFDZHf5gYHnnQkHAQL4+A==";
     public static final String INTRANET_CONNECT_PASS = "xXHPPl7DZLd/M+T0fm7O4w==";
+    public static final String SW_PASS = "jaNUpm9cNWvfct86RHRwwQ==";
 //
 /////////////// **************** END PASS STRINGS ************* ////////////////////////
 

@@ -1,18 +1,25 @@
 package MyWork.NodesClass;
 
+import MyWork.Tools.CryptDecrypt;
+
+import static MyWork.Config.ERROR_S;
 import static MyWork.Config.SUCCESS_S;
+import static MyWork.Config.SW_PASS;
 
 public class Switch {
+    private final String LOGIN = "admin";
+    private String pass;
     private String ip;
     private String upPort;
     private String downPort;
     private boolean root;
 
-    public Switch(String ip, String upPort, String downPort, boolean root) {
+    public Switch(String ip, String upPort, String downPort, boolean root, String pass) {
         this.ip = ip;
         this.upPort = upPort;
         this.downPort = downPort;
         this.root = root;
+        this.pass = pass;
     } // ** constructor
 
     @Override
@@ -42,23 +49,41 @@ public class Switch {
     }
 
     public String createClient(Customer customer) {
-        String pDown = "";
-        String pUp = "";
-        if(!getDownPort().contains("null")) pDown = "," + getDownPort();
-        if(!getDownPort().contains("null") && getUpPort().contains("null")) pDown = getDownPort();
-        if(!getUpPort().contains("null")) pUp = getUpPort();
+        Telnet connect = new Telnet(getIp(), 23);
+        boolean successConnect = connect.auth(LOGIN, CryptDecrypt.getEncrypt(pass, SW_PASS));
 
-        String create = "create vlan " + customer.getMnemokod() + " tag " + customer.getVlan();
-        String confTag = "conf vlan " + customer.getMnemokod() + " add tagged " + pUp + pDown;
+        if(successConnect) {
+            String pDown = "";
+            String pUp = "";
+            if (!getDownPort().contains("null")) pDown = "," + getDownPort();
+            if (!getDownPort().contains("null") && getUpPort().contains("null")) pDown = getDownPort();
+            if (!getUpPort().contains("null")) pUp = getUpPort();
 
-        if(customer.getUntagged() && getIp().contains(customer.getIPswitch())) {
-            String confUntag = "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();
-//            System.out.println(confUntag);
-        }
+            String create = "create vlan " + customer.getMnemokod() + " tag " + customer.getVlan();
+            String confTag = "conf vlan " + customer.getMnemokod() + " add tagged " + pUp + pDown;
+
+            connect.sendCommand(create);
+            connect.sendCommand(confTag);
+
+            if (getIp().contains(customer.getIPswitch())) {
+                String confUntag;
+                if(customer.getUntagged())
+                    confUntag = "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();
+                else
+                    confUntag = "conf vlan " + customer.getMnemokod() + " add tagged " + customer.getPort();
+
+                connect.sendCommand(confUntag);
+            }
 
 //        System.out.println(create);
 //        System.out.println(confTag);
 
-        return SUCCESS_S;
+            connect.sendCommand("Saving", "save\r\n");
+
+            connect.close();
+
+            return SUCCESS_S;
+        } // ** if connected
+        return ERROR_S;
     }
 } // ** class Switch

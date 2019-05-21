@@ -67,7 +67,6 @@ public class RunActionListener implements ActionListener {
             }
 
 
-
             if (CURRENT_INTRANET_TYPE == EXCEL) {
                 try {
                     intranet = new ExcelIntranet(mainFrame.customer.getCity());
@@ -99,7 +98,8 @@ public class RunActionListener implements ActionListener {
                     mainFrame.customer,
                     CREATE_S,
                     runningFrame,
-                    eventPrint)
+                    eventPrint,
+                    new String(mainFrame.authDialog.getPass()))
             ).start();
 
             System.out.println(mainFrame.customer);
@@ -114,7 +114,8 @@ public class RunActionListener implements ActionListener {
                     mainFrame.customer,
                     DELETE_S,
                     runningFrame,
-                    eventPrint)
+                    eventPrint,
+                    new String(mainFrame.authDialog.getPass()))
             ).start();
 
             System.out.println(mainFrame.customer);
@@ -249,18 +250,21 @@ class ControlDoOnPathThreads implements Runnable {
     private CurrentlyRunningFrame fr;
     private EventPrintFrame eventPrint;
     private ConcurrentHashMap<String, String> resultMap;
+    private String enterPass;
 
     ControlDoOnPathThreads(String pathFromIntranet,
                            Customer customer,
                            String toDo,
                            CurrentlyRunningFrame fr,
-                           EventPrintFrame eventPr) {
+                           EventPrintFrame eventPr,
+                           String enterPass) {
         this.ToDo = toDo;
         this.pathFromIntranet = pathFromIntranet;
         this.customer = customer;
         this.fr = fr;
         this.eventPrint = eventPr;
         this.resultMap = new ConcurrentHashMap<>();
+        this.enterPass = enterPass;
     }
 
     @Override
@@ -286,14 +290,16 @@ class ControlDoOnPathThreads implements Runnable {
                 ip = connectionList[i].split(SEPARATOR_PORT)[1];
 
                 if (SWITCH_PATTERN.matcher(connectData).find()) {
-                    boolean root = false; // <<------------------------------------- NEED CHECK IF ROOT
+                    boolean root = false;
+                    if (connectionList[i].contains(customer.getCity().getCoreSwitch())) root = true;
                     DoClientOnSwitchThread tempThr = new DoClientOnSwitchThread(
                             connectionList[i],
                             root,
                             customer,
                             ToDo,
                             fr,
-                            resultMap);
+                            resultMap,
+                            enterPass);
                     Future task = pool.submit(tempThr);
                     eventPrint.printEvent("Do on " + ip);
                     allThreadsSwitch.add(task);
@@ -305,10 +311,13 @@ class ControlDoOnPathThreads implements Runnable {
 
             for (Future task : allThreadsSwitch) {
                 try {
+//                    task.get(10, TimeUnit.SECONDS);
                     task.get();
                 } catch (ExecutionException | InterruptedException ex) {
                     eventPrint.printEvent("[Error] ControlDoOnPathThreads -->> run()");
                     ex.printStackTrace();
+//                } catch (TimeoutException timeEx) {
+//                    eventPrint.printEvent("[Warning] TimeoutException -> ControlDoOnPathThreads");
                 }
             } // ** for(all join)
 
@@ -340,7 +349,8 @@ class DoClientOnSwitchThread implements Runnable {
                            Customer customer,
                            String toDo,
                            CurrentlyRunningFrame fr,
-                           ConcurrentHashMap<String, String> resultMap) {
+                           ConcurrentHashMap<String, String> resultMap,
+                           String enterPass) {
         this.aCustomer = customer;
         this.aToDo = toDo; // delete or create CREATE_S or DELETE_S
         this.runningFrame = fr;
@@ -351,7 +361,7 @@ class DoClientOnSwitchThread implements Runnable {
             String upPort = connection[0];
             String ipSw = connection[1];
             String downPort = connection[2];
-            aSwitch = new Switch(ipSw, upPort, downPort, root);
+            aSwitch = new Switch(ipSw, upPort, downPort, root, enterPass);
         }
 
     } // ** constructor
@@ -360,32 +370,29 @@ class DoClientOnSwitchThread implements Runnable {
     public void run() {
         int idLineOnCurrentProcess = -1;
 //        super.run();
-        try {
-            if (correct) {
-                Thread.currentThread().setName("Do on " + aSwitch.getIp());
-                String message = aToDo + " на свитче " + aSwitch.getIp();
-                idLineOnCurrentProcess = runningFrame.addLine(message, Thread.currentThread());
-                Thread.sleep(1000);
-                if (aToDo.equals(CREATE_S)) { // <-------------------- CREATE
-                    String result = aSwitch.createClient(aCustomer);
-                    if (result.equals(SUCCESS_S))
-                        result = "Success " + aSwitch.getIp() + " " + result + " " + CREATE_S;
-                    else
-                        result = "[Error] " + result + " " + CREATE_S;
-                    resultMap.put(aSwitch.getIp(), result);
 
-                } else if (aToDo.equals(DELETE_S)) { // <-------------------- DELETE
-                    System.out.println("Delete on sw " + aSwitch.getIp());
-                    resultMap.put(aSwitch.getIp(), "Success " + " " + DELETE_S);
-                }
-            } // ** if correct
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            resultMap.put(aSwitch.getIp(), "[Error] " + e.toString());
-            e.printStackTrace();
-        } finally {
-            if (idLineOnCurrentProcess > 0)
-                runningFrame.removeLine(idLineOnCurrentProcess);
-        }
-    }
+        if (correct) {
+            Thread.currentThread().setName("Do on " + aSwitch.getIp());
+            String message = aToDo + " на свитче " + aSwitch.getIp();
+            idLineOnCurrentProcess = runningFrame.addLine(message, Thread.currentThread());
+
+            if (aToDo.equals(CREATE_S)) { // <-------------------- CREATE SECTION
+                String result = aSwitch.createClient(aCustomer);
+                if (result.equals(SUCCESS_S))
+                    result = "Success " + aSwitch.getIp() + " " + result + " " + CREATE_S;
+                else
+                    result = "[Error] DoClientOnSwitchThread->run->createClient " + result + " " + CREATE_S;
+
+                resultMap.put(aSwitch.getIp(), result);
+
+            } else if (aToDo.equals(DELETE_S)) { // <-------------------- DELETE SECTION
+                System.out.println("Delete on sw " + aSwitch.getIp());
+                resultMap.put(aSwitch.getIp(), "Success " + " " + DELETE_S);
+            }
+        } // ** if correct
+
+        if (idLineOnCurrentProcess > 0)
+            runningFrame.removeLine(idLineOnCurrentProcess);
+
+    } // ** run()
 } // ** class DoClientOnSwitchThread

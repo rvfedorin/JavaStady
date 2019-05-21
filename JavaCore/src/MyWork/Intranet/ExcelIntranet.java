@@ -88,7 +88,7 @@ public class ExcelIntranet extends Intranet {
                     connect = findConnect(fromM.group(2)) + " [" + fromM.group(1) + "] " + SEPARATOR_CONNECTION + " [" + fromM.group(3) + "] " + ipM.group() + "(switch)";
                 } else {
                     if (ipDev.equals(region.getCoreSwitch()))
-                        connect = "[" + region.getRootPort() + "] " + region.getCoreSwitch() + "()";
+                        connect = "[" + region.getRootPort() + "] " + region.getCoreSwitch() + "(switch)";
                     else
                         connect = "[Error] Broken path";
                 }

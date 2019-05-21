@@ -1,8 +1,12 @@
 package other;
 
+import MyWork.Tools.CryptDecrypt;
+
+import static MyWork.Config.SW_PASS;
+
 public class test {
     public static void main(String[] args) {
-
+        System.out.println(CryptDecrypt.getEncrypt("", SW_PASS));
     }
 }
 
