@@ -174,7 +174,7 @@ public class ExcelIntranet extends Intranet {
 
     @Override
     public String allConnectionFromSwitch(String switchIP, boolean onlySw) {
-        String result = "";
+        String result = "Все подключения от: " + switchIP + "\n";
         Set<String> allIP = new HashSet<>();
         allIP.add(switchIP);
         allIP.addAll(allIPConnected(switchIP));
