@@ -7,12 +7,10 @@ import javax.xml.bind.DatatypeConverter;
 import static MyWork.Config.*;
 
 public class CryptDecrypt {
-    private static final String LOGIN = "r.fedorin";
-    private static final String PASS = "L7hfTXmcYa";
 
     public static void main(String[] args) {
         // Configuration
-        String key	= "kolbasa#";
+        String key	= "123#";
         String secret = "L7hfTXmcYa";
         String secretCod = "bXFDZHf5gYHnnQkHAQL4+A==";
 
