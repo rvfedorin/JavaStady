@@ -2,11 +2,14 @@ package MyWork.NodesClass;
 
 import MyWork.Tools.CryptDecrypt;
 
+import java.util.regex.Pattern;
+
 import static MyWork.Config.ERROR_S;
 import static MyWork.Config.SUCCESS_S;
 import static MyWork.Config.SW_PASS;
 
 public class Switch {
+    private final Pattern ERROR_PATTERN;
     private final String LOGIN = "admin";
     private String pass;
     private String ip;
@@ -15,6 +18,7 @@ public class Switch {
     private boolean root;
 
     public Switch(String ip, String upPort, String downPort, boolean root, String pass) {
+        ERROR_PATTERN = Pattern.compile("Invalid|Error|Fail|exist|vlanid 2-4094");
         this.ip = ip;
         this.upPort = upPort;
         this.downPort = downPort;
@@ -49,6 +53,7 @@ public class Switch {
     }
 
     public String createClient(Customer customer) {
+        String result = "\n";
         Telnet connect = new Telnet(getIp(), 23);
         boolean successConnect = connect.auth(LOGIN, CryptDecrypt.getEncrypt(pass, SW_PASS));
 
@@ -60,30 +65,83 @@ public class Switch {
             if (!getUpPort().contains("null")) pUp = getUpPort();
 
             String create = "create vlan " + customer.getMnemokod() + " tag " + customer.getVlan();
-            String confTag = "conf vlan " + customer.getMnemokod() + " add tagged " + pUp + pDown;
+            result += connect.sendCommand(create) + "\n";
 
-            connect.sendCommand(create);
-            connect.sendCommand(confTag);
+            if(!ERROR_PATTERN.matcher(result).find()) {
+                String confTag = "conf vlan " + customer.getMnemokod() + " add tagged " + pUp + pDown;
+                result += connect.sendCommand(confTag) + "\n";
 
-            if (getIp().contains(customer.getIPswitch())) {
-                String confUntag;
-                if(customer.getUntagged())
-                    confUntag = "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();
-                else
-                    confUntag = "conf vlan " + customer.getMnemokod() + " add tagged " + customer.getPort();
+                if (getIp().contains(customer.getIPswitch())) {
+                    String confUntag;
+                    if (customer.getUntagged())
+                        confUntag = "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();
+                    else
+                        confUntag = "conf vlan " + customer.getMnemokod() + " add tagged " + customer.getPort();
 
-                connect.sendCommand(confUntag);
-            }
-
-//        System.out.println(create);
-//        System.out.println(confTag);
-
-            connect.sendCommand("Saving", "save\r\n");
+                    result += connect.sendCommand(confUntag) + "\n";
+                } // ** if untagged or not
+                result += connect.sendCommand("Saving", "save\r\n") + "\n";
+            } // ** if vlan exist then exit
 
             connect.close();
-
-            return SUCCESS_S;
         } // ** if connected
-        return ERROR_S;
+
+        if(isSuccess(result))
+            return SUCCESS_S + formatResult(result);
+        else
+            return ERROR_S + formatResult(result);
+    } // ** createClient(Customer customer)
+
+    public String deleteClient(Customer customer) {
+        String result = "\n";
+        Telnet connect = new Telnet(getIp(), 23);
+        boolean successConnect = connect.auth(LOGIN, CryptDecrypt.getEncrypt(pass, SW_PASS));
+        boolean ok = false;
+
+        if(successConnect) {
+            String deleteByName = "delete vlan " + customer.getMnemokod();
+            result += connect.sendCommand(deleteByName) + "\n";
+            if(!isSuccess(result)) {
+                String deleteByNumber = "delete vlan vlanid " + customer.getVlan();
+                result = connect.sendCommand(deleteByNumber) + "\n";
+                if(isSuccess(result)) {
+                    result += connect.sendCommand("Saving", "save\r\n") + "\n";
+                    ok = true;
+                } // ** save if customer is deleted
+            } // ** if it is with error
+
+            connect.close();
+        } // ** if connected
+
+        if(ok)
+            return SUCCESS_S + formatResult(result);
+        else
+            return ERROR_S + formatResult(result);
+    }
+
+    private String formatResult(String toFormat) {
+        StringBuilder result = new StringBuilder("\n");
+        for(String line: toFormat.split("\n")) {
+            line = line.trim();
+            if(line.length() > 0 && !line.contains("#")) {
+                result.append("\t").append(line).append("\n");
+                continue;
+            }
+            if(line.split("#").length < 2) {
+                continue;
+            }
+            result.append(line).append("\n");
+        } // ** for every line
+
+        return result.toString();
+    } // ** formatResult()
+
+    private boolean isSuccess(String result) {
+        for(String line: result.split("\n")) {
+            if(ERROR_PATTERN.matcher(line).find()) {
+                return false;
+            }
+        }
+        return true;
     }
 } // ** class Switch

@@ -1,12 +1,18 @@
 package other;
 
-import MyWork.Tools.CryptDecrypt;
-
-import static MyWork.Config.SW_PASS;
+import java.util.regex.Pattern;
 
 public class test {
     public static void main(String[] args) {
-        System.out.println(CryptDecrypt.getEncrypt("", SW_PASS));
+        Pattern ERROR_PATTERN = Pattern.compile("Invalid|Error|Fail|exist|vlanid 2-4094");
+        String s = "DGS-3420-28TC:admin#delete vlan Orel-test1\n" +
+                "Command: delete vlan Orel-test1\n" +
+                " The VLAN does not exi.\n" +
+                "!          Fail         ";
+
+        if(ERROR_PATTERN.matcher(s).find()) {
+            System.out.println("ERROR!!!!");
+        }
     }
 }
 

@@ -9,6 +9,7 @@ import MyWork.NodesClass.Region;
 import MyWork.NodesClass.Switch;
 import MyWork.Tools.Formatting;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -37,6 +38,9 @@ public class RunActionListener implements ActionListener {
         //getAllData() return String[]{mnemokod, vlan, IPswitch, port, untagged, createCis, city, action}
         String[] allData = workPanel.getAllData();
         boolean fineData = true;
+
+        if(allData[7].trim().equals(DELETE_S))
+            allData[3] = "999";
 
         // checks if all data was filled
         for (String s : allData) {
@@ -79,6 +83,7 @@ public class RunActionListener implements ActionListener {
 
             if (intranet != null) {
                 pathFromIntranet = intranet.getFullPath(mainFrame.customer.getIPswitch());
+                pathFromIntranet = pathFromIntranet.replaceAll("<\\\\/th>|<\\\\/td>|\\\\n|<td>|\\n|\\\\\"|\\s+", "");
             } else {
                 fineData = false;
             }
@@ -91,7 +96,6 @@ public class RunActionListener implements ActionListener {
 
             System.out.println("Создание клиента: ");
             eventPrint.printEvent("Создание клиента: ");
-            pathFromIntranet = pathFromIntranet.replaceAll("<\\\\/th>|<\\\\/td>|\\\\n|<td>|\\n|\\\\\"|\\s+", "");
             // Создаём
             new Thread(new ControlDoOnPathThreads(
                     pathFromIntranet,
@@ -270,6 +274,7 @@ class ControlDoOnPathThreads implements Runnable {
     @Override
     public void run() {
         ArrayList<Future> allThreadsSwitch = new ArrayList<>(); // threads connections to switches
+        StringBuilder dialogMessage = new StringBuilder();
 
         String[] piecesOfPath = pathFromIntranet.split(SEPARATOR_CONNECTION);
         String[] connectionList = Formatting.formatPath(pathFromIntranet);
@@ -316,6 +321,7 @@ class ControlDoOnPathThreads implements Runnable {
                 } catch (ExecutionException | InterruptedException ex) {
                     eventPrint.printEvent("[Error] ControlDoOnPathThreads -->> run()");
                     ex.printStackTrace();
+                    dialogMessage.append("[Error] ControlDoOnPathThreads -->> run()\n");
 //                } catch (TimeoutException timeEx) {
 //                    eventPrint.printEvent("[Warning] TimeoutException -> ControlDoOnPathThreads");
                 }
@@ -324,6 +330,7 @@ class ControlDoOnPathThreads implements Runnable {
             for (String PortIpPort : connectionList) {
                 String ip = PortIpPort.split(SEPARATOR_PORT)[1];
                 String result = resultMap.getOrDefault(ip, "[Error] " + ip + " not found in queue.");
+                dialogMessage.append(result.contains("Error") ? "[Error] " + ip + "\n" : "[Ok] " + ip + "\n");
                 eventPrint.printEvent(result);
             } // ** for on path
             eventPrint.printEvent(BLOCK);
@@ -331,7 +338,20 @@ class ControlDoOnPathThreads implements Runnable {
             pool.shutdown();
         } else {
             eventPrint.printEvent("[Error] wrong path format ControlDoOnPathThreads -> run()");
+            dialogMessage.append("[Error] wrong path format ControlDoOnPathThreads -> run()\n");
         }// main if
+
+        int dialogType;
+
+        if (dialogMessage.toString().contains("Error"))
+            dialogType = JOptionPane.ERROR_MESSAGE;
+        else
+            dialogType = JOptionPane.INFORMATION_MESSAGE;
+
+        JOptionPane.showMessageDialog(null,
+                dialogMessage,
+                "Result",
+                dialogType);
 
     } // ** run()
 } // ** class ControlDoOnPathThreads
@@ -378,16 +398,22 @@ class DoClientOnSwitchThread implements Runnable {
 
             if (aToDo.equals(CREATE_S)) { // <-------------------- CREATE SECTION
                 String result = aSwitch.createClient(aCustomer);
-                if (result.equals(SUCCESS_S))
-                    result = "Success " + aSwitch.getIp() + " " + result + " " + CREATE_S;
+                if (result.contains(SUCCESS_S))
+                    result = "Success " + aSwitch.getIp() + " " + CREATE_S + " " + result + LINE;
                 else
-                    result = "[Error] DoClientOnSwitchThread->run->createClient " + result + " " + CREATE_S;
+                    result = "[Error] DoClientOnSwitchThread->run->createClient \n" +
+                            "[Error] " + aSwitch.getIp() + " " + CREATE_S + " " + result + LINE;
 
                 resultMap.put(aSwitch.getIp(), result);
 
-            } else if (aToDo.equals(DELETE_S)) { // <-------------------- DELETE SECTION
-                System.out.println("Delete on sw " + aSwitch.getIp());
-                resultMap.put(aSwitch.getIp(), "Success " + " " + DELETE_S);
+            } else if (aToDo.contains(DELETE_S)) { // <-------------------- DELETE SECTION
+                String result = aSwitch.deleteClient(aCustomer);
+                if (result.contains(SUCCESS_S))
+                    result = "Success " + aSwitch.getIp() + " " + DELETE_S + " " + result + LINE;
+                else
+                    result = "[Error] DoClientOnSwitchThread->run->createClient \n" +
+                            "[Error] " + aSwitch.getIp() + " " + DELETE_S + " " + result + LINE;
+                resultMap.put(aSwitch.getIp(), result);
             }
         } // ** if correct
 

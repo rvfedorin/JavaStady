@@ -68,7 +68,7 @@ public class StringCounter implements Callable<Integer> {
             while (in.hasNextLine()) {
                 String str = in.nextLine();
                 if(str.trim().length() > 0)
-                    if(str.contains("concur")) System.out.println(file.getAbsolutePath());
+//                    if(str.contains("concur")) System.out.println(file.getAbsolutePath());
                     result ++;
             }
         } catch (Exception ex) {

@@ -40,7 +40,7 @@ public class Telnet {
         if (resultConnect) {
             client.sendCommand("show vlan vl 4001");
             client.sendCommand("show ports 2 err_disabled");
-            System.out.println("1 ==============>>>>>>>> ");
+//            System.out.println("1 ==============>>>>>>>> ");
             client.sendCommand("Done", "save");
 
 
@@ -97,8 +97,8 @@ public class Telnet {
         return result;
     } // auth()
 
-    public void sendCommand(String command) {
-        String result = "";
+    public String sendCommand(String command) {
+        StringBuilder result = new StringBuilder();
         try {
             out.println(command + "\r\n");
             sleep(100);
@@ -118,6 +118,8 @@ public class Telnet {
                     done = true;
                     continue;
                 }
+                result.append(line);
+                result.append("\n");
                 System.out.println(line);
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -130,11 +132,11 @@ public class Telnet {
                 out.close();
             }
         }
-//        return result;
+        return result.toString();
     }
 
-    public void sendCommand(String wait, String command) {
-        String result = "";
+    public String sendCommand(String wait, String command) {
+        StringBuilder result = new StringBuilder();
         try {
             out.println(command + "\r\n");
             sleep(100);
@@ -156,6 +158,8 @@ public class Telnet {
                 }
                 if(line.contains(wait))
                     done = true;
+                result.append(line);
+                result.append("\n");
                 System.out.println(line);
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -168,11 +172,11 @@ public class Telnet {
                 out.close();
             }
         }
-//        return result;
+        return result.toString();
     }
 
-    public void sendListCommands(ArrayList<String> commands) {
-        String result = "";
+    public String sendListCommands(ArrayList<String> commands) {
+        StringBuilder result = new StringBuilder();
         try {
 
             for(String command: commands) {
@@ -196,6 +200,8 @@ public class Telnet {
                     done = true;
                     continue;
                 }
+                result.append(line);
+                result.append("\n");
                 System.out.println(line.length());
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -208,6 +214,7 @@ public class Telnet {
                 out.close();
             }
         }
+        return result.toString();
     } // ** sendListCommands()
 
     public void setTimeout(int mls) {
