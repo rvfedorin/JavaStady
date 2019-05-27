@@ -16,15 +16,15 @@ import static MyWork.Config.*;
 import static MyWork.Config.INTRANET_TYPE.EXCEL;
 
 public class FullPathToSw extends JFrame {
-    private char[] passForWeb;
+    private char[] passKey;
     private EventPrintFrame toPrint;
     private String ipSw;
     private String city;
     private boolean withLinks;
 
-    public FullPathToSw(EventPrintFrame toPrint, char[] passForWeb) {
+    public FullPathToSw(EventPrintFrame toPrint, char[] passKey) {
         this.toPrint = toPrint;
-        this.passForWeb = passForWeb;
+        this.passKey = passKey;
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
@@ -91,14 +91,14 @@ public class FullPathToSw extends JFrame {
             Intranet intranet = null;
             if (CURRENT_INTRANET_TYPE == EXCEL) {
                 try {
-                    intranet = new ExcelIntranet(CITIES.get(city));
+                    intranet = new ExcelIntranet(passKey, CITIES.get(city));
                 } catch (FileNotFoundException ex) {
                     toPrint.printEvent(LINE);
                     toPrint.printEvent(ex.toString());
                     toPrint.printEvent(LINE);
                 }
             } else {
-                intranet = new WebIntranet(passForWeb, CITIES.get(city));
+                intranet = new WebIntranet(passKey, CITIES.get(city));
             }
 
             if(intranet != null && ipSw != null) {

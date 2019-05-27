@@ -4,9 +4,7 @@ import MyWork.Tools.CryptDecrypt;
 
 import java.util.regex.Pattern;
 
-import static MyWork.Config.ERROR_S;
-import static MyWork.Config.SUCCESS_S;
-import static MyWork.Config.SW_PASS;
+import static MyWork.Config.*;
 
 public class Switch {
     private final Pattern ERROR_PATTERN;
@@ -18,7 +16,7 @@ public class Switch {
     private boolean root;
 
     public Switch(String ip, String upPort, String downPort, boolean root, String pass) {
-        ERROR_PATTERN = Pattern.compile("Invalid|Error|Fail|exist|vlanid 2-4094");
+        ERROR_PATTERN = ERROR_ON_SWITCHES_PATTERN;
         this.ip = ip;
         this.upPort = upPort;
         this.downPort = downPort;
@@ -143,5 +141,31 @@ public class Switch {
             }
         }
         return true;
+    }
+
+    public String showVlanByName(String vlanName) {
+        String result = "[Error] connected to " + getIp();
+        Telnet connect = new Telnet(getIp(), 23);
+        boolean successConnect = connect.auth(LOGIN, CryptDecrypt.getEncrypt(pass, SW_PASS));
+        String showVlanCommand = "show vlan " + vlanName;
+
+        if(successConnect) {
+            result = formatResult(connect.sendCommand(showVlanCommand) + "\n");
+        }
+
+        return result;
+    }
+
+    public String showVlanByNumber(int number) {
+        String result = "[Error] connected to " + getIp();
+        Telnet connect = new Telnet(getIp(), 23);
+
+        boolean successConnect = connect.auth(LOGIN, CryptDecrypt.getEncrypt(pass, SW_PASS));
+        String showVlanCommand = "show vlan vlanid " + number;
+
+        if(successConnect) {
+            result = connect.sendCommand(showVlanCommand) + "\n";
+        }
+        return result;
     }
 } // ** class Switch

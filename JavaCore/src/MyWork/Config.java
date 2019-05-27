@@ -56,6 +56,7 @@ public abstract class Config {
     public static final Pattern CISCO_PATTERN = Pattern.compile("cisco");
     public static final Pattern MIKROTIK_PATTERN = Pattern.compile("mikrotik");
     public static final Pattern IP_PATTERN = Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
+    public static final Pattern ERROR_ON_SWITCHES_PATTERN = Pattern.compile("Invalid|Error|Fail|exist|vlanid 2-4094|Entries : 0|possible");
 
     public static final String SPEEDS_FILE = "speeds.txt";
     public static final String LOG_FILE = "log.txt";

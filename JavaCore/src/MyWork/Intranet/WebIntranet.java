@@ -242,4 +242,9 @@ public class WebIntranet extends Intranet{
     public String allConnectionFromSwitch(String switchIP, boolean onlySw) {
         return null;
     }
+
+    @Override
+    public String findClient(String mnemokod) {
+        return null;
+    }
 } // ** class

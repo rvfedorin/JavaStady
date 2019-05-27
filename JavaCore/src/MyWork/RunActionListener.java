@@ -73,7 +73,7 @@ public class RunActionListener implements ActionListener {
 
             if (CURRENT_INTRANET_TYPE == EXCEL) {
                 try {
-                    intranet = new ExcelIntranet(mainFrame.customer.getCity());
+                    intranet = new ExcelIntranet(mainFrame.authDialog.getPass(), mainFrame.customer.getCity());
                 } catch (FileNotFoundException ex) {
                     eventPrint.printEvent(ex.toString());
                 }

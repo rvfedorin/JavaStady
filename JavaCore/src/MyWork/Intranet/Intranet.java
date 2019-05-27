@@ -7,4 +7,5 @@ public abstract class Intranet {
 
     public abstract String getFullPath(String ipDev);
     public abstract String allConnectionFromSwitch(String switchIP, boolean onlySw);
+    public abstract String findClient(String mnemokod);
 }

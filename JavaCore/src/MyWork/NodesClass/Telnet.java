@@ -25,7 +25,7 @@ public class Telnet {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println("[Error] -> class " + getClass().getName() + " -> constructor() ");
         } // ** try
 
     }
@@ -90,8 +90,8 @@ public class Telnet {
                 }
             } // ** while()
             result = true;
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
+        } catch (InterruptedException | NullPointerException ex) {
+            System.out.println("[Error] -> class " + getClass().getName() + " -> auth() ");
         }
 
         return result;
@@ -120,7 +120,7 @@ public class Telnet {
                 }
                 result.append(line);
                 result.append("\n");
-                System.out.println(line);
+//                System.out.println(line);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 done = true;
