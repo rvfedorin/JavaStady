@@ -19,6 +19,7 @@ public class MainMenu {
     private JMenuItem clientSettings;
     private JMenuItem multiDelVlanItem;
     private JMenuItem multiCreateVlanItem;
+    private JMenuItem findCustomer;
 
     private JMenu switchMenu;
     private JMenuItem pathToSwItem;
@@ -47,6 +48,10 @@ public class MainMenu {
         toolsMenu.addSeparator();
         clientSettings = toolsMenu.add("Полные настройки клиента.");
         clientSettings.addActionListener(e -> new ClientFullSettings(mainFrame.eventPrintFrame));
+        findCustomer = toolsMenu.add("Найти клиента.");
+        findCustomer.addActionListener(e ->
+                new FindCustomer(mainFrame.eventPrintFrame, mainFrame.authDialog.getPass())
+        );
         toolsMenu.addSeparator();
         multiDelVlanItem = toolsMenu.add("Массовое создание vlan");
         multiCreateVlanItem = toolsMenu.add("Массовое удаление vlan");
