@@ -2,7 +2,8 @@ package MyWork.Tools;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.binary.Base64;
+//import javax.xml.bind.DatatypeConverter;
 
 import static MyWork.Config.*;
 
@@ -38,7 +39,8 @@ public class CryptDecrypt {
             ex.printStackTrace();
             return "Error";
         }
-        return DatatypeConverter.printBase64Binary(encoding);
+//        return DatatypeConverter.printBase64Binary(encoding);
+        return new String(Base64.encodeBase64(encoding));
     }
 
     public static String getEncrypt(String pass, String toEncryptString) {
@@ -46,7 +48,8 @@ public class CryptDecrypt {
         byte[] message;
         try {
             Cipher cipher = Cipher.getInstance("Blowfish/CBC/PKCS5Padding");
-            byte[] cryptoText = DatatypeConverter.parseBase64Binary(toEncryptString);
+//            byte[] cryptoText = DatatypeConverter.parseBase64Binary(toEncryptString);
+            byte[] cryptoText = Base64.decodeBase64(toEncryptString.getBytes());
             cipher.init(Cipher.DECRYPT_MODE, secKey, new javax.crypto.spec.IvParameterSpec(IV.getBytes()));
             message = cipher.doFinal(cryptoText);
         } catch (Exception ex) {

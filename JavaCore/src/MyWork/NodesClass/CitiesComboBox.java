@@ -1,7 +1,5 @@
 package MyWork.NodesClass;
 
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
