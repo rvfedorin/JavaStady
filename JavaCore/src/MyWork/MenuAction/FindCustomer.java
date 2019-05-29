@@ -72,6 +72,7 @@ public class FindCustomer extends JFrame{
         try {
             ExcelIntranet intranet = new ExcelIntranet(passKey, CITIES.get(city));
             String customerFrom = intranet.findClient(mnemokod);
+            toPrint.pDate();
             toPrint.printEvent(customerFrom);
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();

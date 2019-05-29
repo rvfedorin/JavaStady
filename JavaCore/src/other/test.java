@@ -1,20 +1,12 @@
 package other;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static MyWork.Config.IP_PATTERN;
-
 public class test {
     public static void main(String[] args) {
-        String port = "4";
-        String ip = "172.17.1.38";
-        String s = "matcher.find() 172.17.151.0/25  (unnumbered sw 172.17.1.38 port 2)";
-        Pattern connectPattern = Pattern.compile(".*\\D" + port + "\\D.*\\D" + ip + "\\D.*");
-        Matcher getIP = connectPattern.matcher(s);
-        if(getIP.find()) {
-            System.out.println(getIP.group());
-        }
+
+        String ip = "[28] 172.16.48.254(switch) [9] <=> [25] 172.16.48.42(switch) [3] <=> [9] 172.16.49.134(switch)";
+        ip = ip.replaceAll("\\(.*?\\)", "");
+        System.out.println(ip);
+
 
     }
 }

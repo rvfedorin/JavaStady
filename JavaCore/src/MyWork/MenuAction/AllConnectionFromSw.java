@@ -80,7 +80,7 @@ public class AllConnectionFromSw extends JFrame{
         this.pack();
         this.setVisible(true);
         ipSwField.requestFocusInWindow();
-    }
+    } // ** constructor
 
     private void getAllConnectionFromSwitch(){
         Intranet intranet = null;
@@ -89,6 +89,7 @@ public class AllConnectionFromSw extends JFrame{
                 intranet = new ExcelIntranet(passKey, CITIES.get(city));
             } catch (FileNotFoundException ex) {
                 toPrint.printEvent(LINE);
+                toPrint.pDate();
                 toPrint.printEvent(ex.toString());
                 toPrint.printEvent(LINE);
             }
@@ -98,12 +99,14 @@ public class AllConnectionFromSw extends JFrame{
 
         if(intranet != null && ipSw != null) {
             toPrint.printEvent(LINE);
+            toPrint.pDate();
             toPrint.printEvent(intranet.allConnectionFromSwitch(ipSw, onlySw));
             toPrint.printEvent(LINE);
         } else {
             toPrint.printEvent(LINE);
+            toPrint.pDate();
             toPrint.printEvent("[Error] class AllConnectionFromSw -> getAllConnectionFromSwitch -> if(intranet != null)");
             toPrint.printEvent(LINE);
         }
-    }
+    } // **  getAllConnectionFromSwitch(
 }

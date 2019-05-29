@@ -83,6 +83,7 @@ public class FullPathToSw extends JFrame {
     private void getFullPathToSw(){
         if(withLinks){
             toPrint.printEvent(LINE);
+            toPrint.pDate();
             toPrint.printEvent("С линками");
             toPrint.printEvent("Версия с линками пока не готова.");
             toPrint.printEvent(LINE);
@@ -94,6 +95,7 @@ public class FullPathToSw extends JFrame {
                     intranet = new ExcelIntranet(passKey, CITIES.get(city));
                 } catch (FileNotFoundException ex) {
                     toPrint.printEvent(LINE);
+                    toPrint.pDate();
                     toPrint.printEvent(ex.toString());
                     toPrint.printEvent(LINE);
                 }
@@ -102,11 +104,15 @@ public class FullPathToSw extends JFrame {
             }
 
             if(intranet != null && ipSw != null) {
+                String rawPath = intranet.getFullPath(ipSw);
+                String clearPath = rawPath.replaceAll("\\(.*?\\)", "");
                 toPrint.printEvent(LINE);
-                toPrint.printEvent(intranet.getFullPath(ipSw));
+                toPrint.pDate();
+                toPrint.printEvent(clearPath);
                 toPrint.printEvent(LINE);
             } else {
                 toPrint.printEvent(LINE);
+                toPrint.pDate();
                 toPrint.printEvent("[Error] class FullPathToSw -> getFullPathToSw -> if(intranet != null)");
                 toPrint.printEvent(LINE);
             }

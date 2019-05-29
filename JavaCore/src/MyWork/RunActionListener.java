@@ -67,6 +67,7 @@ public class RunActionListener implements ActionListener {
                 mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
             } catch (IllegalArgumentException ex) {
                 fineData = false;
+                eventPrint.pDate();
                 eventPrint.printEvent("[Error] " + ex.toString() + " " + city);
             }
 
@@ -75,6 +76,7 @@ public class RunActionListener implements ActionListener {
                 try {
                     intranet = new ExcelIntranet(mainFrame.authDialog.getPass(), mainFrame.customer.getCity());
                 } catch (FileNotFoundException ex) {
+                    eventPrint.pDate();
                     eventPrint.printEvent(ex.toString());
                 }
             } else {
@@ -91,12 +93,14 @@ public class RunActionListener implements ActionListener {
 
 
         if (fineData && action.equals(CREATE_S)) {
+            // Создаём
+            eventPrint.pDate();
             if (Boolean.valueOf(createCis))
                 System.out.println("С созданием на Cisco.");
 
             System.out.println("Создание клиента: ");
             eventPrint.printEvent("Создание клиента: ");
-            // Создаём
+
             new Thread(new ControlDoOnPathThreads(
                     pathFromIntranet,
                     mainFrame.customer,
@@ -111,6 +115,7 @@ public class RunActionListener implements ActionListener {
 
         } else if (fineData && action.equals(DELETE_S)) {
             // Удаляем
+            eventPrint.pDate();
             System.out.println("Удаление клиента: ");
             eventPrint.printEvent("Удаление клиента: ");
             new Thread(new ControlDoOnPathThreads(
@@ -127,6 +132,7 @@ public class RunActionListener implements ActionListener {
 
         } else if (action.equals(CHANGE_SPEED_S)) {
             // Меняем скорость
+            eventPrint.pDate();
             System.out.println("Смена скорости.");
             eventPrint.printEvent("Смена скорости.");
             new ChangeSpeedThread("speedChange", eventPrint, runningFrame);
@@ -157,6 +163,8 @@ class ChangeSpeedThread extends Thread {
             BufferedReader frSpeedFile = ExtendedOpenFile.readFile();
             if (frSpeedFile != null) readFile(frSpeedFile);
         } catch (Exception ex) {
+            frameEvent.pDate();
+            frameEvent.printEvent("Error in ChangeSpeedThread -> run()");
             System.out.println("Error in ChangeSpeedThread -> run()");
             throw ex;
         } finally {
@@ -183,6 +191,7 @@ class ChangeSpeedThread extends Thread {
                     if (key != null && !key.isEmpty()) {
                         key = key.substring(0, 1).toUpperCase() + key.substring(1);
                     } else {
+                        frameEvent.pDate();
                         frameEvent.printEvent(tempLine);
                         frameEvent.printEvent("[!!!] Error. City key not found!");
                         frameEvent.printEvent(LINE);
@@ -197,6 +206,7 @@ class ChangeSpeedThread extends Thread {
                         if (clientNewSpeed.length >= 2) {
                             formattedSpeed = getFormattedSpeed("service-policy", clientNewSpeed[1]);
                         } else {
+                            frameEvent.pDate();
                             frameEvent.printEvent(tempLine);
                             frameEvent.printEvent("[!!!] Error parse line speed.");
                             frameEvent.printEvent(LINE);
@@ -221,6 +231,7 @@ class ChangeSpeedThread extends Thread {
                         // ************** END REMOVE AFTER TESTS ********************************
 
                         // ************** START PRINT EVENT ********************************
+                        frameEvent.pDate();
                         frameEvent.printEvent(tempLine);
                         frameEvent.printEvent(line);
                         frameEvent.printEvent("ОП " + citySpeed.getCity());
@@ -286,6 +297,7 @@ class ControlDoOnPathThreads implements Runnable {
                 String node = "[" + cellConnect[0] + "]" + cellConnect[1] + "[" + cellConnect[2] + "] <=>";
                 humanPath.append(node);
             }
+            eventPrint.pDate();
             eventPrint.printEvent(humanPath.toString());
             eventPrint.printEvent(LINE);
             int i = 0;

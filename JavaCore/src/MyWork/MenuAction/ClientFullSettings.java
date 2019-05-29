@@ -45,6 +45,7 @@ public class ClientFullSettings extends JFrame {
 
         if (cl.length > 3) {
             toPrint.printEvent(LINE);
+            toPrint.pDate();
             if(data.contains("number")) {
                 toPrint.printEvent("IP " + cl[3]);
                 toPrint.printEvent("MASK 255.255.255.0");

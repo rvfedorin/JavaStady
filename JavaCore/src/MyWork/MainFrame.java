@@ -22,6 +22,7 @@ public class MainFrame {
                 // ************** END AUTH ****************
                 mainWindow.setVisible(true);
                 mainWindow.eventPrintFrame.setVisible(true);
+                mainWindow.eventPrintFrame.pDate();
                 mainWindow.eventPrintFrame.printEvent("Success logged.");
                 mainWindow.eventPrintFrame.printEvent(LINE);
 
