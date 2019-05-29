@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class EventPrintFrame extends JFrame {
-    public ExtendedTextArea textField;
+    private ExtendedTextArea textField;
 
     EventPrintFrame() {
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

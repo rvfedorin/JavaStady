@@ -2,6 +2,7 @@ package MyWork.NodesClass;
 
 import MyWork.Tools.CryptDecrypt;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import static MyWork.Config.*;
@@ -154,7 +155,7 @@ public class Switch {
         }
 
         return result;
-    }
+    } // ** showVlanByName(String vlanName)
 
     public String showVlanByNumber(int number) {
         String result = "[Error] connected to " + getIp();
@@ -168,4 +169,16 @@ public class Switch {
         }
         return result;
     }
+
+    public String runCommand(ArrayList<String> command) {
+        String result = "[Error] connected to " + getIp();
+        Telnet connect = new Telnet(getIp(), 23);
+        boolean successConnect = connect.auth(LOGIN, CryptDecrypt.getEncrypt(pass, SW_PASS));
+
+        if(successConnect) {
+            result = formatResult(connect.sendListCommands(command) + "\n");
+        }
+
+        return result;
+    } // ** showVlanByName(String vlanName)
 } // ** class Switch
