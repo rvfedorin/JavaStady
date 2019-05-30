@@ -20,7 +20,7 @@ public class Telnet {
     public Telnet(String host, int port) {
         try {
             socket = new Socket(host, port);
-            socket.setSoTimeout(10 * 1000);
+            socket.setSoTimeout(3 * 1000);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -160,7 +160,7 @@ public class Telnet {
                     done = true;
                 result.append(line);
                 result.append("\n");
-                System.out.println(line);
+//                System.out.println(line);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 done = true;
@@ -181,7 +181,7 @@ public class Telnet {
 
             for(String command: commands) {
                 out.println(command + "\r\n");
-                sleep(100);
+                sleep(300);
             }
 
             out.println(END + "\r\n");
@@ -202,7 +202,7 @@ public class Telnet {
                 }
                 result.append(line);
                 result.append("\n");
-                System.out.println(line.length());
+//                System.out.println(line.length());
             } catch (IOException ex) {
                 ex.printStackTrace();
                 done = true;
@@ -214,6 +214,7 @@ public class Telnet {
                 out.close();
             }
         }
+//        System.out.println("RES -->> " + result);
         return result.toString();
     } // ** sendListCommands()
 

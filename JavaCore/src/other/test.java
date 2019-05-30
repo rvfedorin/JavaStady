@@ -1,5 +1,7 @@
 package other;
 
+import static MyWork.Config.IP_PATTERN;
+
 public class test {
     public static void main(String[] args) {
 
@@ -7,10 +9,30 @@ public class test {
         ip = ip.replaceAll("\\(.*?\\)|]|\\[", "");
         System.out.println(ip);
         int i = 0;
-        ip = ip.replaceFirst(" <=> ", "");
-        for(String node: ip.split("<=>")){
-            System.out.println(node.replaceAll("\\s*", ""));
-            System.out.println(i++);
+        ip = ip.replaceFirst(" <=> ", "").replaceAll("\\s+", " ").trim();
+        for (String node : ip.split(" <=> ")) {
+//            System.out.println(node.replaceAll("\\s*", ""));
+//            System.out.println(i++);
+            String[] portSwitchPort = node.split(" ");
+            System.out.println("NODE "+node);
+            System.out.println(portSwitchPort.length);
+            String upPort = null, ipSw = null, downPort = null;
+            if (portSwitchPort.length == 3) {
+                upPort = portSwitchPort[0].replaceAll("\\s*", "");
+                ipSw = portSwitchPort[1].replaceAll("\\s*", "");
+                downPort = portSwitchPort[2].replaceAll("\\s*", "");
+            } else if (portSwitchPort.length == 2) {
+                if (IP_PATTERN.matcher(portSwitchPort[0]).find()) {
+                    upPort = "null";
+                    ipSw = portSwitchPort[0].replaceAll("\\s*", "");
+                    downPort = portSwitchPort[1].replaceAll("\\s*", "");
+                } else {
+                    upPort = portSwitchPort[0].replaceAll("\\s*", "");
+                    ipSw = portSwitchPort[1].replaceAll("\\s*", "");
+                    downPort = "null";
+                }
+            }
+            System.out.println("--> " + upPort + " " + ipSw + " " + downPort);
         }
 
 

@@ -56,7 +56,10 @@ public class FullPathToSw extends JFrame {
                 ipSw = ipSwField.getText();
                 withLinks = withLinksField.isSelected();
                 city = CITIES_BY_NAME.get(citiesComboBox.getItemAt(citiesComboBox.getSelectedIndex()));
-                getFullPathToSw();
+                Thread thread = new Thread(()-> {
+                    getFullPathToSw();
+                });
+                thread.start();
                 this.dispose();
             }
         });
@@ -133,10 +136,14 @@ public class FullPathToSw extends JFrame {
         ExecutorService poolThreads = Executors.newCachedThreadPool();
         ConcurrentHashMap<String, FutureTask> nodesResponse = new ConcurrentHashMap<>();
         StringBuilder ipPath = new StringBuilder();
+        path = path.replaceAll("\\s+", " ").trim();
+        System.out.println("PATH: " + path);
 
         for (String node : path.split(SEPARATOR_CONNECTION)) {
+
             if (SWITCH_PATTERN.matcher(node).find()) {
-                node = node.replaceAll("\\(.*?\\)|]|\\[", "");
+                node = node.replaceAll("\\(.*?\\)|]|\\[", "").trim();
+//                System.out.println("++++++++++++++++++++++++++++++++++++++ " + node + "++++++++++++");
                 String[] portSwitchPort = node.split(" ");
                 String upPort = null, ipSw = null, downPort = null;
                 if (portSwitchPort.length == 3) {
@@ -154,7 +161,7 @@ public class FullPathToSw extends JFrame {
                         downPort = "null";
                     }
                 }
-                if (ipSw != null) {
+                if (ipSw != null && IP_PATTERN.matcher(ipSw).find()) {
                     Switch sw = new Switch(ipSw, upPort, downPort, false, new String(passKey));
                     getNodeLinksConnect nodeLinksConnect = new getNodeLinksConnect(sw);
                     FutureTask<String> task = new FutureTask<>(nodeLinksConnect);
@@ -164,14 +171,21 @@ public class FullPathToSw extends JFrame {
                 } else {
                     resultBuilder.append("[").append(node).append("]");
                 }
-                String ipPathStr = ipPath.toString().replaceFirst(SEPARATOR_CONNECTION, "");
-                for(String ip: ipPathStr.split(SEPARATOR_CONNECTION)) {
-                    System.out.println(nodesResponse.get(ip));
-                    resultBuilder.append(nodesResponse.get(ip));
-                }
             } // ** if it is switch
-            result = resultBuilder.toString();
+        } // ** for path.split(SEPARATOR_CONNECTION)
+
+        String ipPathStr = ipPath.toString().replaceFirst(SEPARATOR_CONNECTION, "");
+        for (String ip : ipPathStr.split(SEPARATOR_CONNECTION)) {
+            try {
+//                System.out.println("nodesResponse.get(ip).get() " + nodesResponse.get(ip).get());
+                resultBuilder.append(SEPARATOR_CONNECTION).append(nodesResponse.get(ip).get());
+            } catch (Exception e) {
+                System.out.println("[Error] nodesResponse.get(ip).get()");
+            }
         }
+
+        result = resultBuilder.toString();
+
         return result;
     }
 } // ** class
@@ -185,13 +199,59 @@ class getNodeLinksConnect implements Callable<String> {
 
     @Override
     public String call() {
-        String result = "";
-        ArrayList<String> commands = new ArrayList<>();
-        commands.add("sh ports " + swNode.getUpPort() + " detail");
-        commands.add("q");
-        String resultCommand = swNode.runCommand(commands);
+        String result;
+        ArrayList<String> commandsUpPort = new ArrayList<>();
+        ArrayList<String> commandsDownPort = new ArrayList<>();
 
-        result = resultCommand;
+        commandsUpPort.add("sh ports " + swNode.getUpPort());
+        commandsUpPort.add("q");
+
+        commandsDownPort.add("sh ports " + swNode.getDownPort());
+        commandsDownPort.add("q");
+
+        String upPort = !swNode.getUpPort().contains("null") ? swNode.runCommand(commandsUpPort) : "null";
+        upPort = formatPort(upPort, swNode.getUpPort());
+        String downPort = !swNode.getDownPort().contains("null") ? swNode.runCommand(commandsDownPort) : "null";
+        downPort = formatPort(downPort, swNode.getDownPort());
+
+        boolean foundUp = false;
+        boolean foundDown = false;
+
+        for (String speedKey : SPEEDS.keySet()) {
+            if (upPort.contains(speedKey)) {
+                upPort = SPEEDS.get(speedKey);
+                foundUp = true;
+            }
+            if (downPort.contains(speedKey)) {
+                downPort = SPEEDS.get(speedKey);
+                foundDown = true;
+            }
+        }
+
+        if(!foundDown) downPort = "?";
+        if(!foundUp) upPort = "?";
+
+        result = "(" + swNode.getUpPort() + upPort + ")-" + swNode.getIp() + "-(" + swNode.getDownPort() + downPort + ")";
+
+        return result;
+    }
+
+    private String formatPort(String out, String port) {
+        String result = "null";
+
+        for(String line: out.split("\n")) {
+            if(line.contains(port) && !line.contains("Down")) {
+                line = line.replaceAll("\\(C\\)|\\(F\\)", "");
+                line = line.replaceAll("\\s+", " ").trim();
+                String[] blocks = line.split(" ");
+                if(blocks.length >= 4)
+                    line = blocks[3];
+//                System.out.println(line);
+
+                result += line + "\n";
+            }
+        }
+
         return result;
     }
 

@@ -97,6 +97,14 @@ public abstract class Config {
         CITIES.forEach((k, v) -> CITIES_BY_NAME.put(v.getCity(), k));
     }
 
+    public static final HashMap<String, String > SPEEDS;
+    static {
+        SPEEDS = new HashMap<>();
+        SPEEDS.put("10G", "TenG");
+        SPEEDS.put("1000M", "Gi");
+        SPEEDS.put("100M", "Fa");
+    }
+
     public static final String SUCCESS_S = "Ok";
     public static final String ERROR_S = "[Error]";
 
