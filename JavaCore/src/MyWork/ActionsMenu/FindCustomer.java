@@ -1,10 +1,9 @@
-package MyWork.MenuAction;
+package MyWork.ActionsMenu;
 
 import MyWork.EventPrintFrame;
 import MyWork.ExtendStandart.ExtendedTextField;
 import MyWork.Intranet.ExcelIntranet;
 import MyWork.NodesClass.CitiesComboBox;
-import MyWork.Verifiers.IPVerifier;
 
 import javax.swing.*;
 import java.awt.*;

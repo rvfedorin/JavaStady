@@ -8,7 +8,7 @@ import java.awt.*;
 
 import static MyWork.Config.*;
 
-import MyWork.MenuAction.*;
+import MyWork.ActionsMenu.*;
 
 public class MainMenu {
     private MainWindow mainFrame;

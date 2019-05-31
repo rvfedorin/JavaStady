@@ -1,4 +1,4 @@
-package MyWork.MenuAction;
+package MyWork.ActionsMenu;
 
 import javax.swing.*;
 import java.awt.*;

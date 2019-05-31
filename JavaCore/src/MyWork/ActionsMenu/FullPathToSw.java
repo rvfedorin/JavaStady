@@ -1,4 +1,4 @@
-package MyWork.MenuAction;
+package MyWork.ActionsMenu;
 
 import MyWork.EventPrintFrame;
 import MyWork.ExtendStandart.ExtendedTextField;

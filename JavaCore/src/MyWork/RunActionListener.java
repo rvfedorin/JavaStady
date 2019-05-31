@@ -1,5 +1,7 @@
 package MyWork;
 
+import MyWork.Actions.ChangeSpeedThread;
+import MyWork.Actions.DoClientOnSwitchThread;
 import MyWork.ExtendStandart.ExtendedOpenFile;
 import MyWork.Intranet.ExcelIntranet;
 import MyWork.Intranet.Intranet;
@@ -145,119 +147,6 @@ public class RunActionListener implements ActionListener {
 } //
 // ** class RunActionListener
 
-class ChangeSpeedThread extends Thread {
-    private EventPrintFrame frameEvent;
-    private CurrentlyRunningFrame runningFrame;
-
-    ChangeSpeedThread(String name, EventPrintFrame printEvent, CurrentlyRunningFrame fr) {
-        super(name);
-        this.frameEvent = printEvent;
-        this.runningFrame = fr;
-        this.start();
-    }
-
-    @Override
-    public void run() {
-        int idLineOnCurrentProcess = runningFrame.addLine("Смена скоростей.", this);
-        try {
-            BufferedReader frSpeedFile = ExtendedOpenFile.readFile();
-            if (frSpeedFile != null) readFile(frSpeedFile);
-        } catch (Exception ex) {
-            frameEvent.pDate();
-            frameEvent.printEvent("Error in ChangeSpeedThread -> run()");
-            System.out.println("Error in ChangeSpeedThread -> run()");
-            throw ex;
-        } finally {
-            runningFrame.removeLine(idLineOnCurrentProcess);
-        }
-    } // ** run()
-
-    private void readFile(BufferedReader frSpeedFile) {
-        String line = "";
-
-        do {
-            try {
-                line = frSpeedFile.readLine();
-                if (line != null && !line.matches("^\\s*$")) {
-//                    System.out.println(line);
-                    String tempLine = line;
-                    line = getParsedString(line);
-//                    System.out.println(line);
-
-                    String[] formattedSpeed;
-                    // get prefix of mnemokod
-                    String key = line.split("-")[0];
-                    // if first letter in lowercase
-                    if (key != null && !key.isEmpty()) {
-                        key = key.substring(0, 1).toUpperCase() + key.substring(1);
-                    } else {
-                        frameEvent.pDate();
-                        frameEvent.printEvent(tempLine);
-                        frameEvent.printEvent("[!!!] Error. City key not found!");
-                        frameEvent.printEvent(LINE);
-                        continue;
-                    }
-
-                    String[] clientNewSpeed = line.split(" ");  // ** [0] mnemokod; [1] speed
-                    // get OP
-                    Region citySpeed = CITIES.getOrDefault(key, null);
-
-                    if (citySpeed != null) { // if we have found city
-                        if (clientNewSpeed.length >= 2) {
-                            formattedSpeed = getFormattedSpeed("service-policy", clientNewSpeed[1]);
-                        } else {
-                            frameEvent.pDate();
-                            frameEvent.printEvent(tempLine);
-                            frameEvent.printEvent("[!!!] Error parse line speed.");
-                            frameEvent.printEvent(LINE);
-                            continue;
-                        }
-
-                        // ************** START REMOVE AFTER TESTS ********************************
-//                        System.out.println(">" + line.trim() + "<" + " строка " + i);
-//                        System.out.println("ОП " + citySpeed);
-//
-//                        if(formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
-//                            for (String s : formattedSpeed) {
-//                                System.out.println(s);
-//                            }
-//                        } else if(formattedSpeed != null) {
-//                            System.out.println(formattedSpeed[0] + formattedSpeed[1]);
-//                        } else {
-//                            System.out.println("getFormattedSpeed return NULL!");
-//                        }
-//
-//                        System.out.println(LINE);
-                        // ************** END REMOVE AFTER TESTS ********************************
-
-                        // ************** START PRINT EVENT ********************************
-                        frameEvent.pDate();
-                        frameEvent.printEvent(tempLine);
-                        frameEvent.printEvent(line);
-                        frameEvent.printEvent("ОП " + citySpeed.getCity());
-                        if (formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
-                            for (String s : formattedSpeed) {
-                                frameEvent.printEvent(s);
-                            }
-                        } else if (formattedSpeed != null) {
-                            frameEvent.printEvent(formattedSpeed[0] + formattedSpeed[1]);
-                        } else {
-                            frameEvent.printEvent("getFormattedSpeed return NULL!");
-                        }
-                        frameEvent.printEvent(LINE);
-                        // ************** END PRINT EVENT ********************************
-
-                        Thread.sleep(1000); // for test
-                    }
-                } // if(line != null)
-            } catch (IOException | InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        } while (line != null);
-        frameEvent.printEvent(BLOCK);
-    } // ** readFile(BufferedReader frSpeedFile)
-}
-
 class ControlDoOnPathThreads implements Runnable {
     private String ToDo;
     private String pathFromIntranet;
@@ -368,69 +257,4 @@ class ControlDoOnPathThreads implements Runnable {
     } // ** run()
 } // ** class ControlDoOnPathThreads
 
-class DoClientOnSwitchThread implements Runnable {
-    private Customer aCustomer;
-    private Switch aSwitch;
-    private boolean correct = true;
-    private String aToDo;
-    private CurrentlyRunningFrame runningFrame;
-    private ConcurrentHashMap<String, String> resultMap;
 
-    DoClientOnSwitchThread(String dataSwitch,
-                           boolean root,
-                           Customer customer,
-                           String toDo,
-                           CurrentlyRunningFrame fr,
-                           ConcurrentHashMap<String, String> resultMap,
-                           String enterPass) {
-        this.aCustomer = customer;
-        this.aToDo = toDo; // delete or create CREATE_S or DELETE_S
-        this.runningFrame = fr;
-        this.resultMap = resultMap;
-
-        String[] connection = dataSwitch.split(SEPARATOR_PORT);
-        if (connection.length == 3 && correct) {
-            String upPort = connection[0];
-            String ipSw = connection[1];
-            String downPort = connection[2];
-            aSwitch = new Switch(ipSw, upPort, downPort, root, enterPass);
-        }
-
-    } // ** constructor
-
-    @Override
-    public void run() {
-        int idLineOnCurrentProcess = -1;
-//        super.run();
-
-        if (correct) {
-            Thread.currentThread().setName("Do on " + aSwitch.getIp());
-            String message = aToDo + " на свитче " + aSwitch.getIp();
-            idLineOnCurrentProcess = runningFrame.addLine(message, Thread.currentThread());
-
-            if (aToDo.equals(CREATE_S)) { // <-------------------- CREATE SECTION
-                String result = aSwitch.createClient(aCustomer);
-                if (result.contains(SUCCESS_S))
-                    result = "Success " + aSwitch.getIp() + " " + CREATE_S + " " + result + LINE;
-                else
-                    result = "[Error] DoClientOnSwitchThread->run->createClient \n" +
-                            "[Error] " + aSwitch.getIp() + " " + CREATE_S + " " + result + LINE;
-
-                resultMap.put(aSwitch.getIp(), result);
-
-            } else if (aToDo.contains(DELETE_S)) { // <-------------------- DELETE SECTION
-                String result = aSwitch.deleteClient(aCustomer);
-                if (result.contains(SUCCESS_S))
-                    result = "Success " + aSwitch.getIp() + " " + DELETE_S + " " + result + LINE;
-                else
-                    result = "[Error] DoClientOnSwitchThread->run->createClient \n" +
-                            "[Error] " + aSwitch.getIp() + " " + DELETE_S + " " + result + LINE;
-                resultMap.put(aSwitch.getIp(), result);
-            }
-        } // ** if correct
-
-        if (idLineOnCurrentProcess > 0)
-            runningFrame.removeLine(idLineOnCurrentProcess);
-
-    } // ** run()
-} // ** class DoClientOnSwitchThread
