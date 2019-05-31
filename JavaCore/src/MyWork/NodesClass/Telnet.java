@@ -81,15 +81,19 @@ public class Telnet {
             while (!done) {
                 try {
                     String line = in.readLine();
-                    if (line.contains(END) || line.contains("Fail"))
+                    if(line.contains("Fail") || line.contains("DES-2108")) {
                         done = true;
+                    } else if (line.contains(END)){
+                        done = true;
+                        result = true;
 //                    System.out.println(line);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     done = true;
                 }
             } // ** while()
-            result = true;
+
         } catch (InterruptedException | NullPointerException ex) {
             System.out.println("[Error] -> class " + getClass().getName() + " -> auth() ");
         }

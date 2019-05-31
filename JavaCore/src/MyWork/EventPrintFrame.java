@@ -35,7 +35,8 @@ public class EventPrintFrame extends JFrame {
         Date date = new Date();
         SimpleDateFormat dateView = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
         EventQueue.invokeLater(() -> {
-            textField.append("\t\t[DATE] " + dateView.format(date) + "\n");
+            textField.append("\t\t[DATE] " + dateView.format(date) + " [DATE]\n");
+            textField.append("\t\t===========================\n");
         });
     }
 }
