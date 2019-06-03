@@ -1,10 +1,10 @@
 package MyWork;
 
+import MyWork.Actions.FreePorts;
 import MyWork.ExtendStandart.AdapterDocumentListener;
 import MyWork.ExtendStandart.CustomBorder;
 import MyWork.ExtendStandart.ExtendedTextField;
 import MyWork.NodesClass.CitiesComboBox;
-import MyWork.NodesClass.Region;
 import MyWork.Verifiers.IPVerifier;
 
 import javax.swing.*;
@@ -21,12 +21,14 @@ public class MainPanelOptic extends JPanel {
     public InputPanel inputPanel;
     public RightPartPanel rightPanel;
     public SelectActionPanel selectActionPanel;
+    private MainWindow mainWindow;
 
-    MainPanelOptic() {
+    MainPanelOptic(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
         setLayout(new BorderLayout());
 
         inputPanel = new InputPanel();
-        rightPanel = new RightPartPanel();
+        rightPanel = new RightPartPanel(mainWindow);
         selectActionPanel = new SelectActionPanel();
 
         // START LISTENER SELECTION PANEL
@@ -163,14 +165,30 @@ class RightPartPanel extends JPanel {
     public JButton freePortBut;
     public JButton changeSpeedBut;
     public CitiesComboBox citiesComboBox;
+    private MainWindow mainWindow;
 
-    RightPartPanel() {
+    RightPartPanel(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
 
 //        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setLayout(new GridLayout(6,0));
         setBorder(BorderFactory.createEmptyBorder(0,4,0,2));
         freeVlanBut = new JButton("Найти свободный влан");
         freePortBut = new JButton("Найти свободный порт");
+        freePortBut.addActionListener((e)-> {
+            JTextField ipField = (JTextField) mainWindow.mainPanel.opticPanel.inputPanel.allTF.get(IP_SWITCH_S);
+            if(ipField.getInputVerifier().verify(ipField)) {
+                mainWindow.eventPrintFrame.pDate();
+                String ip = ipField.getText();
+                char[] key = mainWindow.authDialog.getPass();
+                EventPrintFrame toPrint = mainWindow.eventPrintFrame;
+                new FreePorts(ip, key, toPrint).start();
+            } else if (ipField.getText().length() <= 0) {
+                mainWindow.eventPrintFrame.printEvent("[Error] Не задан IP свитча.");
+            } else {
+                mainWindow.eventPrintFrame.printEvent("[Error] Некорректный IP свитча: " + ipField.getText());
+            }
+        });
         changeSpeedBut = new JButton("Файл скоростей.");
         changeSpeedBut.setEnabled(false);
         changeSpeedBut.addActionListener(e -> {

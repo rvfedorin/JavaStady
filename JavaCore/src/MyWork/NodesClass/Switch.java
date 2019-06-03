@@ -176,7 +176,7 @@ public class Switch {
         boolean successConnect = connect.auth(LOGIN, CryptDecrypt.getEncrypt(pass, SW_PASS));
 
         if(successConnect) {
-            result = formatResult(connect.sendListCommands(command) + "\n");
+            result = formatResult(connect.sendListCommands(command));
         }
 
         return result;

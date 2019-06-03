@@ -63,7 +63,7 @@ class MainWindow extends JFrame {
 
         authDialog = new AuthDialog(this);
         mainMenu = new MainMenu(this);
-        mainPanel = new MainPanel();
+        mainPanel = new MainPanel(this);
         currentlyRunning = new CurrentlyRunningFrame(this);
         eventPrintFrame = new EventPrintFrame();
         add(mainPanel, BorderLayout.CENTER);
@@ -93,13 +93,15 @@ class MainPanel extends JPanel {
     MainPanelOptic opticPanel;
     private JPanel mbPanel;
     private JPanel rwrPanel;
+    private MainWindow mainWindow;
 
 
 
-    MainPanel() {
+    MainPanel(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(2,4,2,0));
-        opticPanel = new MainPanelOptic();
+        opticPanel = new MainPanelOptic(mainWindow);
         mbPanel = new MainPanelMB();
         rwrPanel = new MainPanelRWR();
 

@@ -25,7 +25,7 @@ public abstract class Config {
     public static final String CREATE_CISCO_S = "Создать на Cisco";
     public static final String DELETE_CISCO_S = "Удалить на Cisco";
     public static final String ACT_ON_CISCO_S = "Действие на Cisco";
-    public static final String LINE = "===================================";
+    public static final String LINE = "====================================================";
     public static final String BLOCK = "" +
             "\n*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=" +
             "\n*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=" +
