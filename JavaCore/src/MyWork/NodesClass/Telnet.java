@@ -199,7 +199,7 @@ public class Telnet {
         while (!done) {
             try {
                 String line = in.readLine();
-                 if (line.length() < 1 || line.length() == 80)
+                 if (line.length() < 1)
                     continue;
                 if (line.contains(END)) {
                     done = true;

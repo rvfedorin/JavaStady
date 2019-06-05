@@ -126,12 +126,13 @@ public class Switch {
                 result.append("\t").append(line).append("\n");
                 continue;
             }
+
             if(line.split("#").length < 2) {
                 continue;
             }
             result.append(line).append("\n");
         } // ** for every line
-
+//        System.out.println(result.toString());
         return result.toString();
     } // ** formatResult()
 

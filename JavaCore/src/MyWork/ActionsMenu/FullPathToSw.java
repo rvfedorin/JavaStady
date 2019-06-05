@@ -56,7 +56,7 @@ public class FullPathToSw extends JFrame {
                 ipSw = ipSwField.getText();
                 withLinks = withLinksField.isSelected();
                 city = CITIES_BY_NAME.get(citiesComboBox.getItemAt(citiesComboBox.getSelectedIndex()));
-                Thread thread = new Thread(()-> {
+                Thread thread = new Thread(() -> {
                     getFullPathToSw();
                 });
                 thread.start();
@@ -92,7 +92,7 @@ public class FullPathToSw extends JFrame {
             toPrint.printEvent(LINE);
             toPrint.pDate();
             toPrint.printEvent("С линками");
-            toPrint.printEvent(getLinks(rawPath));
+            toPrint.printEvent(rawPath.contains("Error") ? rawPath : getLinks(rawPath));
             toPrint.printEvent(LINE);
         } else {
             String clearPath = rawPath.replaceAll("\\(.*?\\)", "");
@@ -228,8 +228,8 @@ class getNodeLinksConnect implements Callable<String> {
             }
         }
 
-        if(!foundDown) downPort = "?";
-        if(!foundUp) upPort = "?";
+        if (!foundDown) downPort = "?";
+        if (!foundUp) upPort = "?";
 
         result = "(" + swNode.getUpPort() + upPort + ")-" + swNode.getIp() + "-(" + swNode.getDownPort() + downPort + ")";
 
@@ -239,18 +239,18 @@ class getNodeLinksConnect implements Callable<String> {
     private String formatPort(String out, String port) {
         String result = "null";
 
-        for(String line: out.split("\n")) {
-            if(line.contains(port) && !line.contains("Down")) {
+        for (String line : out.split("\n")) {
+            if (line.contains(port) && !line.contains("Down")) {
                 line = line.replaceAll("\\(C\\)|\\(F\\)", "");
                 line = line.replaceAll("\\s+", " ").trim();
                 String[] blocks = line.split(" ");
-                if(blocks.length >= 4)
+                if (blocks.length >= 4)
                     line = blocks[3];
 //                System.out.println(line);
 
                 result += line + "\n";
             }
-        }
+        } // ** for lines of out
 
         return result;
     }

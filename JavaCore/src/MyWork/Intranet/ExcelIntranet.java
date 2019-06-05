@@ -71,7 +71,12 @@ public class ExcelIntranet extends Intranet {
 
     private String findConnect(String ipDev) {
         String connect = "";
-        int cellID = Integer.valueOf(region.getDevCellId());
+        int cellID;
+        try {
+            cellID = Integer.valueOf(region.getDevCellId());
+        } catch (Exception ex) {
+            return "[Error] when try get ID of region (package Intranet -> class ExcelIntranet)";
+        }
         HSSFSheet sheet = workbook.getSheetAt(0);
         Iterator<Row> rows = sheet.rowIterator();
 
@@ -79,8 +84,14 @@ public class ExcelIntranet extends Intranet {
             Row row = rows.next();
             if (row == null) continue;
             Cell cellDevIP = row.getCell(cellID);
-            if (cellDevIP != null && cellDevIP.getStringCellValue().equals(ipDev)) {
-                String ip = cellDevIP.getStringCellValue();
+            String cellValue;
+            try {
+                cellValue = cellDevIP.getStringCellValue();
+            } catch (Exception ex) {
+                continue;
+            }
+            if (cellValue.equals(ipDev)) {
+                String ip = cellValue;
                 String from = row.getCell(cellID + 1).getStringCellValue().replaceAll("\\d/", "");
                 if (from.trim().length() < 8) { // ** START if connect UP is broken
                     if (ip.equals(region.getCoreSwitch())) { // ** check if it is broken because it id root sw
@@ -105,7 +116,7 @@ public class ExcelIntranet extends Intranet {
             }
         } // ** while
         if (connect.length() < 8)
-            connect = "[Error] Broken path [[" + ipDev + "]]";
+            connect = "[Error] Broken path [[" + ipDev + "]] [[" + region.getCity() + "]]";
 
         return connect;
     }
