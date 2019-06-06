@@ -1,45 +1,86 @@
 package other;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static MyWork.Config.SPEEDS;
+import com.jcraft.jsch.*;
 
 public class test {
     public static void main(String[] args) {
-        String upPortSw = "2";
-        String s = "DES-3200-10:admin#show ports 2 details\n" +
-                "Command: show ports 2 details\n" +
-                "\n" +
-                "Port : 2\n" +
-                "--------------------\n" +
-                "Port Status                 : Link Up\n" +
-                "Description                 :\n" +
-                "HardWare Type               : Fast Ethernet\n" +
-                "MAC Address                 : C0-A0-BB-42-D0-82\n" +
-                "Bandwidth                   : 10000Kbit\n" +
-                "Auto-Negotiation            : Enabled\n" +
-                "Duplex Mode                 : Half Duplex\n" +
-                "Flow Control                : Disabled\n" +
-                "MDI                         : Normal\n" +
-                "Address Learning            : Enabled\n" +
-                "Last Clear of Counter       : 241 hours 44 mins ago\n" +
-                "BPDU Hardware Filtering Mode: Disabled\n" +
-                "Queuing Strategy            : FIFO\n" +
-                "TX Load                     :   0/100,          0 bits/sec,        0 packets/sec\n" +
-                "RX Load                     :   0/100,          0 bits/sec,        0 packets/sec\n";
+        JSch jsch = new JSch();
 
-        Pattern upPortP = Pattern.compile("Port : " + upPortSw + ".*(\\d{5,9}Kbit)");
-//        Pattern upPortP = Pattern.compile("Port : (" + upPortSw + ".*)");
-        Matcher upPortM = upPortP.matcher(s.replaceAll("\n", " "));
+        String remoteClientsConf = "/etc/Clients.conf";
+        String localClientConf = "Clients.conf";
+//        String knownHosts = "C:\\known_hosts.txt";
+        ChannelSftp sftp = null;
+        Session session = null;
 
-        if(upPortM.find()) {
-            System.out.println("Gr upPort ->> " + upPortM.group(0));
-            String upPort = SPEEDS.getOrDefault(upPortM.group(1), "?");
-            System.out.println("upPort ->> " + upPort);
+        try {
+//            jsch.setKnownHosts(knownHosts);
+
+            session = jsch.getSession("user", "213.170.117.254");
+//            session.setPassword("pass");
+
+            UserInfo ui=new MyUserInfo("pass");
+            session.setUserInfo(ui);
+
+            session.connect();
+
+            sftp = (ChannelSftp) session.openChannel("sftp");
+            sftp.connect();
+
+            sftp.get(remoteClientsConf, localClientConf );
+// OR
+//            InputStream in = sftp.get( "remote-file" );
+            // process inputstream as needed
+
+
+
+        } catch (JSchException | SftpException jex) {
+            jex.printStackTrace();
+        } finally {
+            if(sftp != null) sftp.exit();
+            if(session != null) session.disconnect();
         }
 
+
     } // ** main()
+
+    public static class MyUserInfo implements UserInfo, UIKeyboardInteractive {
+        String passwd;
+
+        MyUserInfo(String pass) {
+            passwd = pass;
+        }
+
+        @Override
+        public String getPassphrase() {
+            return null;
+        }
+        @Override
+        public String getPassword() {
+            return passwd;
+        }
+        @Override
+        public boolean promptPassphrase(String arg0) {
+            return false;
+        }
+        @Override
+        public boolean promptPassword(String arg0) {
+            return true;
+        }
+        @Override
+        public boolean promptYesNo(String arg0) {
+            return true;
+        }
+        @Override
+        public void showMessage(String arg0) {
+        }
+        @Override
+        public String[] promptKeyboardInteractive(String arg0, String arg1,
+                                                  String arg2, String[] arg3, boolean[] arg4) {
+            return null;
+        }
+    } // ** class MyUserInfo
+
 } // ** class test
 
 

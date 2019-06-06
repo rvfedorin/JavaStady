@@ -184,7 +184,7 @@ public class Telnet {
         try {
 
             for(String command: commands) {
-                System.out.println("Send command: " + command);
+//                System.out.println("Send command: " + command);
                 out.println(command + "\r\n");
                 sleep(100);
             }
