@@ -1,33 +1,43 @@
 package other;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static MyWork.Config.SPEEDS;
+
 public class test {
     public static void main(String[] args) {
-        String s = "Command: show ports 23\n" +
-                "line -> \n" +
-                "line -> \n" +
-                "line ->  Port      Port            Settings             Connection          Address \n" +
-                "line -> \n" +
-                "line ->            State     Speed/Duplex/FlowCtrl  Speed/Duplex/FlowCtrl   Learning\n" +
-                "line -> \n" +
-                "line ->  -------  --------  ---------------------  ----------------------  ---------\n" +
-                "line -> \n" +
-                "line ->  23   (C) Enabled   Auto/Disabled           Link Down               Enabled     \n" +
-                "line -> \n" +
-                "line ->  23   (F) Enabled   Auto/Disabled           1000M/Full/None         Enabled     ";
+        String upPortSw = "2";
+        String s = "DES-3200-10:admin#show ports 2 details\n" +
+                "Command: show ports 2 details\n" +
+                "\n" +
+                "Port : 2\n" +
+                "--------------------\n" +
+                "Port Status                 : Link Up\n" +
+                "Description                 :\n" +
+                "HardWare Type               : Fast Ethernet\n" +
+                "MAC Address                 : C0-A0-BB-42-D0-82\n" +
+                "Bandwidth                   : 10000Kbit\n" +
+                "Auto-Negotiation            : Enabled\n" +
+                "Duplex Mode                 : Half Duplex\n" +
+                "Flow Control                : Disabled\n" +
+                "MDI                         : Normal\n" +
+                "Address Learning            : Enabled\n" +
+                "Last Clear of Counter       : 241 hours 44 mins ago\n" +
+                "BPDU Hardware Filtering Mode: Disabled\n" +
+                "Queuing Strategy            : FIFO\n" +
+                "TX Load                     :   0/100,          0 bits/sec,        0 packets/sec\n" +
+                "RX Load                     :   0/100,          0 bits/sec,        0 packets/sec\n";
 
-        StringBuilder result = new StringBuilder("\n");
-        for(String line: s.split("\n")) {
-            line = line.trim();
-            if(line.length() > 0 && !line.contains("#")) {
-                result.append("\t").append(line).append("\n");
-                continue;
-            }
-            if(line.split("#").length < 2) {
-                continue;
-            }
-            result.append(line).append("\n");
-        } // ** for every line
-        System.out.println(result.toString());
+        Pattern upPortP = Pattern.compile("Port : " + upPortSw + ".*(\\d{5,9}Kbit)");
+//        Pattern upPortP = Pattern.compile("Port : (" + upPortSw + ".*)");
+        Matcher upPortM = upPortP.matcher(s.replaceAll("\n", " "));
+
+        if(upPortM.find()) {
+            System.out.println("Gr upPort ->> " + upPortM.group(0));
+            String upPort = SPEEDS.getOrDefault(upPortM.group(1), "?");
+            System.out.println("upPort ->> " + upPort);
+        }
 
     } // ** main()
 } // ** class test

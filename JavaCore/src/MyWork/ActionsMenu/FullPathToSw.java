@@ -14,6 +14,8 @@ import java.awt.*;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static MyWork.Config.*;
 import static MyWork.Config.INTRANET_TYPE.EXCEL;
@@ -200,42 +202,47 @@ class getNodeLinksConnect implements Callable<String> {
     @Override
     public String call() {
         String result;
-        ArrayList<String> commandsUpPort = new ArrayList<>();
-        ArrayList<String> commandsDownPort = new ArrayList<>();
+        ArrayList<String> commandsPort = new ArrayList<>();
+        String upPort = "?]";
+        String downPort = "?]";
 
-        commandsUpPort.add("sh ports " + swNode.getUpPort());
-        commandsUpPort.add("q");
-
-        commandsDownPort.add("sh ports " + swNode.getDownPort());
-        commandsDownPort.add("q");
-
-        String upPort = !swNode.getUpPort().contains("null") ? swNode.runCommand(commandsUpPort) : "null";
-        upPort = formatPort(upPort, swNode.getUpPort());
-        String downPort = !swNode.getDownPort().contains("null") ? swNode.runCommand(commandsDownPort) : "null";
-        downPort = formatPort(downPort, swNode.getDownPort());
-
-        boolean foundUp = false;
-        boolean foundDown = false;
-
-        for (String speedKey : SPEEDS.keySet()) {
-            if (upPort.contains(speedKey)) {
-                upPort = SPEEDS.get(speedKey);
-                foundUp = true;
-            }
-            if (downPort.contains(speedKey)) {
-                downPort = SPEEDS.get(speedKey);
-                foundDown = true;
-            }
+        if (Pattern.compile("\\d*").matcher(swNode.getUpPort()).find()) {
+            commandsPort.add("sh ports " + swNode.getUpPort() + " details");
+            commandsPort.add("q");
+        }
+        if (Pattern.compile("\\d*").matcher(swNode.getDownPort()).find()) {
+            commandsPort.add("sh ports " + swNode.getDownPort() + " details");
+            commandsPort.add("q");
         }
 
-        if (!foundDown) downPort = "?";
-        if (!foundUp) upPort = "?";
+        if (commandsPort.size() > 1) {
+            String response = swNode.runCommand(commandsPort).replaceAll("\n", " ");
 
-        result = "(" + swNode.getUpPort() + upPort + ")-" + swNode.getIp() + "-(" + swNode.getDownPort() + downPort + ")";
+            Pattern upPortP = Pattern.compile("Port : " + swNode.getUpPort() + ".*?(\\d{5,8}Kbit)");
+            Matcher upPortM = upPortP.matcher(response);
+
+            Pattern downPortP = Pattern.compile("Port : " + swNode.getDownPort() + ".*?(\\d{5,8}Kbit)");
+            Matcher downPortM = downPortP.matcher(response);
+
+            if (upPortM.find()) {
+                upPort = " [" + SPEEDS.getOrDefault(upPortM.group(1), "?") + "]";
+            }
+
+            if (downPortM.find()) {
+                downPort = " [" + SPEEDS.getOrDefault(downPortM.group(1), "?") + "]";
+            }
+        } // if we have commands
+
+        result = "(" + swNode.getUpPort() + "p" + upPort + ")-" +
+                swNode.getIp() +
+                "-(" + swNode.getDownPort() + "p" + downPort + ")";
 
         return result;
     }
 
+    /*
+     * delete from out unwanted symbols and return the field with link
+     */
     private String formatPort(String out, String port) {
         String result = "null";
 
@@ -247,11 +254,9 @@ class getNodeLinksConnect implements Callable<String> {
                 if (blocks.length >= 4)
                     line = blocks[3];
 //                System.out.println(line);
-
                 result += line + "\n";
             }
         } // ** for lines of out
-
         return result;
     }
 
