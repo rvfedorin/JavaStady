@@ -21,42 +21,64 @@ public class SSH {
         this.session = null;
     }
 
+    private void sessionConnect() throws JSchException {
+        session = jsch.getSession(getEncrypt(new String(key), SSH_LOGIN), host);
+        UserInfo ui = new MyUserInfo(getEncrypt(new String(key), SSH_PASS));
+        session.setUserInfo(ui);
+
+        session.connect();
+    } // ** sessionConnect()
+
     public boolean downloadFile(String remoteFile, String localFile) {
         boolean result = false;
         ChannelSftp sftp = null;
         try {
             File file = new File(localFile);
             long before = 0;
-            if(file.exists())
+            if (file.exists())
                 before = file.lastModified();
 
-            session = jsch.getSession(getEncrypt(new String(key),SSH_LOGIN), host);
-            UserInfo ui=new MyUserInfo(getEncrypt(new String(key),SSH_PASS));
-            session.setUserInfo(ui);
-
-            session.connect();
+            sessionConnect();
 
             sftp = (ChannelSftp) session.openChannel("sftp");
             sftp.connect();
 
             sftp.get(remoteFile, localFile);
 
-            if(file.exists() && before != 0) {
-                if(file.lastModified() - before > 0)
+            if (file.exists() && before != 0) {
+                if (file.lastModified() - before > 0)
                     result = true;
 
             } else if (file.exists() && file.length() > 0) {
                 result = true;
             }
-        }
-        catch (JSchException | SftpException jex) {
+        } catch (JSchException | SftpException jex) {
             jex.printStackTrace();
         } finally {
-            if(sftp != null) sftp.exit();
-            if(session != null) session.disconnect();
+            if (sftp != null) sftp.exit();
+            closeSession();
         }
 
         return result;
+    } // ** downloadFile
+
+    public ChannelExec getExec() {
+        ChannelExec channelExec = null;
+        try {
+            sessionConnect();
+            channelExec = (ChannelExec) session.openChannel("exec");
+        } catch (JSchException ex) {
+            ex.printStackTrace();
+        }
+
+        return channelExec;
+    } // ** getExec()
+
+    public void closeSession() {
+        if (session != null) {
+            session.disconnect();
+            session = null;
+        }
     }
 
     public static class MyUserInfo implements UserInfo, UIKeyboardInteractive {
@@ -70,25 +92,31 @@ public class SSH {
         public String getPassphrase() {
             return null;
         }
+
         @Override
         public String getPassword() {
             return passwd;
         }
+
         @Override
         public boolean promptPassphrase(String arg0) {
             return false;
         }
+
         @Override
         public boolean promptPassword(String arg0) {
             return true;
         }
+
         @Override
         public boolean promptYesNo(String arg0) {
             return true;
         }
+
         @Override
         public void showMessage(String arg0) {
         }
+
         @Override
         public String[] promptKeyboardInteractive(String arg0, String arg1,
                                                   String arg2, String[] arg3, boolean[] arg4) {

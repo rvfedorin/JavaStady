@@ -95,7 +95,40 @@ public class Telnet {
             } // ** while()
 
         } catch (InterruptedException | NullPointerException ex) {
-            System.out.println("[Error] -> class " + getClass().getName() + " -> auth() ");
+            System.out.println("[Error] -> class " + getClass().getName() + " -> auth(login, pass) ");
+        }
+
+        return result;
+    } // auth()
+
+    public boolean auth(String pass) {
+        boolean result = false;
+
+        try {
+            out.println(pass);
+            sleep(100);
+            out.println(END + "\r\n");
+            sleep(100);
+
+            boolean done = false;
+            while (!done) {
+                try {
+                    String line = in.readLine();
+                    if(line.contains("Fail") || line.contains("DES-2108")) {
+                        done = true;
+                    } else if (line.contains(END)){
+                        done = true;
+                        result = true;
+//                    System.out.println(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    done = true;
+                }
+            } // ** while()
+
+        } catch (InterruptedException | NullPointerException ex) {
+            System.out.println("[Error] -> class " + getClass().getName() + " -> auth(pass) ");
         }
 
         return result;

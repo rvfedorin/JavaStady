@@ -1,18 +1,15 @@
 package other;
 
 
-import MyWork.Tools.SSH;
+import MyWork.NodesClass.Cisco;
 
 public class test {
     public static void main(String[] args) {
-        String remoteClientsConf = "/etc/Clients.conf";
-        String localClientConf = "Clients.conf";
-        char[] pass = "pass".toCharArray();
+        char[] key = "pass".toCharArray();
+        String ip = "ip";
+        Cisco cisco = new Cisco(ip, key);
 
-        SSH ssh = new SSH("IP", pass);
-        boolean result = ssh.downloadFile(remoteClientsConf, localClientConf);
-        System.out.println(result);
-
+        System.out.println(cisco.getFreeInt());
 
     } // ** main()
 

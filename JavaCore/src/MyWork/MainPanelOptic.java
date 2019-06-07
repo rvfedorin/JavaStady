@@ -4,6 +4,7 @@ import MyWork.Actions.FreePorts;
 import MyWork.ExtendStandart.AdapterDocumentListener;
 import MyWork.ExtendStandart.CustomBorder;
 import MyWork.ExtendStandart.ExtendedTextField;
+import MyWork.NodesClass.Cisco;
 import MyWork.NodesClass.CitiesComboBox;
 import MyWork.Verifiers.IPVerifier;
 
@@ -56,7 +57,7 @@ public class MainPanelOptic extends JPanel {
                     }
                 }
 
-                if (CITIES.containsKey(key)){
+                if (CITIES.containsKey(key)) {
                     rightPanel.citiesComboBox.setSelectedItem(CITIES.get(key).getCity());
                 }  // if
             }  // act()
@@ -68,23 +69,23 @@ public class MainPanelOptic extends JPanel {
     private class ActionSelectionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(selectActionPanel.allButtonMap.get(CREATE_S).isSelected()) {
+            if (selectActionPanel.allButtonMap.get(CREATE_S).isSelected()) {
                 rightPanel.changeSpeedBut.setEnabled(false);
                 inputPanel.allTF.forEach((k, v) -> v.setEnabled(true));
                 ((JCheckBox) inputPanel.allTF.get(ACT_ON_CISCO_S)).setText(CREATE_CISCO_S);
-            } else if(selectActionPanel.allButtonMap.get(DELETE_S).isSelected()) {
+            } else if (selectActionPanel.allButtonMap.get(DELETE_S).isSelected()) {
                 rightPanel.changeSpeedBut.setEnabled(false);
                 JCheckBox temCheck = (JCheckBox) inputPanel.allTF.get(ACT_ON_CISCO_S);
                 temCheck.setText(DELETE_CISCO_S);
                 temCheck.setSelected(false);
                 inputPanel.allTF.forEach((k, v) -> {
-                    if(k.equals(UNTAGGED_S) || k.equals(PORT_S)) {
+                    if (k.equals(UNTAGGED_S) || k.equals(PORT_S)) {
                         v.setEnabled(false);
                     } else {
                         v.setEnabled(true);
                     } // if equals
                 });
-            } else if(selectActionPanel.allButtonMap.get(CHANGE_SPEED_S).isSelected()) {
+            } else if (selectActionPanel.allButtonMap.get(CHANGE_SPEED_S).isSelected()) {
                 rightPanel.changeSpeedBut.setEnabled(true);
                 inputPanel.allTF.forEach((k, v) -> v.setEnabled(false));
             }
@@ -95,7 +96,7 @@ public class MainPanelOptic extends JPanel {
      * Get all data from field
      * @return String[]{mnemokod, vlan, IPswitch, port, untagged, createCis, city, action}
      */
-    public String[] getAllData(){
+    public String[] getAllData() {
 
         String mnemokod = ((JTextField) inputPanel.allTF.get(MNEMOKOD_S)).getText().trim();
         String vlan = ((JTextField) inputPanel.allTF.get(NUMBER_VLAN_S)).getText().trim();
@@ -121,7 +122,7 @@ class InputPanel extends JPanel {
         setLayout(new BorderLayout());
         allTF = new HashMap<>();
 
-        for(String lab: LABELS) {
+        for (String lab : LABELS) {
             if (lab.equals(UNTAGGED_S)) {
                 allTF.put(lab, new JCheckBox(lab));
             } else if (lab.equals(ACT_ON_CISCO_S)) {
@@ -130,7 +131,7 @@ class InputPanel extends JPanel {
                 JTextField tempTextField = new ExtendedTextField(18);
                 tempTextField.setBorder(BorderFactory.createCompoundBorder(
                         new CustomBorder(),
-                        BorderFactory.createEmptyBorder(0,2,0,2)
+                        BorderFactory.createEmptyBorder(0, 2, 0, 2)
                 ));
 
                 allTF.put(lab, tempTextField);
@@ -143,7 +144,7 @@ class InputPanel extends JPanel {
         JPanel inp = new JPanel(new GridLayout(LABELS.length, 1, 1, 1));
         JPanel lab = new JPanel(new GridLayout(LABELS.length, 1, 1, 1));
 
-        for (String name: LABELS) {
+        for (String name : LABELS) {
             if (name.equals(UNTAGGED_S) || name.equals(ACT_ON_CISCO_S)) {
                 lab.add(new JLabel());
                 inp.add(allTF.get(name));
@@ -171,13 +172,23 @@ class RightPartPanel extends JPanel {
         this.mainWindow = mainWindow;
 
 //        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setLayout(new GridLayout(6,0));
-        setBorder(BorderFactory.createEmptyBorder(0,4,0,2));
+        setLayout(new GridLayout(6, 0));
+        setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 2));
         freeVlanBut = new JButton("Найти свободный влан");
+        freeVlanBut.addActionListener((e) -> {
+            char[] key = mainWindow.authDialog.getPass();
+            String city = citiesComboBox.getItemAt(citiesComboBox.getSelectedIndex());
+            String ipCisco = CITIES.get(CITIES_BY_NAME.get(city)).getCoreCisco();
+            Cisco cisco = new Cisco(ipCisco, key);
+            mainWindow.eventPrintFrame.pDate();
+            mainWindow.eventPrintFrame.printEvent("Свободные интерфейсы " + city + ": " + ipCisco);
+            mainWindow.eventPrintFrame.printEvent(cisco.getFreeInt());
+        });
+
         freePortBut = new JButton("Найти свободный порт");
-        freePortBut.addActionListener((e)-> {
+        freePortBut.addActionListener((e) -> {
             JTextField ipField = (JTextField) mainWindow.mainPanel.opticPanel.inputPanel.allTF.get(IP_SWITCH_S);
-            if(ipField.getInputVerifier().verify(ipField)) {
+            if (ipField.getInputVerifier().verify(ipField)) {
                 mainWindow.eventPrintFrame.pDate();
                 String ip = ipField.getText();
                 char[] key = mainWindow.authDialog.getPass();
