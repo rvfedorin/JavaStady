@@ -58,8 +58,12 @@ public abstract class Config {
     public static final Pattern IP_PATTERN = Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
     public static final Pattern ERROR_ON_SWITCHES_PATTERN = Pattern.compile("Invalid|Error|Fail|exist|vlanid 2-4094|Entries : 0|possible");
 
+    /////////////// **************** START FILES ************* ////////////////////////
     public static final String SPEEDS_FILE = "speeds.txt";
     public static final String LOG_FILE = "log.txt";
+    public static final String REMOTE_CLIENTS_CONF_FILE = "/etc/Clients.conf";
+    public static final String LOCAL_CLIENTS_CONF_FILE = "Clients.conf";
+    /////////////// **************** END FILES ************* ////////////////////////
 
 
     public static final Map<String, Region> CITIES;
@@ -132,6 +136,11 @@ public abstract class Config {
     public static final String INTRANET_CONNECT_LOGIN = "bXFDZHf5gYHnnQkHAQL4+A==";
     public static final String INTRANET_CONNECT_PASS = "xXHPPl7DZLd/M+T0fm7O4w==";
     public static final String SW_PASS = "jaNUpm9cNWvfct86RHRwwQ==";
+    public static final String CISCO_PASS = "0VndzNNjOgIYdLuYolLLpw==";
+    public static final String CISCO_EN_PASS = "L4AroI1w8tkZhbVw9zkSPA==";
+    public static final String SSH_LOGIN = "LI+vCBkIo1U=";
+    public static final String SSH_PASS = "fyzWJkoD10g=";
+
 //
 /////////////// **************** END PASS STRINGS ************* ////////////////////////
 
