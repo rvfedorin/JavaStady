@@ -15,6 +15,7 @@ public class SSH {
     private Session session;
 
     public SSH(String host, char[] pass) {
+        System.out.println("SSH create host: " + host);
         this.host = host;
         this.key = pass;
         this.jsch = new JSch();

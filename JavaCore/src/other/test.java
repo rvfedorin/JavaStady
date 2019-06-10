@@ -2,14 +2,16 @@ package other;
 
 
 import MyWork.NodesClass.Cisco;
+import MyWork.NodesClass.Customer;
+
 
 public class test {
     public static void main(String[] args) {
         char[] key = "pass".toCharArray();
         String ip = "ip";
         Cisco cisco = new Cisco(ip, key);
-
-        System.out.println(cisco.getFreeInt());
+        Customer customer = new Customer("Kursk", "Kr-Kurgazpro", "52", "no", "no", "no");
+        System.out.println(cisco.createClient(customer));
 
     } // ** main()
 
