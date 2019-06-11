@@ -7,18 +7,17 @@ import MyWork.Tools.SSH;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static MyWork.Config.*;
 
 public class Cisco {
-    private final String UNNUMBERED = "unnumbered";
-//    private enum CLIENT_TYPE {UNNUM, LAN}
+    private final String UNNUMBERED = "unnumber";
     private final String FREE_INT_COMMAND = "sh int des | inc Svobodno";
     private final String SHOW_INT_DES_COMMAND = "sh int des | inc ";
+    private final Pattern LAN_PATTERN = Pattern.compile(" (\\d{3,7}) (" + IP_PATTERN + ")/(\\d{2})");
     private String ip;
     private char[] key;
     private Telnet connect;
@@ -87,8 +86,7 @@ public class Cisco {
 
             ////////// START ROUTE CONFIG //////////////////////////
             for (String clientLine : clSettings.split("\n")) {
-                Pattern lanP = Pattern.compile(" (\\d{3,7}) (" + IP_PATTERN + ")/(\\d{2})");
-                Matcher lanM = lanP.matcher(clientLine);
+                Matcher lanM = LAN_PATTERN.matcher(clientLine);
                 if (lanM.find() && !lanM.group(3).equals("32")) {
                     System.out.println(lanM.group());
                     speedSize = lanM.group(1) + "k";
@@ -97,7 +95,7 @@ public class Cisco {
                         secondary = " secondary";
                     }
                     String toConfigLine = "ip address " + getGw(lanM.group(2)) + " " + getMask(lanM.group(3)) + secondary;
-                    ipAddressesCommands.add(toConfigLine + "\n");
+                    ipAddressesCommands.add(toConfigLine);
                     clientCount++;
                 } else if (clientLine.toLowerCase().contains(UNNUMBERED)) {
                     Pattern speedP = Pattern.compile(" (\\d{3,7}) " + IP_PATTERN + ".*");
@@ -110,7 +108,7 @@ public class Cisco {
                     if (ipM.find()) {
                         String toConfigLine = "ip route " + ipM.group() + " 255.255.255.255 " + intCisco + " 10";
                         //ip route 77.235.218.94 255.255.255.255 TenGigabitEthernet0/3/0.890 10
-                        ipAddressesCommands.add(toConfigLine + "\n");
+                        ipAddressesCommands.add(toConfigLine);
                     }
                 } // if unnumbered
             } // for every ip line
@@ -127,6 +125,47 @@ public class Cisco {
 
         return result;
     } // ** createClient()
+
+    public String deleteClient(Customer client) {
+        String result = "deleteClient -> ";
+
+        String clSettings = getClFromClConf(client.getMnemokod(), client.getCity().getCoreUnix());
+        System.out.println("clSettings " + clSettings);
+
+        if (!clSettings.contains("Error")) {
+            String intCisco = getIntCisco(client.getVlan());
+            System.out.println("intCisco " + intCisco);
+//            CLIENT_TYPE client_type = null;
+            ArrayList<String> ipAddressesCommands = new ArrayList<>(); // create string route to config
+
+            ////////// START ROUTE CONFIG //////////////////////////
+            for (String clientLine : clSettings.split("\n")) {
+                Matcher lanM = LAN_PATTERN.matcher(clientLine);
+                if (lanM.find() && !lanM.group(3).equals("32")) {
+                    System.out.println(lanM.group());
+                    String toConfigLine = "ip unnumbered " + getUnnumberInt();
+                    ipAddressesCommands.add(toConfigLine);
+                } else if (clientLine.toLowerCase().contains(UNNUMBERED)) {
+                    Matcher ipM = IP_PATTERN.matcher(clientLine);
+
+                    if (ipM.find()) {
+                        String toConfigLine = "no ip route " + ipM.group() + " 255.255.255.255";
+                        ipAddressesCommands.add(toConfigLine);
+                    }
+                } // if unnumbered
+            } // for every ip line
+            ////////// END ROUTE CONFIG //////////////////////////
+
+            //////// START CREATION /////////////////////////////////////
+            if(ipAddressesCommands.size() > 0)
+                result = runDeleteCustomerOnCisco(intCisco, ipAddressesCommands);
+            ////////// END CREATION /////////////////////////////////////
+        } else {
+            result = clSettings;
+        }
+
+        return result;
+    } // ** deleteClient()
 
     private String runCreatingCustomerOnCisco(String interfaceCisco, ArrayList<String> ipAddressesCommands, Customer client, String speedSize) {
         String result = "";
@@ -145,6 +184,8 @@ public class Cisco {
             createClientCommands.add("no shutdown");
             String speedType = null;
 //            System.out.println("shRunIntOut: " + shRunIntOut);
+            if(!shRunIntOut.contains("ip unnumbered Loopback"))
+                createClientCommands.add("ip unnumbered " + getUnnumberInt());
 
             for(String line: shRunIntOut.split("\n")) {
                 if(line.contains("service-policy")) {
@@ -166,10 +207,9 @@ public class Cisco {
                 createClientCommands.addAll(Arrays.asList(speedToConfig));
                 createClientCommands.addAll(ipAddressesCommands);
                 createClientCommands.add("end");
-                createClientCommands.add("wr");
+//                createClientCommands.add("wr");
 
-                result = connect.sendListCommands(createClientCommands);
-//                result = createClientCommands.toString();
+                result = formatOut(connect.sendListCommands(createClientCommands));
             } else {
                 System.out.println("No found speed type.");
             }
@@ -180,6 +220,30 @@ public class Cisco {
         return result;
     }
 
+    private String runDeleteCustomerOnCisco(String interfaceCisco, ArrayList<String> ipAddressesCommands) {
+        String result = "";
+
+        if (connect()) {
+            System.out.println("Connected to cisco.");
+
+            ArrayList<String> deleteClientCommands = new ArrayList<>();
+            deleteClientCommands.add("conf t");
+            deleteClientCommands.add("int " + interfaceCisco);
+            deleteClientCommands.add("description Svobodno");
+            deleteClientCommands.add("shutdown");
+
+            deleteClientCommands.addAll(ipAddressesCommands);
+            deleteClientCommands.add("end");
+//            createClientCommands.add("wr");
+
+            result = formatOut(connect.sendListCommands(deleteClientCommands));
+
+            closeConnect();
+        } // if connect
+
+        return result;
+    } // ** runDeleteCustomerOnCisco()
+
     private String formatOut(String out) {
         StringBuilder result = new StringBuilder();
         for(String s: out.split("\n")) {
@@ -189,6 +253,45 @@ public class Cisco {
         }
         return result.toString();
     } // ** formatOut()
+
+    private String getUnnumberInt() {
+        String result;
+        boolean needCloseConnect = false;
+        ArrayList<String> shConfSecLoopback = new ArrayList<>();
+        shConfSecLoopback.add("sh conf | sec ip unnumbered Loopback");
+        shConfSecLoopback.add("q");
+        if(connect == null) {
+            connect();
+            needCloseConnect = true;
+        }
+
+        if(connect != null) {
+            String out = connect.sendListCommands(shConfSecLoopback);
+            HashMap<String, Integer> count = new HashMap<>();
+
+            Pattern loopbackP = Pattern.compile("Loopback\\d{1,2}");
+            Matcher loopbackM = loopbackP.matcher(out);
+
+            for (String s : out.split("\n")) {
+                if (loopbackM.find()) {
+                    Integer oldCount = count.get(loopbackM.group());
+                    if (oldCount == null)
+                        oldCount = 0;
+
+                    count.put(loopbackM.group(), (oldCount + 1));
+                }
+            } // for every line
+
+            result = Collections.max(count.entrySet(), Comparator.comparing(Map.Entry::getValue)).getKey();
+        } else {
+            result = null;
+        }
+
+        if(needCloseConnect)
+            closeConnect();
+
+        return result;
+    } // ** getUnnumberInt()
 
     private String getSpeedType() {
         String result = null;
