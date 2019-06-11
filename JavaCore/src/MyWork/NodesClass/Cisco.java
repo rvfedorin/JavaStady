@@ -1,5 +1,6 @@
 package MyWork.NodesClass;
 
+import MyWork.Tools.CiscoSpeedFormat;
 import MyWork.Tools.CryptDecrypt;
 import MyWork.Tools.SSH;
 
@@ -7,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,9 +16,7 @@ import static MyWork.Config.*;
 
 public class Cisco {
     private final String UNNUMBERED = "unnumbered";
-
-    private enum CLIENT_TYPE {UNNUM, LAN}
-
+//    private enum CLIENT_TYPE {UNNUM, LAN}
     private final String FREE_INT_COMMAND = "sh int des | inc Svobodno";
     private final String SHOW_INT_DES_COMMAND = "sh int des | inc ";
     private String ip;
@@ -54,7 +54,7 @@ public class Cisco {
         }
 
         return result;
-    }
+    } // ** runCommand()
 
     public String getFreeInt() {
         String result = "";
@@ -72,50 +72,144 @@ public class Cisco {
 
     public String createClient(Customer client) {
         String result = "createClient -> ";
-        CLIENT_TYPE client_type;
 
         String clSettings = getClFromClConf(client.getMnemokod(), client.getCity().getCoreUnix());
+        System.out.println("clSettings " + clSettings);
 
         if (!clSettings.contains("Error")) {
             int clientCount = 1;
             String secondary = "";
-            boolean foundInt = false;
-            String intCisco = null;
+            String intCisco = getIntCisco(client.getVlan());
+            System.out.println("intCisco " + intCisco);
+            String speedSize = null;
+//            CLIENT_TYPE client_type = null;
+            ArrayList<String> ipAddressesCommands = new ArrayList<>(); // create string route to config
 
-            StringBuilder ipAddresses = new StringBuilder();
+            ////////// START ROUTE CONFIG //////////////////////////
             for (String clientLine : clSettings.split("\n")) {
-                Pattern lanP = Pattern.compile("(" + IP_PATTERN + ")/(\\d{2})");
+                Pattern lanP = Pattern.compile(" (\\d{3,7}) (" + IP_PATTERN + ")/(\\d{2})");
                 Matcher lanM = lanP.matcher(clientLine);
-                if (lanM.find() && !lanM.group(2).equals("32")) {
-                    client_type = CLIENT_TYPE.LAN;
+                if (lanM.find() && !lanM.group(3).equals("32")) {
+                    System.out.println(lanM.group());
+                    speedSize = lanM.group(1) + "k";
+
                     if (clientCount == 2) {
                         secondary = " secondary";
                     }
-                    String toConfigLine = "ip address " + getGw(lanM.group(1)) + " " + getMask(lanM.group(2)) + secondary;
-                    ipAddresses.append(toConfigLine).append("\n");
+                    String toConfigLine = "ip address " + getGw(lanM.group(2)) + " " + getMask(lanM.group(3)) + secondary;
+                    ipAddressesCommands.add(toConfigLine + "\n");
                     clientCount++;
                 } else if (clientLine.toLowerCase().contains(UNNUMBERED)) {
-                    client_type = CLIENT_TYPE.UNNUM;
+                    Pattern speedP = Pattern.compile(" (\\d{3,7}) " + IP_PATTERN + ".*");
+                    Matcher speedM = speedP.matcher(clientLine);
+                    if (speedM.find()) {
+                        speedSize = speedM.group(1) + "k";
+                    }
                     Matcher ipM = IP_PATTERN.matcher(clientLine);
 
                     if (ipM.find()) {
-                        if(!foundInt) {
-                            intCisco = getIntCisco(client.getVlan());
-                            foundInt = true;
-                        }
                         String toConfigLine = "ip route " + ipM.group() + " 255.255.255.255 " + intCisco + " 10";
                         //ip route 77.235.218.94 255.255.255.255 TenGigabitEthernet0/3/0.890 10
-                        ipAddresses.append(toConfigLine).append("\n");
+                        ipAddressesCommands.add(toConfigLine + "\n");
                     }
                 } // if unnumbered
-                result = ipAddresses.toString();
             } // for every ip line
+            System.out.println("speedSize " + speedSize);
+            ////////// END ROUTE CONFIG //////////////////////////
+
+            //////// START CREATION /////////////////////////////////////
+            if(speedSize != null && ipAddressesCommands.size() > 0)
+                result = runCreatingCustomerOnCisco(intCisco, ipAddressesCommands, client, speedSize);
+            ////////// END CREATION /////////////////////////////////////
         } else {
             result = clSettings;
         }
 
         return result;
     } // ** createClient()
+
+    private String runCreatingCustomerOnCisco(String interfaceCisco, ArrayList<String> ipAddressesCommands, Customer client, String speedSize) {
+        String result = "";
+        String shRunIntOut;
+        ArrayList<String> shRunInt = new ArrayList<>();
+        shRunInt.add("sh run int " + interfaceCisco);
+        System.out.println(shRunInt);
+
+        if (connect()) {
+            System.out.println("Connected to cisco.");
+            shRunIntOut = connect.sendListCommands(shRunInt);
+            ArrayList<String> createClientCommands = new ArrayList<>();
+            createClientCommands.add("conf t");
+            createClientCommands.add("int " + interfaceCisco);
+            createClientCommands.add("description " + client.getMnemokod());
+            createClientCommands.add("no shutdown");
+            String speedType = null;
+//            System.out.println("shRunIntOut: " + shRunIntOut);
+
+            for(String line: shRunIntOut.split("\n")) {
+                if(line.contains("service-policy")) {
+                    createClientCommands.add("no "+line);
+                    speedType = "service-policy";
+                } else if (line.contains("rate-limit")) {
+                    createClientCommands.add("no "+line);
+                    speedType = "rate-limit";
+                }
+            } // for line - find current speed and create command to del
+            if(speedType == null)
+                speedType = getSpeedType();
+
+            System.out.println("speedType = " + speedType);
+
+            String[] speedToConfig;
+            if(speedType != null) {
+                speedToConfig = CiscoSpeedFormat.getFormattedSpeed(speedType, speedSize);
+                createClientCommands.addAll(Arrays.asList(speedToConfig));
+                createClientCommands.addAll(ipAddressesCommands);
+                createClientCommands.add("end");
+                createClientCommands.add("wr");
+
+                result = connect.sendListCommands(createClientCommands);
+//                result = createClientCommands.toString();
+            } else {
+                System.out.println("No found speed type.");
+            }
+
+            closeConnect();
+        } // if connect
+
+        return result;
+    }
+
+    private String formatOut(String out) {
+        StringBuilder result = new StringBuilder();
+        for(String s: out.split("\n")) {
+            if(s.split("#").length > 1) {
+                result.append(s).append("\n");
+            }
+        }
+        return result.toString();
+    } // ** formatOut()
+
+    private String getSpeedType() {
+        String result = null;
+        String out = connect.sendCommand("sh conf | sec service-policy");
+        out += connect.sendCommand("sh conf | sec rate-limit");
+        int count = 0;
+        for(String line: out.split("\n")) {
+            if(line.contains("rate-limit")) {
+                count++;
+                result = "rate-limit";
+            } else if(line.contains("service-policy")) {
+                count++;
+                result = "service-policy";
+            }
+
+            if(count > 6)
+                break;
+        }
+
+        return result;
+    } // ** getSpeedType()
 
     private String getMask(String cidr) {
         int power = 32 - Integer.valueOf(cidr);
@@ -151,7 +245,7 @@ public class Cisco {
     }
 
     private String getClFromClConf(String mnemokod, String ipUnix) {
-        String result = "[Error] Not found";
+        String result = "[Error] Not found client in " + LOCAL_CLIENTS_CONF_FILE;
         StringBuilder foundClients = new StringBuilder();
 
         SSH ssh = new SSH(ipUnix, key);
@@ -165,11 +259,12 @@ public class Cisco {
                         foundClients.append(line).append("\n");
                     }
                 } // while every line
+                if(foundClients.length() > 0)
+                    result = foundClients.toString();
             } catch (IOException ioex) {
                 ioex.printStackTrace();
                 result = "[Error] open file " + LOCAL_CLIENTS_CONF_FILE;
             }
-            result = foundClients.toString().contains("Error") ? result : foundClients.toString();
         } // if we get Clients.conf
         return result;
     } // ** getClFromClConf()

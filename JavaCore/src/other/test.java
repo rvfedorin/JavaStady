@@ -7,11 +7,12 @@ import MyWork.NodesClass.Customer;
 
 public class test {
     public static void main(String[] args) {
-        char[] key = "pass".toCharArray();
-        String ip = "ip";
+        char[] key = "".toCharArray();
+        String ip = "";
         Cisco cisco = new Cisco(ip, key);
-        Customer customer = new Customer("Kursk", "Kr-Kurgazpro", "52", "no", "no", "no");
+        Customer customer = new Customer("Orel", "Orel-test", "1431", "no", "no", "no");
         System.out.println(cisco.createClient(customer));
+
 
     } // ** main()
 
