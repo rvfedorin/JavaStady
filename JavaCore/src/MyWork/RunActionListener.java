@@ -6,6 +6,7 @@ import MyWork.ExtendStandart.ExtendedOpenFile;
 import MyWork.Intranet.ExcelIntranet;
 import MyWork.Intranet.Intranet;
 import MyWork.Intranet.WebIntranet;
+import MyWork.NodesClass.Cisco;
 import MyWork.NodesClass.Customer;
 import MyWork.NodesClass.Region;
 import MyWork.NodesClass.Switch;
@@ -25,9 +26,11 @@ import static MyWork.Tools.CiscoSpeedFormat.getFormattedSpeed;
 
 public class RunActionListener implements ActionListener {
     private MainWindow mainFrame;
+    private char[] key;
 
     RunActionListener(MainWindow frame) {
         mainFrame = frame;
+        key = mainFrame.authDialog.getPass();
     }
 
     @Override
@@ -76,13 +79,13 @@ public class RunActionListener implements ActionListener {
 
             if (CURRENT_INTRANET_TYPE == EXCEL) {
                 try {
-                    intranet = new ExcelIntranet(mainFrame.authDialog.getPass(), mainFrame.customer.getCity());
+                    intranet = new ExcelIntranet(key, mainFrame.customer.getCity());
                 } catch (FileNotFoundException ex) {
                     eventPrint.pDate();
                     eventPrint.printEvent(ex.toString());
                 }
             } else {
-                intranet = new WebIntranet(mainFrame.authDialog.getPass(), mainFrame.customer.getCity());
+                intranet = new WebIntranet(key, mainFrame.customer.getCity());
             }
 
             if (intranet != null) {
@@ -97,8 +100,12 @@ public class RunActionListener implements ActionListener {
         if (fineData && action.equals(CREATE_S)) {
             // Создаём
             eventPrint.pDate();
-            if (Boolean.valueOf(createCis))
+            if (Boolean.valueOf(createCis)) {
                 System.out.println("С созданием на Cisco.");
+                String ipCisco = mainFrame.customer.getCity().getCoreCisco();
+                Cisco cisco = new Cisco(ipCisco, key);
+                eventPrint.printEvent(cisco.createClient(mainFrame.customer));
+            }
 
             System.out.println("Создание клиента: ");
             eventPrint.printEvent("Создание клиента: ");
@@ -109,7 +116,7 @@ public class RunActionListener implements ActionListener {
                     CREATE_S,
                     runningFrame,
                     eventPrint,
-                    new String(mainFrame.authDialog.getPass()))
+                    new String(key))
             ).start();
 
             System.out.println(mainFrame.customer);
@@ -118,6 +125,12 @@ public class RunActionListener implements ActionListener {
         } else if (fineData && action.equals(DELETE_S)) {
             // Удаляем
             eventPrint.pDate();
+            if (Boolean.valueOf(createCis)) {
+                System.out.println("С удалением на Cisco.");
+                String ipCisco = mainFrame.customer.getCity().getCoreCisco();
+                Cisco cisco = new Cisco(ipCisco, key);
+                eventPrint.printEvent(cisco.deleteClient(mainFrame.customer));
+            }
             System.out.println("Удаление клиента: ");
             eventPrint.printEvent("Удаление клиента: ");
             new Thread(new ControlDoOnPathThreads(
@@ -126,7 +139,7 @@ public class RunActionListener implements ActionListener {
                     DELETE_S,
                     runningFrame,
                     eventPrint,
-                    new String(mainFrame.authDialog.getPass()))
+                    new String(key))
             ).start();
 
             System.out.println(mainFrame.customer);
