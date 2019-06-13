@@ -3,25 +3,27 @@ package MyWork.Actions;
 import MyWork.CurrentlyRunningFrame;
 import MyWork.EventPrintFrame;
 import MyWork.ExtendStandart.ExtendedOpenFile;
+import MyWork.NodesClass.Cisco;
 import MyWork.NodesClass.Region;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import static MyWork.Config.BLOCK;
-import static MyWork.Config.CITIES;
-import static MyWork.Config.LINE;
-import static MyWork.Tools.CiscoSpeedFormat.getFormattedSpeed;
+import static MyWork.Config.*;
 import static MyWork.Tools.SpeedFileParser.getParsedString;
 
 public class ChangeSpeedThread extends Thread {
     private EventPrintFrame frameEvent;
     private CurrentlyRunningFrame runningFrame;
+    private char[] key;
 
-    public ChangeSpeedThread(String name, EventPrintFrame printEvent, CurrentlyRunningFrame fr) {
+    public ChangeSpeedThread(String name, EventPrintFrame printEvent, CurrentlyRunningFrame fr, char[] key) {
         super(name);
         this.frameEvent = printEvent;
         this.runningFrame = fr;
+        this.key = key;
         this.start();
     }
 
@@ -43,6 +45,8 @@ public class ChangeSpeedThread extends Thread {
 
     private void readFile(BufferedReader frSpeedFile) {
         String line = "";
+        Region region = null;
+        HashMap<String, String> mnemoSpeed = new HashMap<>();
 
         do {
             try {
@@ -60,7 +64,6 @@ public class ChangeSpeedThread extends Thread {
                     if (key != null && !key.isEmpty()) {
                         key = key.substring(0, 1).toUpperCase() + key.substring(1);
                     } else {
-                        frameEvent.pDate();
                         frameEvent.printEvent(tempLine);
                         frameEvent.printEvent("[!!!] Error. City key not found!");
                         frameEvent.printEvent(LINE);
@@ -73,9 +76,13 @@ public class ChangeSpeedThread extends Thread {
 
                     if (citySpeed != null) { // if we have found city
                         if (clientNewSpeed.length >= 2) {
-                            formattedSpeed = getFormattedSpeed("service-policy", clientNewSpeed[1]);
+//                            formattedSpeed = getFormattedSpeed("service-policy", clientNewSpeed[1]);
+                             mnemoSpeed.put(clientNewSpeed[0], clientNewSpeed[1]);
+
+                            if(region == null) {
+                                region = CITIES.getOrDefault(CITIES_BY_NAME.get(clientNewSpeed[0].split("-")[0]), null);
+                            }
                         } else {
-                            frameEvent.pDate();
                             frameEvent.printEvent(tempLine);
                             frameEvent.printEvent("[!!!] Error parse line speed.");
                             frameEvent.printEvent(LINE);
@@ -100,29 +107,33 @@ public class ChangeSpeedThread extends Thread {
                         // ************** END REMOVE AFTER TESTS ********************************
 
                         // ************** START PRINT EVENT ********************************
-                        frameEvent.pDate();
-                        frameEvent.printEvent(tempLine);
+//                        frameEvent.printEvent(tempLine);
                         frameEvent.printEvent(line);
-                        frameEvent.printEvent("ОП " + citySpeed.getCity());
-                        if (formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
-                            for (String s : formattedSpeed) {
-                                frameEvent.printEvent(s);
-                            }
-                        } else if (formattedSpeed != null) {
-                            frameEvent.printEvent(formattedSpeed[0] + formattedSpeed[1]);
-                        } else {
-                            frameEvent.printEvent("getFormattedSpeed return NULL!");
-                        }
+//                        frameEvent.printEvent("ОП " + citySpeed.getCity());
+//                        if (formattedSpeed != null && !formattedSpeed[0].contains("Error")) {
+//                            for (String s : formattedSpeed) {
+//                                frameEvent.printEvent(s);
+//                            }
+//                        } else if (formattedSpeed != null) {
+//                            frameEvent.printEvent(formattedSpeed[0] + formattedSpeed[1]);
+//                        } else {
+//                            frameEvent.printEvent("getFormattedSpeed return NULL!");
+//                        }
                         frameEvent.printEvent(LINE);
                         // ************** END PRINT EVENT ********************************
-
-                        Thread.sleep(1000); // for test
-                    }
+                    } // if we have found city
                 } // if(line != null)
-            } catch (IOException | InterruptedException ex) {
+            } catch (IOException ex) {
                 ex.printStackTrace();
             }
         } while (line != null);
+        if(region != null) {
+            Cisco cisco = new Cisco(region.getCoreCisco(), key);
+            ArrayList<String> result = cisco.changeSpeed(mnemoSpeed);
+            frameEvent.printEvent(result.toString());
+        } else {
+            frameEvent.printEvent("Not found region for connect to cisco.");
+        }
         frameEvent.printEvent(BLOCK);
     } // ** readFile(BufferedReader frSpeedFile)
 }

@@ -45,6 +45,9 @@ public abstract class Config {
     public static final Double X_SCREEN_SIZE = DIMENSION.getWidth();
     public static final Double Y_SCREEN_SIZE = DIMENSION.getHeight();
 
+    public enum IP_TYPE {IP, ROUTE}
+    public enum SPEED_TYPE {POLICY, RATE}
+
     public enum INTRANET_TYPE {WEB, EXCEL}
     public static final INTRANET_TYPE CURRENT_INTRANET_TYPE = INTRANET_TYPE.EXCEL;
     public static final String INTRANETS_PATH = "C:\\INTRANETS\\";

@@ -150,7 +150,7 @@ public class RunActionListener implements ActionListener {
             eventPrint.pDate();
             System.out.println("Смена скорости.");
             eventPrint.printEvent("Смена скорости.");
-            new ChangeSpeedThread("speedChange", eventPrint, runningFrame);
+            new ChangeSpeedThread("speedChange", eventPrint, runningFrame, key);
 
         } else {
             eventPrint.printEvent("[Error] Получены не все данные. RunActionListener -> actionPerformed()");
