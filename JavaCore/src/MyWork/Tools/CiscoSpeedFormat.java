@@ -11,7 +11,7 @@ public class CiscoSpeedFormat {
         ArrayList<String> result = new ArrayList<>();
 
         String speedLowCase = speed.toLowerCase();
-        int speedSize;
+        double speedSize;
         try {
             speedSize = Integer.valueOf(speedLowCase.split("\\D")[0]);
         } catch (Exception ex) {
@@ -20,13 +20,13 @@ public class CiscoSpeedFormat {
             return result;
         }
 
-        if(type != null) {
+        if (type != null) {
             switch (type) {
                 case RATE:
                     if (speedLowCase.contains("m")) {
-                        String spBlock = 1024000 * speedSize + " " +
-                                192000 * speedSize + " " +
-                                384000 * speedSize + " ";
+                        String spBlock = (int) (1024000 * speedSize) + " " +
+                                (int) (192000 * speedSize) + " " +
+                                (int) (384000 * speedSize) + " ";
 
                         result.add("rate-limit input " +
                                 spBlock +
@@ -36,10 +36,10 @@ public class CiscoSpeedFormat {
                                 "conform-action transmit exceed-action drop");
 
                     } else if (speedLowCase.contains("k")) {
-                        int divider = KB / speedSize;
-                        String spBlock = (1024000 / divider) + " " +
-                                (192000 / divider) + " " +
-                                (384000 / divider) + " ";
+                        double inMB = speedSize / KB;
+                        String spBlock = (int) (1024000 * inMB) + " " +
+                                (int) (192000 * inMB) + " " +
+                                (int) (384000 * inMB) + " ";
 
                         result.add("rate-limit input " +
                                 spBlock +
@@ -55,9 +55,9 @@ public class CiscoSpeedFormat {
                     break;
                 case POLICY:
                     if (speedLowCase.contains("m")) {
-                        int speedResult = speedSize * KB;
-                        result.add("service-policy input " + speedResult + "k");
-                        result.add("service-policy output " + speedResult + "k");
+                        double speedResult = speedSize * KB;
+                        result.add("service-policy input " + (int) speedResult + "k");
+                        result.add("service-policy output " + (int) speedResult + "k");
 
                     } else if (speedLowCase.contains("k")) {
                         result.add("service-policy input " + speedLowCase);
@@ -73,6 +73,10 @@ public class CiscoSpeedFormat {
             result.add("[!!!] Error. ");
             result.add("\tSpeed type is null. ");
         }
+
+        System.out.println("result " + result);
+        System.out.println("speed " + speed);
+        System.out.println("divider = " + speedSize / KB);
 
         return result;
     } // ** getFormattedSpeed(String type)
