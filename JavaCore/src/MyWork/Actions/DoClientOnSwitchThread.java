@@ -65,7 +65,7 @@ public class DoClientOnSwitchThread implements Runnable {
                 if (result.contains(SUCCESS_S))
                     result = "Success " + aSwitch.getIp() + " " + DELETE_S + " " + result + LINE;
                 else
-                    result = "[Error] DoClientOnSwitchThread->run->createClient \n" +
+                    result = "[Error] DoClientOnSwitchThread->run->deleteClient \n" +
                             "[Error] " + aSwitch.getIp() + " " + DELETE_S + " " + result + LINE;
                 resultMap.put(aSwitch.getIp(), result);
             }

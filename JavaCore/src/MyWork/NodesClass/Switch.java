@@ -107,8 +107,9 @@ public class Switch {
                     result += connect.sendCommand("Saving", "save\r\n") + "\n";
                     ok = true;
                 } // ** save if customer is deleted
+            } else {
+                ok = true;
             } // ** if it is with error
-
             connect.close();
         } // ** if connected
 
