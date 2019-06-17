@@ -11,9 +11,9 @@ public class CryptDecrypt {
 
     public static void main(String[] args) {
         // Configuration
-        String key	= "123#";
-        String secret = "L7hfTXmcYa";
-        String secretCod = "bXFDZHf5gYHnnQkHAQL4+A==";
+        String key	= "pass";
+        String secret = "secret Text";
+        String secretCod = "grat7igguQOqzqIpGgS2hA==";
 
         String mode = "crypt"; // encrypt
 

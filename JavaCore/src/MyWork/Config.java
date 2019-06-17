@@ -44,7 +44,7 @@ public abstract class Config {
 /////////////// **************** START PASS GENERATE ************* ////////////////////////
 //
     public static final String PASS_SIMBOLS = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
-    public static final int PASS_LENGHT = 12;
+    public static final int PASS_LENGHT = 15;
 //
 /////////////// **************** END PASS GENERATE ************* ////////////////////////
 
@@ -142,8 +142,8 @@ public abstract class Config {
 /////////////// **************** START PASS STRINGS ************* ////////////////////////
 //
     public static final String IV = "31415926";
-    public static final String RUN_LOGIN = "admin";
-    public static final String RUN_PASS = "jaNUpm9cNWvfct86RHRwwQ==";
+    static final String RUN_LOGIN = "admin";
+    static final String RUN_PASS = "jaNUpm9cNWvfct86RHRwwQ==";
     public static final String INTRANET_CONNECT_LOGIN = "bXFDZHf5gYHnnQkHAQL4+A==";
     public static final String INTRANET_CONNECT_PASS = "xXHPPl7DZLd/M+T0fm7O4w==";
     public static final String SW_PASS = "jaNUpm9cNWvfct86RHRwwQ==";
@@ -151,6 +151,7 @@ public abstract class Config {
     public static final String CISCO_EN_PASS = "L4AroI1w8tkZhbVw9zkSPA==";
     public static final String SSH_LOGIN = "LI+vCBkIo1U=";
     public static final String SSH_PASS = "fyzWJkoD10g=";
+    public static final String MB_PASS = "grat7igguQOqzqIpGgS2hA==";
 
 //
 /////////////// **************** END PASS STRINGS ************* ////////////////////////

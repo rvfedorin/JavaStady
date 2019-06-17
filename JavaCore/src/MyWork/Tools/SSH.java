@@ -23,8 +23,16 @@ public class SSH {
     }
 
     private void sessionConnect() throws JSchException {
-        session = jsch.getSession(getEncrypt(new String(key), SSH_LOGIN), host);
-        UserInfo ui = new MyUserInfo(getEncrypt(new String(key), SSH_PASS));
+    session = jsch.getSession(getEncrypt(new String(key), SSH_LOGIN), host);
+    UserInfo ui = new MyUserInfo(getEncrypt(new String(key), SSH_PASS));
+        session.setUserInfo(ui);
+
+        session.connect();
+} // ** sessionConnect()
+
+    private void sessionConnect(String login, String pass) throws JSchException {
+        session = jsch.getSession(login, host);
+        UserInfo ui = new MyUserInfo(getEncrypt(new String(key), pass));
         session.setUserInfo(ui);
 
         session.connect();
@@ -63,10 +71,10 @@ public class SSH {
         return result;
     } // ** downloadFile
 
-    public ChannelExec getExec() {
+    public ChannelExec getExec(String login, String pass) {
         ChannelExec channelExec = null;
         try {
-            sessionConnect();
+            sessionConnect(login, pass);
             channelExec = (ChannelExec) session.openChannel("exec");
         } catch (JSchException ex) {
             ex.printStackTrace();
