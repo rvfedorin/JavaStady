@@ -76,7 +76,7 @@ public class CiscoSpeedFormat {
 
         System.out.println("result " + result);
         System.out.println("speed " + speed);
-        System.out.println("divider = " + speedSize / KB);
+        System.out.println("inMb = " + speedSize / KB);
 
         return result;
     } // ** getFormattedSpeed(String type)

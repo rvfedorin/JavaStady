@@ -41,6 +41,14 @@ public abstract class Config {
 //
 /////////////// **************** END GUI STRINGS ************* ////////////////////////
 
+/////////////// **************** START PASS GENERATE ************* ////////////////////////
+//
+    public static final String PASS_SIMBOLS = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+    public static final int PASS_LENGHT = 12;
+//
+/////////////// **************** END PASS GENERATE ************* ////////////////////////
+
+
     private static final Dimension DIMENSION = Toolkit.getDefaultToolkit().getScreenSize();
     public static final Double X_SCREEN_SIZE = DIMENSION.getWidth();
     public static final Double Y_SCREEN_SIZE = DIMENSION.getHeight();
