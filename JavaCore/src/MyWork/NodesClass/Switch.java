@@ -70,7 +70,7 @@ public class Switch {
                 String confTag = "conf vlan " + customer.getMnemokod() + " add tagged " + pUp + pDown;
                 result += connect.sendCommand(confTag) + "\n";
 
-                if (getIp().contains(customer.getIPswitch())) {
+                if (getIp().contains(customer.getIPConnection())) {
                     String confUntag;
                     if (customer.getUntagged())
                         confUntag = "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();

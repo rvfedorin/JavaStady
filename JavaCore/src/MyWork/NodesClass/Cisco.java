@@ -29,9 +29,13 @@ public class Cisco {
         this.connect = null;
     }
 
+    public String getIP() {
+        return ip;
+    }
+
     private boolean connect() {
         boolean successConnect;
-        connect = new Telnet(ip, 23);
+        connect = new Telnet(getIP(), 23);
         successConnect = connect.auth(CryptDecrypt.getEncrypt(new String(key), CISCO_PASS));
         if (successConnect) {
             ArrayList<String> commands = new ArrayList<>();
@@ -80,46 +84,53 @@ public class Cisco {
             int clientCount = 1;
             String secondary = "";
             String intCisco = getIntCisco(client.getVlan());
-            System.out.println("intCisco " + intCisco);
-            String speedSize = null;
+            if(intCisco.contains("Error")) {
+                result = intCisco;
+            } else {
+                System.out.println("intCisco " + intCisco);
+                String speedSize = null;
 //            CLIENT_TYPE client_type = null;
-            ArrayList<String> ipAddressesCommands = new ArrayList<>(); // create string route to config
+                ArrayList<String> ipAddressesCommands = new ArrayList<>(); // create string route to config
 
-            ////////// START ROUTE CONFIG //////////////////////////
-            for (String clientLine : clSettings.split("\n")) {
-                Matcher lanM = LAN_PATTERN.matcher(clientLine);
-                if (lanM.find() && !lanM.group(3).equals("32")) {
-                    System.out.println(lanM.group());
-                    speedSize = lanM.group(1) + "k";
+                ////////// START ROUTE CONFIG //////////////////////////
+                for (String clientLine : clSettings.split("\n")) {
+                    Matcher lanM = LAN_PATTERN.matcher(clientLine);
+                    if (lanM.find() && !lanM.group(3).equals("32")) {
+                        System.out.println(lanM.group());
+                        speedSize = lanM.group(1) + "k";
 
-                    if (clientCount == 2) {
-                        secondary = " secondary";
-                    }
-                    String toConfigLine = "ip address " + getGw(lanM.group(2)) + " " + getMask(lanM.group(3)) + secondary;
-                    ipAddressesCommands.add(toConfigLine);
-                    clientCount++;
-                } else if (clientLine.toLowerCase().contains(UNNUMBERED)) {
-                    Pattern speedP = Pattern.compile(" (\\d{3,7}) " + IP_PATTERN + ".*");
-                    Matcher speedM = speedP.matcher(clientLine);
-                    if (speedM.find()) {
-                        speedSize = speedM.group(1) + "k";
-                    }
-                    Matcher ipM = IP_PATTERN.matcher(clientLine);
-
-                    if (ipM.find()) {
-                        String toConfigLine = "ip route " + ipM.group() + " 255.255.255.255 " + intCisco + " 10";
-                        //ip route 77.235.218.94 255.255.255.255 TenGigabitEthernet0/3/0.890 10
+                        if (clientCount == 2) {
+                            secondary = " secondary";
+                        }
+                        String toConfigLine = "ip address " + getGw(lanM.group(2)) + " " + getMask(lanM.group(3)) + secondary;
                         ipAddressesCommands.add(toConfigLine);
-                    }
-                } // if unnumbered
-            } // for every ip line
-            System.out.println("speedSize " + speedSize);
-            ////////// END ROUTE CONFIG //////////////////////////
+                        clientCount++;
+                    } else if (clientLine.toLowerCase().contains(UNNUMBERED)) {
+                        Pattern speedP = Pattern.compile(" (\\d{3,7}) " + IP_PATTERN + ".*");
+                        Matcher speedM = speedP.matcher(clientLine);
+                        if (speedM.find()) {
+                            speedSize = speedM.group(1) + "k";
+                        }
+                        Matcher ipM = IP_PATTERN.matcher(clientLine);
 
-            //////// START CREATION /////////////////////////////////////
-            if (speedSize != null && ipAddressesCommands.size() > 0)
-                result = runCreatingCustomerOnCisco(intCisco, ipAddressesCommands, client, speedSize);
-            ////////// END CREATION /////////////////////////////////////
+                        if (ipM.find()) {
+                            String toConfigLine = "ip route " + ipM.group() + " 255.255.255.255 " + intCisco + " 10";
+                            //ip route 77.235.218.94 255.255.255.255 TenGigabitEthernet0/3/0.890 10
+                            ipAddressesCommands.add(toConfigLine);
+                        }
+                    } // if unnumbered
+                } // for every ip line
+                System.out.println("speedSize " + speedSize);
+                ////////// END ROUTE CONFIG //////////////////////////
+
+                //////// START CREATION /////////////////////////////////////
+                if (speedSize != null && ipAddressesCommands.size() > 0) {
+                    result = "\n" + SUCCESS_S;
+                    result += "\n" + runCreatingCustomerOnCisco(intCisco, ipAddressesCommands, client, speedSize) + "\n";
+
+                }
+                ////////// END CREATION /////////////////////////////////////
+            } // ** if(intCisco.contains("Error"))
         } else {
             result = clSettings;
         }
@@ -135,32 +146,39 @@ public class Cisco {
 
         if (!clSettings.contains("Error")) {
             String intCisco = getIntCisco(client.getVlan());
-            System.out.println("intCisco " + intCisco);
+            if(intCisco.contains("Error")) {
+                result = intCisco;
+            } else {
+                System.out.println("intCisco " + intCisco);
 //            CLIENT_TYPE client_type = null;
-            ArrayList<String> ipAddressesCommands = new ArrayList<>(); // create string route to config
+                ArrayList<String> ipAddressesCommands = new ArrayList<>(); // create string route to config
 
-            ////////// START ROUTE CONFIG //////////////////////////
-            for (String clientLine : clSettings.split("\n")) {
-                Matcher lanM = LAN_PATTERN.matcher(clientLine);
-                if (lanM.find() && !lanM.group(3).equals("32")) {
-                    System.out.println(lanM.group());
-                    String toConfigLine = "ip unnumbered " + getUnnumberInt();
-                    ipAddressesCommands.add(toConfigLine);
-                } else if (clientLine.toLowerCase().contains(UNNUMBERED)) {
-                    Matcher ipM = IP_PATTERN.matcher(clientLine);
-
-                    if (ipM.find()) {
-                        String toConfigLine = "no ip route " + ipM.group() + " 255.255.255.255";
+                ////////// START ROUTE CONFIG //////////////////////////
+                for (String clientLine : clSettings.split("\n")) {
+                    Matcher lanM = LAN_PATTERN.matcher(clientLine);
+                    if (lanM.find() && !lanM.group(3).equals("32")) {
+                        System.out.println(lanM.group());
+                        String toConfigLine = "ip unnumbered " + getUnnumberInt();
                         ipAddressesCommands.add(toConfigLine);
-                    }
-                } // if unnumbered
-            } // for every ip line
-            ////////// END ROUTE CONFIG //////////////////////////
+                    } else if (clientLine.toLowerCase().contains(UNNUMBERED)) {
+                        Matcher ipM = IP_PATTERN.matcher(clientLine);
 
-            //////// START CREATION /////////////////////////////////////
-            if (ipAddressesCommands.size() > 0)
-                result = runDeleteCustomerOnCisco(intCisco, ipAddressesCommands);
-            ////////// END CREATION /////////////////////////////////////
+                        if (ipM.find()) {
+                            String toConfigLine = "no ip route " + ipM.group() + " 255.255.255.255";
+                            ipAddressesCommands.add(toConfigLine);
+                        }
+                    } // if unnumbered
+                } // for every ip line
+                ////////// END ROUTE CONFIG //////////////////////////
+
+                //////// START DELETEION /////////////////////////////////////
+                if (ipAddressesCommands.size() > 0) {
+                    result = "\n" + SUCCESS_S;
+                    result += "\n" + runDeleteCustomerOnCisco(intCisco, ipAddressesCommands) + "\n";
+
+                }
+                ////////// END DELETEION /////////////////////////////////////
+            } // ** if(intCisco.contains("Error"))
         } else {
             result = clSettings;
         }
@@ -440,7 +458,7 @@ public class Cisco {
     }
 
     private String getIntCisco(String vlan) {
-        String result = "";
+        String result = "[Error] No found interface.";
         String showIntOut = runCommand(SHOW_INT_DES_COMMAND + vlan + " ");
         Matcher intCisM = Pattern.compile(".*?\\." + vlan).matcher(showIntOut);
         if (intCisM.find()) {

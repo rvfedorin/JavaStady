@@ -117,10 +117,12 @@ public class MainPanelOptic extends JPanel {
 
 class InputPanel extends JPanel {
     public Map<String, JComponent> allTF;
+    public HashMap<String, JLabel> allLB;
 
     InputPanel() {
         setLayout(new BorderLayout());
         allTF = new HashMap<>();
+        allLB = new HashMap<>();
 
         for (String lab : LABELS) {
             if (lab.equals(UNTAGGED_S)) {
@@ -149,8 +151,10 @@ class InputPanel extends JPanel {
                 lab.add(new JLabel());
                 inp.add(allTF.get(name));
             } else {
-                lab.add(new JLabel(name, SwingConstants.LEFT));
+                JLabel tmpLB = new JLabel(name, SwingConstants.LEFT);
+                lab.add(tmpLB);
                 inp.add(allTF.get(name));
+                allLB.put(name, tmpLB);
             }
         }
 

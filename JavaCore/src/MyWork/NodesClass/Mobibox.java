@@ -8,7 +8,9 @@ import com.jcraft.jsch.JSchException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static MyWork.Config.ERROR_S;
 import static MyWork.Config.MB_PASS;
+import static MyWork.Config.SUCCESS_S;
 
 public class Mobibox {
     private String ipMb;
@@ -55,8 +57,9 @@ public class Mobibox {
         return result;
     } // ** send()
 
-    public String createCustomer(Customer customer, String ipNewMb) {
+    public String createClient(Customer customer) {
         String result = "[Error] not found MB line in city.";
+        String ipNewMb = customer.getIPConnection();
         StringBuilder commands = new StringBuilder();
         // "95.80.120.44X172.17.239.129X172.16.44.235X28"
         String[] mbData = customer.getCity().getLanMB().split("X");
@@ -92,42 +95,50 @@ public class Mobibox {
 
             ///interface l2tp-client add add-default-route=yes connect-to=95.80.98.181 disabled=no keepalive-timeout=disabled name=l2tp-out2 password=Nh78dkju129jfguhndfSD user=Kr-IPDyachkoMB
             ///ip dhcp-client set default-route-distance=10 numbers=0
-            result = "interface l2tp-client add add-default-route=yes connect-to="
-                    + ipMb
-                    + " disabled=no keepalive-timeout=disabled name=l2tp-out2 password="
-                    + newPass
-                    + " user="
-                    + customer.getMnemokod()
-                    + "\n"
-                    + "ip dhcp-client set default-route-distance=10 numbers=0\n\n";
 
-            result += send(commands.toString());
-        }
+            result = send(commands.toString());
+
+            if(result.contains("failure")) {
+                result += "\n" + ERROR_S + "\n";
+            } else {
+                result += "\n\ninterface l2tp-client add add-default-route=yes connect-to="
+                        + ipMb
+                        + " disabled=no keepalive-timeout=disabled name=l2tp-out2 password="
+                        + newPass
+                        + " user="
+                        + customer.getMnemokod()
+                        + "\n"
+                        + "ip dhcp-client set default-route-distance=10 numbers=0\n\n";
+
+                result += "\n" + SUCCESS_S + "\n";
+            } // ** if(result.contains("failure"))
+        } // ** if(mbData.length == 4)
 //        System.out.println(commands.toString());
 
         return result;
     }
 
-    public String removeCustomer(Customer customer) {
+    public String deleteClient(Customer customer) {
         String result;
         String commands = "ppp secret remove " + customer.getMnemokod() + "\n";
         commands += "int eoip remove " + customer.getMnemokod();
 
         result = send(commands);
+        result += "\n" + SUCCESS_S + "\n";
 
         return result;
-    } // ** removeCustomer()
+    } // ** deleteClient()
 
     public static void main(String[] args) {
         String ip = "ip";
         char[] key = "pass".toCharArray();
-        Customer customer = new Customer("Orel", "Orel-test", "4000", "null", "null", "null");
+        Customer customer = new Customer("Orel", "Orel-test", "4000", "IPNewMB", "null", "null");
 
         Mobibox mobibox = new Mobibox(ip, key);
-//        String mbS = mobibox.createCustomer(customer, "172.17.239.187");
+//        String mbS = mobibox.createClient(customer, "172.17.239.187");
 //        System.out.println(mbS);
 
-//        String rem = mobibox.removeCustomer(customer);
+//        String rem = mobibox.deleteClient(customer);
 //        System.out.println(rem);
 //        mobibox.send("log pr\n int pr");
 

@@ -19,7 +19,8 @@ public abstract class Config {
     public static final String MNEMOKOD_DELIMITER_S = "-";
     public static final String MNEMOKOD_S = "Мнемокод: ";
     public static final String NUMBER_VLAN_S = "Номер vlan: ";
-    public static final String IP_SWITCH_S = "IP свитча: ";
+    public static final String IP_SWITCH_S = "IP свитча:       ";
+    public static final String IP_MB_S = "IP мобибокса: ";
     public static final String PORT_S = "Порт: ";
     public static final String UNTAGGED_S = "Untagged";
     public static final String CREATE_CISCO_S = "Создать на Cisco";
@@ -55,6 +56,7 @@ public abstract class Config {
 
     public enum IP_TYPE {IP, ROUTE}
     public enum SPEED_TYPE {POLICY, RATE}
+    public enum CONNECT_TYPE {OPTIC, MB, RWR}
 
     public enum INTRANET_TYPE {WEB, EXCEL}
     public static final INTRANET_TYPE CURRENT_INTRANET_TYPE = INTRANET_TYPE.EXCEL;
@@ -62,10 +64,11 @@ public abstract class Config {
     public static final String SEPARATOR_CONNECTION = "<=>";
     public static final String SEPARATOR_PORT = "P";
     public static final Pattern SWITCH_PATTERN = Pattern.compile("DES|switch|D-Link|DGS");
+    public static final Pattern MB_PATTERN = Pattern.compile("Mobibox|MB");
+    public static final Pattern MIKROTIK_PATTERN = Pattern.compile("mikrotik");
     public static final Pattern RWR_SECTOR_PATTERN = Pattern.compile("Omx");
     public static final Pattern RWR_CLIENT_PATTERN = Pattern.compile("Sm");
-    public static final Pattern CISCO_PATTERN = Pattern.compile("cisco");
-    public static final Pattern MIKROTIK_PATTERN = Pattern.compile("mikrotik");
+    public static final Pattern CISCO_PATTERN = Pattern.compile("cisco|Cisco");
     public static final Pattern IP_PATTERN = Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
     public static final Pattern ERROR_ON_SWITCHES_PATTERN = Pattern.compile("Invalid|Error|Fail|exist|vlanid 2-4094|Entries : 0|possible");
 

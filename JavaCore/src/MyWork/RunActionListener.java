@@ -1,15 +1,14 @@
 package MyWork;
 
 import MyWork.Actions.ChangeSpeedThread;
+import MyWork.Actions.DoClientOnCiscoThread;
+import MyWork.Actions.DoClientOnMBThread;
 import MyWork.Actions.DoClientOnSwitchThread;
-import MyWork.ExtendStandart.ExtendedOpenFile;
 import MyWork.Intranet.ExcelIntranet;
 import MyWork.Intranet.Intranet;
 import MyWork.Intranet.WebIntranet;
 import MyWork.NodesClass.Cisco;
 import MyWork.NodesClass.Customer;
-import MyWork.NodesClass.Region;
-import MyWork.NodesClass.Switch;
 import MyWork.Tools.Formatting;
 
 import javax.swing.*;
@@ -21,12 +20,11 @@ import java.util.concurrent.*;
 
 import static MyWork.Config.*;
 import static MyWork.Config.INTRANET_TYPE.EXCEL;
-import static MyWork.Tools.SpeedFileParser.getParsedString;
-import static MyWork.Tools.CiscoSpeedFormat.getFormattedSpeed;
 
 public class RunActionListener implements ActionListener {
     private MainWindow mainFrame;
     private char[] key;
+    private CONNECT_TYPE connect_type;
 
     RunActionListener(MainWindow frame) {
         mainFrame = frame;
@@ -35,126 +33,160 @@ public class RunActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        MainPanelOptic workPanel = null;
 
-        MainPanelOptic workPanel = mainFrame.mainPanel.opticPanel;
+
+        if (mainFrame.mainPanel.jTabbedPane.getSelectedIndex() == 0) {
+            workPanel = mainFrame.mainPanel.opticPanel;
+            connect_type = CONNECT_TYPE.OPTIC;
+        } else if (mainFrame.mainPanel.jTabbedPane.getSelectedIndex() == 1) {
+            workPanel = mainFrame.mainPanel.mbPanel;
+            connect_type = CONNECT_TYPE.MB;
+        }
+
+
         CurrentlyRunningFrame runningFrame = mainFrame.currentlyRunning;
         EventPrintFrame eventPrint = mainFrame.eventPrintFrame;
 
-        //getAllData() return String[]{mnemokod, vlan, IPswitch, port, untagged, createCis, city, action}
-        String[] allData = workPanel.getAllData();
+        //getAllData() return String[]{mnemokod, vlan, IPconnection, port, untagged, createCis, city, action}
+        String[] allData = null;
+        if (workPanel != null)
+            allData = workPanel.getAllData();
         boolean fineData = true;
 
-        if(allData[7].trim().equals(DELETE_S))
+        if (allData != null && allData[7].trim().equals(DELETE_S))
             allData[3] = "999";
 
         // checks if all data was filled
-        for (String s : allData) {
-            if (s.length() < 1) {
-                fineData = false;
-                break;
-            }
-        } // for
+        String mnemokod, vlan, IPconnection, port, untagged, createCis, city, action;
 
-        String mnemokod = allData[0].trim();
-        String vlan = allData[1].trim();
-        String IPswitch = allData[2].trim();
-        String port = allData[3].trim();
-        String untagged = allData[4].trim();
-        String createCis = allData[5].trim();
-        String city = allData[6].trim();
-        String action = allData[7].trim();
-
-        Intranet intranet = null;
-        String pathFromIntranet = null;
-
-        if (fineData) {
-            try {
-                mainFrame.customer = new Customer(city, mnemokod, vlan, IPswitch, port, untagged);
-            } catch (IllegalArgumentException ex) {
-                fineData = false;
-                eventPrint.pDate();
-                eventPrint.printEvent("[Error] " + ex.toString() + " " + city);
-            }
-
-
-            if (CURRENT_INTRANET_TYPE == EXCEL) {
-                try {
-                    intranet = new ExcelIntranet(key, mainFrame.customer.getCity());
-                } catch (FileNotFoundException ex) {
-                    eventPrint.pDate();
-                    eventPrint.printEvent(ex.toString());
+        if (allData != null) {
+            for (String s : allData) {
+                if (s.length() < 1) {
+                    fineData = false;
+                    break;
                 }
-            } else {
-                intranet = new WebIntranet(key, mainFrame.customer.getCity());
-            }
+            } // for
 
-            if (intranet != null) {
-                pathFromIntranet = intranet.getFullPath(mainFrame.customer.getIPswitch());
-                pathFromIntranet = pathFromIntranet.replaceAll("<\\\\/th>|<\\\\/td>|\\\\n|<td>|\\n|\\\\\"|\\s+", "");
-            } else {
+            mnemokod = allData[0].trim();
+            vlan = allData[1].trim();
+            IPconnection = allData[2].trim();
+            port = allData[3].trim();
+            untagged = allData[4].trim();
+            createCis = allData[5].trim();
+            city = allData[6].trim();
+            action = allData[7].trim();
+
+            Intranet intranet = null;
+            String pathFromIntranet = null;
+
+            if (fineData) {
+                try {
+                    mainFrame.customer = new Customer(city, mnemokod, vlan, IPconnection, port, untagged);
+                } catch (IllegalArgumentException ex) {
+                    fineData = false;
+                    eventPrint.pDate();
+                    eventPrint.printEvent("[Error] " + ex.toString() + " " + city);
+                }
+
+
+                if (CURRENT_INTRANET_TYPE == EXCEL) {
+                    try {
+                        intranet = new ExcelIntranet(key, mainFrame.customer.getCity());
+                    } catch (FileNotFoundException ex) {
+                        eventPrint.pDate();
+                        eventPrint.printEvent(ex.toString());
+                    }
+                } else {
+                    intranet = new WebIntranet(key, mainFrame.customer.getCity());
+                }
+
+                if (intranet != null) {
+                    switch (connect_type) {
+                        case OPTIC:
+                            pathFromIntranet = intranet.getFullPath(mainFrame.customer.getIPConnection());
+                            pathFromIntranet = pathFromIntranet.replaceAll("<\\\\/th>|<\\\\/td>|\\\\n|<td>|\\n|\\\\\"|\\s+", "");
+                            break;
+                        case MB:
+                            String MBmainSwitch = mainFrame.customer.getCity().getLanMB().split("X")[2];
+                            String MBmainPort = mainFrame.customer.getCity().getLanMB().split("X")[3];
+                            String ipConnect = mainFrame.customer.getIPConnection();
+                            if (MBmainSwitch != null && MBmainPort != null) {
+                                pathFromIntranet = intranet.getFullPath(MBmainSwitch);
+                                pathFromIntranet = pathFromIntranet.replaceAll("<\\\\/th>|<\\\\/td>|\\\\n|<td>|\\n|\\\\\"|\\s+", "");
+                                pathFromIntranet += "[" + MBmainPort + "]" + SEPARATOR_CONNECTION + "[null]" + ipConnect + "(Mobibox)";
+                            }
+                            break;
+                        case RWR:
+                            pathFromIntranet = intranet.getFullPath(mainFrame.customer.getIPConnection());
+                            pathFromIntranet = pathFromIntranet.replaceAll("<\\\\/th>|<\\\\/td>|\\\\n|<td>|\\n|\\\\\"|\\s+", "");
+                            break;
+                    } // connection type switch
+
+                } else {
+                    fineData = false;
+                }
+            } // ** if (fineData)
+
+            if (pathFromIntranet == null)
                 fineData = false;
-            }
-        } // ** if (fineData)
 
-
-        if (fineData && action.equals(CREATE_S)) {
-            // Создаём
-            eventPrint.pDate();
-            if (Boolean.valueOf(createCis)) {
-                System.out.println("С созданием на Cisco.");
-                String ipCisco = mainFrame.customer.getCity().getCoreCisco();
-                Cisco cisco = new Cisco(ipCisco, key);
-                eventPrint.printEvent(cisco.createClient(mainFrame.customer));
+            if(fineData) {
+                if (Boolean.valueOf(createCis)) {
+                    System.out.println("С выполнением на Cisco.");
+                    String ipCisco = mainFrame.customer.getCity().getCoreCisco();
+                    pathFromIntranet = "[null]" + ipCisco + "(Cisco)[null]" + SEPARATOR_CONNECTION + pathFromIntranet;
+                }
             }
 
-            System.out.println("Создание клиента: ");
-            eventPrint.printEvent("Создание клиента: ");
 
-            new Thread(new ControlDoOnPathThreads(
-                    pathFromIntranet,
-                    mainFrame.customer,
-                    CREATE_S,
-                    runningFrame,
-                    eventPrint,
-                    new String(key))
-            ).start();
+            if (fineData && action.equals(CREATE_S)) {
+                // Создаём
+                eventPrint.pDate();
+                System.out.println("Создание клиента: ");
+                eventPrint.printEvent("Создание клиента: ");
 
-            System.out.println(mainFrame.customer);
-            eventPrint.printEvent(mainFrame.customer.toString());
+                new Thread(new ControlDoOnPathThreads(
+                        pathFromIntranet,
+                        mainFrame.customer,
+                        CREATE_S,
+                        runningFrame,
+                        eventPrint,
+                        new String(key))
+                ).start();
 
-        } else if (fineData && action.equals(DELETE_S)) {
-            // Удаляем
-            eventPrint.pDate();
-            if (Boolean.valueOf(createCis)) {
-                System.out.println("С удалением на Cisco.");
-                String ipCisco = mainFrame.customer.getCity().getCoreCisco();
-                Cisco cisco = new Cisco(ipCisco, key);
-                eventPrint.printEvent(cisco.deleteClient(mainFrame.customer));
-            }
-            System.out.println("Удаление клиента: ");
-            eventPrint.printEvent("Удаление клиента: ");
-            new Thread(new ControlDoOnPathThreads(
-                    pathFromIntranet,
-                    mainFrame.customer,
-                    DELETE_S,
-                    runningFrame,
-                    eventPrint,
-                    new String(key))
-            ).start();
+                System.out.println(mainFrame.customer);
+                eventPrint.printEvent(mainFrame.customer.toString());
 
-            System.out.println(mainFrame.customer);
-            eventPrint.printEvent(mainFrame.customer.toString());
+            } else if (fineData && action.equals(DELETE_S)) {
+                // Удаляем
+                eventPrint.pDate();
 
-        } else if (action.equals(CHANGE_SPEED_S)) {
-            // Меняем скорость
-            eventPrint.pDate();
-            System.out.println("Смена скорости.");
-            eventPrint.printEvent("Смена скорости.");
-            new ChangeSpeedThread("speedChange", eventPrint, runningFrame, key);
+                System.out.println("Удаление клиента: ");
+                eventPrint.printEvent("Удаление клиента: ");
+                new Thread(new ControlDoOnPathThreads(
+                        pathFromIntranet,
+                        mainFrame.customer,
+                        DELETE_S,
+                        runningFrame,
+                        eventPrint,
+                        new String(key))
+                ).start();
 
-        } else {
-            eventPrint.printEvent("[Error] Получены не все данные. RunActionListener -> actionPerformed()");
-        } // ** if selection action
+                System.out.println(mainFrame.customer);
+                eventPrint.printEvent(mainFrame.customer.toString());
+
+            } else if (action.equals(CHANGE_SPEED_S)) {
+                // Меняем скорость
+                eventPrint.pDate();
+                System.out.println("Смена скорости.");
+                eventPrint.printEvent("Смена скорости.");
+                new ChangeSpeedThread("speedChange", eventPrint, runningFrame, key);
+
+            } else {
+                eventPrint.printEvent("[Error] Получены не все данные. RunActionListener -> actionPerformed()");
+            } // ** if selection action
+        } // if (alldata not null)
 
     } // ** actionPerformed(ActionEvent e)
 } //
@@ -196,7 +228,7 @@ class ControlDoOnPathThreads implements Runnable {
             StringBuilder humanPath = new StringBuilder();
             for (String s : connectionList) {
                 String[] cellConnect = s.split(SEPARATOR_PORT);
-                String node = "[" + cellConnect[0] + "]" + cellConnect[1] + "[" + cellConnect[2] + "] <=>";
+                String node = "[" + cellConnect[0] + "]" + cellConnect[1] + "[" + cellConnect[2] + "] " + SEPARATOR_CONNECTION;
                 humanPath.append(node);
             }
             eventPrint.pDate();
@@ -220,10 +252,31 @@ class ControlDoOnPathThreads implements Runnable {
                             resultMap,
                             enterPass);
                     Future task = pool.submit(tempThr);
-                    eventPrint.printEvent("Do on " + ip);
+                    eventPrint.printEvent("Do on Switch " + ip);
                     allThreadsSwitch.add(task);
                 } else if (MIKROTIK_PATTERN.matcher(connectData).find()) {
                     System.out.println("ДЕЛАЕМ НА МИКРОТИКЕ");
+                } else if (MB_PATTERN.matcher(connectData).find()) {
+                    DoClientOnMBThread tempThr = new DoClientOnMBThread(
+                            customer,
+                            ToDo,
+                            fr,
+                            resultMap,
+                            enterPass);
+                    Future task = pool.submit(tempThr);
+                    eventPrint.printEvent("Do on Mobibox " + ip);
+                    allThreadsSwitch.add(task);
+                } else if (CISCO_PATTERN.matcher(connectData).find()) {
+                    DoClientOnCiscoThread tempThr = new DoClientOnCiscoThread(
+                            connectionList[i],
+                            customer,
+                            ToDo,
+                            fr,
+                            resultMap,
+                            enterPass);
+                    Future task = pool.submit(tempThr);
+                    eventPrint.printEvent("Do on Cisco " + ip);
+                    allThreadsSwitch.add(task);
                 }
                 i++;
             } // ** for(all switches)

@@ -6,15 +6,15 @@ public class Customer {
     private Region city;
     private String mnemokod;
     private String vlan;
-    private String IPswitch;
+    private String IPConnection;
     private String port;
     private boolean untagged;
 
-    public Customer(String city, String mnemokod, String vlan, String IPswitch, String port, String untagged)
+    public Customer(String city, String mnemokod, String vlan, String IPConnection, String port, String untagged)
             throws IllegalArgumentException{
 
         boolean fineData = true;
-        String[] allData = new String[]{city, mnemokod, vlan, IPswitch, port, untagged};
+        String[] allData = new String[]{city, mnemokod, vlan, IPConnection, port, untagged};
 
         for (String s: allData) {
             if (s.length() < 1) {
@@ -34,7 +34,7 @@ public class Customer {
             this.city = CITIES.get(prefix);
             this.mnemokod = mnemokod;
             this.vlan = vlan;
-            this.IPswitch = IPswitch;
+            this.IPConnection = IPConnection;
             this.port = port;
             this.untagged = Boolean.valueOf(untagged);
         } else {
@@ -54,8 +54,8 @@ public class Customer {
         return vlan;
     }
 
-    public String getIPswitch() {
-        return IPswitch;
+    public String getIPConnection() {
+        return IPConnection;
     }
 
     public String getPort() {
@@ -72,7 +72,7 @@ public class Customer {
                    "ОП подключения: " + getCity().getCity() + "\n" +
                    "Клиент: " + getMnemokod() + "\n" +
                    "Номер vlan: " + getVlan() + "\n" +
-                   "IP свитча: " + getIPswitch() + "\n" +
+                   "IP свитча: " + getIPConnection() + "\n" +
                    "Порт подключения: " + getPort() + "\n" +
                    "Растагирование: " + getUntagged() + "\n" +
                    LINE + "\n";

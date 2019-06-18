@@ -91,7 +91,8 @@ class MainWindow extends JFrame {
 
 class MainPanel extends JPanel {
     MainPanelOptic opticPanel;
-    private JPanel mbPanel;
+    JTabbedPane jTabbedPane;
+    MainPanelMB mbPanel;
     private JPanel rwrPanel;
     private MainWindow mainWindow;
 
@@ -102,10 +103,16 @@ class MainPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(2,4,2,0));
         opticPanel = new MainPanelOptic(mainWindow);
-        mbPanel = new MainPanelMB();
+        opticPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,0));
+        mbPanel = new MainPanelMB(mainWindow);
+        mbPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,0));
         rwrPanel = new MainPanelRWR();
 
-        add(opticPanel);
+        jTabbedPane = new JTabbedPane();
+        jTabbedPane.addTab("Optic", opticPanel);
+        jTabbedPane.addTab("Mobibox", mbPanel);
+//        add(opticPanel);
+        add(jTabbedPane);
 
     }
 } // ************************ close class MainPanel
