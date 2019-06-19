@@ -5,6 +5,8 @@ import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import static MyWork.Config.*;
 
@@ -55,6 +57,13 @@ class MainWindow extends JFrame {
         int x = (int) (X_SCREEN_SIZE - getWidth())/3;
         int y = (int) (Y_SCREEN_SIZE - getHeight())/3;
         setLocation(x, y);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                eventPrintFrame.saveToFile();
+                super.windowClosing(e);
+            }
+        });
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Работа с клиентами.");

@@ -14,9 +14,10 @@ public class AboutDialog extends JDialog {
         JPanel text = new JPanel();
         text.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         text.add(new JLabel("<html>" +
-                "<h3>Работа с клиентам v."+ VERSION +"  </h3>" +
+                "<h4>Трудовые будни v."+ VERSION +"  </h4>" +
                 "<hr>" +
-                "By Roman V. Fedorin" +
+                "Powered by Roman V. Fedorin" +
+                "<ht>" +
                 "</html>"));
         add(text, BorderLayout.CENTER);
         JPanel newPanel = new JPanel();

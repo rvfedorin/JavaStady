@@ -5,7 +5,6 @@ import MyWork.ExtendStandart.ExtendedTextArea;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -15,8 +14,10 @@ import static MyWork.Config.LOG_FILE;
 
 public class EventPrintFrame extends JFrame {
     private ExtendedTextArea textField;
+    private StringBuilder unsavedText;
 
     EventPrintFrame() {
+        unsavedText = new StringBuilder();
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 //        this.setResizable(false);
         this.setTitle("Events");
@@ -34,9 +35,15 @@ public class EventPrintFrame extends JFrame {
     public void printEvent(String text) {
         EventQueue.invokeLater(() -> {
             textField.append(text + "\n");
-            if(!saveToFile(text)) {
-                textField.append("\n[Error] Write to log.\n");
-            }
+            unsavedText.append(text).append("\n");
+
+            if(unsavedText.toString().split("\n").length > 10) {
+                if (!saveToFile(unsavedText.toString())) {
+                    textField.append("\n[Error] Write to log.\n");
+                } else {
+                    unsavedText = new StringBuilder();
+                }
+            } // if we have many not save lines
         });
     } // ** printEvent()
 
@@ -62,5 +69,9 @@ public class EventPrintFrame extends JFrame {
             ex.printStackTrace();
             return false;
         }
+    } // ** saveToFile(String text)
+
+    public boolean saveToFile() {
+        return saveToFile(unsavedText.toString());
     } // ** saveToFile(String text)
 }
