@@ -84,12 +84,14 @@ public class Switch {
             } // ** if vlan exist then exit
 
             connect.close();
-        } // ** if connected
 
-        if (isSuccess(result))
-            return SUCCESS_S + formatResult(result);
-        else
-            return ERROR_S + formatResult(result);
+            if (isSuccess(result))
+                return SUCCESS_S + formatResult(result);
+            else
+                return ERROR_S + formatResult(result);
+        } else { // ** if connected
+            return ERROR_S + " Can't connect.\n";
+        } // ** if not connected
     } // ** createClient(Customer customer)
 
     public String deleteClient(Customer customer) {
@@ -112,13 +114,14 @@ public class Switch {
                 ok = true;
             } // ** if it is with error
             connect.close();
-        } // ** if connected
-
-        if (ok)
-            return SUCCESS_S + formatResult(result);
-        else
-            return ERROR_S + formatResult(result);
-    }
+            if (ok)
+                return SUCCESS_S + formatResult(result);
+            else
+                return ERROR_S + formatResult(result);
+        } else { // ** if connected
+            return ERROR_S + " Can't connect.\n";
+        }
+    } // ** deleteClient()
 
     private String formatResult(String toFormat) {
         StringBuilder result = new StringBuilder("\n");

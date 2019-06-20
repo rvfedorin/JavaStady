@@ -50,10 +50,14 @@ public class EventPrintFrame extends JFrame {
     public void pDate() {
         Date date = new Date();
         SimpleDateFormat dateView = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+        StringBuilder result = new StringBuilder();
+        result.append("\t\t+++++++++++++++++++++++++++\n");
+        result.append("\t\t[DATE] ").append(dateView.format(date)).append(" [DATE]\n");
+        result.append("\t\t+++++++++++++++++++++++++++\n");
+
         EventQueue.invokeLater(() -> {
-            textField.append("\t\t+++++++++++++++++++++++++++\n");
-            textField.append("\t\t[DATE] " + dateView.format(date) + " [DATE]\n");
-            textField.append("\t\t+++++++++++++++++++++++++++\n");
+            unsavedText.append(result.toString());
+            textField.append(result.toString());
         });
     }
 
@@ -71,7 +75,7 @@ public class EventPrintFrame extends JFrame {
         }
     } // ** saveToFile(String text)
 
-    public boolean saveToFile() {
+    boolean saveToFile() {
         return saveToFile(unsavedText.toString());
     } // ** saveToFile(String text)
 }
