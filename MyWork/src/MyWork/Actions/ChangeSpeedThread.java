@@ -72,16 +72,13 @@ public class ChangeSpeedThread extends Thread {
 
                     String[] clientNewSpeed = line.split(" ");  // ** [0] mnemokod; [1] speed
                     // get OP
-                    Region citySpeed = CITIES.getOrDefault(key, null);
+                    region = CITIES.getOrDefault(key, null);
 
-                    if (citySpeed != null) { // if we have found city
+                    if (region != null) { // if we have found city
                         if (clientNewSpeed.length >= 2) {
 //                            formattedSpeed = getFormattedSpeed("service-policy", clientNewSpeed[1]);
                              mnemoSpeed.put(clientNewSpeed[0], clientNewSpeed[1]);
 
-                            if(region == null) {
-                                region = CITIES.getOrDefault(CITIES_BY_NAME.get(clientNewSpeed[0].split("-")[0]), null);
-                            }
                         } else {
                             frameEvent.printEvent(tempLine);
                             frameEvent.printEvent("[!!!] Error parse line speed.");
@@ -127,7 +124,10 @@ public class ChangeSpeedThread extends Thread {
                 ex.printStackTrace();
             }
         } while (line != null);
+
         if(region != null) {
+            System.out.println(region);
+            System.out.println(mnemoSpeed);
             Cisco cisco = new Cisco(region.getCoreCisco(), key);
             ArrayList<String> result = cisco.changeSpeed(mnemoSpeed);
             frameEvent.printEvent(result.toString());

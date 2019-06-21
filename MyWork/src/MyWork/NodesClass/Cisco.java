@@ -201,7 +201,7 @@ public class Cisco {
             String interfaceCl = null;
 
 
-            Region region = CITIES.getOrDefault(CITIES_BY_NAME.get(mnemo.split("-")[0]), null);
+            Region region = CITIES.getOrDefault(mnemo.split("-")[0], null);
             if (region != null) {
                 String out;
                 String unixIP = region.getCoreUnix();
@@ -252,6 +252,8 @@ public class Cisco {
                 } else {
                     result.add("[Error] " + mnemo + "not found");
                 }// ** if (interfaceCl != null)
+            } else {
+                result.add("[Error] " + mnemo + "Region not found. Node[Cisco]-[changeSpeed()]");
             } // if we have region
         } // for every mnemo-speed
 
@@ -382,6 +384,7 @@ public class Cisco {
 
     private String formatOut(String out) {
         StringBuilder result = new StringBuilder();
+//        out = out.replaceAll("\b", "");
         for (String s : out.split("\n")) {
             if (s.split("#").length > 1) {
                 result.append(s).append("\n");

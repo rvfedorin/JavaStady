@@ -15,6 +15,7 @@ import static MyWork.Config.LOG_FILE;
 public class EventPrintFrame extends JFrame {
     private ExtendedTextArea textField;
     private StringBuilder unsavedText;
+    private String logName = null;
 
     EventPrintFrame() {
         unsavedText = new StringBuilder();
@@ -32,7 +33,7 @@ public class EventPrintFrame extends JFrame {
 //        this.setVisible(true);
     }
 
-    public void printEvent(String text) {
+    public synchronized void printEvent(String text) {
         EventQueue.invokeLater(() -> {
             textField.append(text + "\n");
             unsavedText.append(text).append("\n");
@@ -47,7 +48,7 @@ public class EventPrintFrame extends JFrame {
         });
     } // ** printEvent()
 
-    public void pDate() {
+    public synchronized void pDate() {
         Date date = new Date();
         SimpleDateFormat dateView = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
         StringBuilder result = new StringBuilder();
@@ -62,10 +63,25 @@ public class EventPrintFrame extends JFrame {
     }
 
     private boolean saveToFile(String text) {
+
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        File log = new File(LOG_FILE + dateFormat.format(date) + ".txt");
+        String logNameTemp = LOG_FILE + dateFormat.format(date) + ".txt";
 
+        if(logName != null && logName.equals(logNameTemp)) {
+            return saveOperation(logName, text);
+        }else if (logName != null){
+            boolean saveResult = saveOperation(logName, text);
+            logName = logNameTemp;
+            return saveResult;
+        } else {
+            logName = logNameTemp;
+            return saveOperation(logName, text);
+        }
+    } // ** saveToFile(String text)
+
+    private boolean saveOperation(String filaName, String text) {
+        File log = new File(filaName);
         try (FileWriter fw = new FileWriter(log, true)) {
             fw.write(text + "\n");
             return true;
@@ -73,9 +89,9 @@ public class EventPrintFrame extends JFrame {
             ex.printStackTrace();
             return false;
         }
-    } // ** saveToFile(String text)
+    } // ** saveOperation()
 
-    boolean saveToFile() {
-        return saveToFile(unsavedText.toString());
+    void saveToFile() {
+        saveToFile(unsavedText.toString());
     } // ** saveToFile(String text)
 }

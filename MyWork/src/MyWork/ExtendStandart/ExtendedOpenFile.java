@@ -6,6 +6,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import static MyWork.Config.SPEEDS_FILE;
 
@@ -16,7 +19,8 @@ public class ExtendedOpenFile {
         File speedFile = new File(fileName);
 
         try {
-            frSpeedFile = new BufferedReader(new FileReader(speedFile));
+//            frSpeedFile = new BufferedReader(new FileReader(speedFile));
+            frSpeedFile = Files.newBufferedReader(speedFile.toPath(), StandardCharsets.UTF_8);
         } catch (IOException ex) {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.showDialog(null, "Select");

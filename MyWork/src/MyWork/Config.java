@@ -1,7 +1,6 @@
 package MyWork;
 
 import java.awt.*;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -43,10 +42,10 @@ public abstract class Config {
 //
 /////////////// **************** END GUI STRINGS ************* ////////////////////////
 
-    /////////////// **************** START PASS GENERATE ************* ////////////////////////
+/////////////// **************** START PASS GENERATE ************* ////////////////////////
 //
-    public static final String PASS_SIMBOLS = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
-    public static final int PASS_LENGHT = 15;
+    public static final String PASS_SYMBOLS = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+    public static final int PASS_LENGTH = 15;
 //
 /////////////// **************** END PASS GENERATE ************* ////////////////////////
 

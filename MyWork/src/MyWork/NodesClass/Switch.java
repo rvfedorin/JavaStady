@@ -111,6 +111,7 @@ public class Switch {
                     ok = true;
                 } // ** save if customer is deleted
             } else {
+                result += connect.sendCommand("Saving", "save\r\n") + "\n";
                 ok = true;
             } // ** if it is with error
             connect.close();
@@ -127,6 +128,7 @@ public class Switch {
         StringBuilder result = new StringBuilder("\n");
         for (String line : toFormat.split("\n")) {
             line = line.trim();
+            line = line.replaceAll("\u001B\\[5D", " ");
             if (line.length() > 0 && !line.contains("#")) {
                 result.append("\t").append(line).append("\n");
                 continue;
