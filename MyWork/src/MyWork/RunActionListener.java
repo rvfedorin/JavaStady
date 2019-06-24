@@ -83,6 +83,7 @@ public class RunActionListener implements ActionListener {
             if (fineData) {
                 try {
                     mainFrame.customer = new Customer(city, mnemokod, vlan, IPconnection, port, untagged);
+                    System.out.println(mainFrame.customer.getCity());
                 } catch (IllegalArgumentException ex) {
                     fineData = false;
                     eventPrint.pDate();
@@ -106,6 +107,7 @@ public class RunActionListener implements ActionListener {
                         case OPTIC:
                             pathFromIntranet = intranet.getFullPath(mainFrame.customer.getIPConnection());
                             pathFromIntranet = pathFromIntranet.replaceAll("<\\\\/th>|<\\\\/td>|\\\\n|<td>|\\n|\\\\\"|\\s+", "");
+                            System.out.println(pathFromIntranet);
                             break;
                         case MB:
                             String MBmainSwitch = mainFrame.customer.getCity().getLanMB().split("X")[2];

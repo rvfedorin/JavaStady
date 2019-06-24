@@ -35,6 +35,10 @@ public class Customer {
             this.mnemokod = mnemokod;
             this.vlan = vlan;
             this.IPConnection = IPConnection;
+            if(IPConnection.contains("root")) {
+                this.city.setCoreSwitch(IPConnection.split("root")[1]);
+                this.IPConnection = IPConnection.split("root")[0];
+            }
             this.port = port;
             this.untagged = Boolean.valueOf(untagged);
         } else {

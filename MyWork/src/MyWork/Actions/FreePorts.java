@@ -3,6 +3,7 @@ package MyWork.Actions;
 import MyWork.EventPrintFrame;
 import MyWork.NodesClass.Switch;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,11 +17,24 @@ public class FreePorts extends Thread {
     private String swIP;
     private EventPrintFrame toPrint;
     private Switch aSwitch;
+    private JTextField portField = null;
+    private boolean addedToField = false;
 
     public FreePorts(String ip, char[] key, EventPrintFrame print) {
         swIP = ip;
         pass = key;
         toPrint = print;
+
+
+        aSwitch = new Switch(swIP, "null", "null", false, new String(pass));
+        System.out.println("Создан объект свитча: " + ip);
+    }
+
+    public FreePorts(String ip, char[] key, EventPrintFrame print, JTextField aPortField) {
+        swIP = ip;
+        pass = key;
+        toPrint = print;
+        portField = aPortField;
 
 
         aSwitch = new Switch(swIP, "null", "null", false, new String(pass));
@@ -67,6 +81,10 @@ public class FreePorts extends Thread {
 
             for (String port : ports) {
                 if (!hasVlans(outVlans, port)) {
+                    if(!addedToField) {
+                        portField.setText(port);
+                        addedToField = true;
+                    }
                     toPrint.printEvent("Свободный порт: " + port);
                     count++;
                 }

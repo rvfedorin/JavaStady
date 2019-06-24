@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import MyWork.NodesClass.Customer;
 import MyWork.NodesClass.Region;
 import MyWork.NodesClass.Switch;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -92,15 +93,12 @@ public class ExcelIntranet extends Intranet {
             }
             if (cellValue.equals(ipDev)) {
                 String ip = cellValue;
+
+                if (ip.equals(region.getCoreSwitch())) { // ** check if it is broken because it id root sw
+                    connect = "[" + region.getRootPort() + "] " + region.getCoreSwitch() + "(switch)";
+                    break;
+                }
                 String from = row.getCell(cellID + 1).getStringCellValue().replaceAll("\\d/", "");
-                if (from.trim().length() < 8) { // ** START if connect UP is broken
-                    if (ip.equals(region.getCoreSwitch())) { // ** check if it is broken because it id root sw
-                        connect = "[" + region.getRootPort() + "] " + region.getCoreSwitch() + "(switch)";
-                        break;
-                    } else {
-                        continue;
-                    }
-                } // ** END if connect UP is broken
 
                 Matcher ipM = IP_PATTERN.matcher(ip);
 

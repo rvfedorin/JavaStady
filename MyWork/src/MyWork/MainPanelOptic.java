@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static MyWork.Config.*;
 import static MyWork.ExtendStandart.ExtendedOpenFile.openSystemFile;
@@ -184,9 +186,17 @@ class RightPartPanel extends JPanel {
             String city = citiesComboBox.getItemAt(citiesComboBox.getSelectedIndex());
             String ipCisco = CITIES.get(CITIES_BY_NAME.get(city)).getCoreCisco();
             Cisco cisco = new Cisco(ipCisco, key);
+            String freeVlans = cisco.getFreeInt();
             mainWindow.eventPrintFrame.pDate();
             mainWindow.eventPrintFrame.printEvent("Свободные интерфейсы " + city + ": " + ipCisco);
-            mainWindow.eventPrintFrame.printEvent(cisco.getFreeInt());
+            mainWindow.eventPrintFrame.printEvent(freeVlans);
+
+            Pattern vlanNumber = Pattern.compile("(\\d{1,4}) down");
+            Matcher vlanNumberM = vlanNumber.matcher(freeVlans);
+            if(vlanNumberM.find()) {
+                JTextField vlanField = (JTextField) mainWindow.mainPanel.opticPanel.inputPanel.allTF.get(NUMBER_VLAN_S);
+                vlanField.setText(vlanNumberM.group(1));
+            }
         });
 
         freePortBut = new JButton("Найти свободный порт");
@@ -197,7 +207,8 @@ class RightPartPanel extends JPanel {
                 String ip = ipField.getText();
                 char[] key = mainWindow.authDialog.getPass();
                 EventPrintFrame toPrint = mainWindow.eventPrintFrame;
-                new FreePorts(ip, key, toPrint).start();
+                JTextField portField = (JTextField) mainWindow.mainPanel.opticPanel.inputPanel.allTF.get(PORT_S);
+                new FreePorts(ip, key, toPrint, portField).start();
             } else if (ipField.getText().length() <= 0) {
                 mainWindow.eventPrintFrame.printEvent("[Error] Не задан IP свитча.");
             } else {

@@ -1,5 +1,6 @@
 package MyWork.Intranet;
 
+import MyWork.NodesClass.Customer;
 import MyWork.NodesClass.Region;
 import MyWork.Tools.CryptDecrypt;
 
