@@ -31,7 +31,7 @@ public class MainPanelOptic extends JPanel {
         setLayout(new BorderLayout());
 
         inputPanel = new InputPanel();
-        rightPanel = new RightPartPanel(mainWindow);
+        rightPanel = new RightPartPanel(mainWindow, inputPanel);
         selectActionPanel = new SelectActionPanel();
 
         // START LISTENER SELECTION PANEL
@@ -173,9 +173,11 @@ class RightPartPanel extends JPanel {
     public JButton changeSpeedBut;
     public CitiesComboBox citiesComboBox;
     private MainWindow mainWindow;
+    private InputPanel inputPanel;
 
-    RightPartPanel(MainWindow mainWindow) {
+    RightPartPanel(MainWindow mainWindow, InputPanel inputPanel) {
         this.mainWindow = mainWindow;
+        this.inputPanel = inputPanel;
 
 //        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setLayout(new GridLayout(6, 0));
@@ -194,20 +196,20 @@ class RightPartPanel extends JPanel {
             Pattern vlanNumber = Pattern.compile("(\\d{1,4}) down");
             Matcher vlanNumberM = vlanNumber.matcher(freeVlans);
             if(vlanNumberM.find()) {
-                JTextField vlanField = (JTextField) mainWindow.mainPanel.opticPanel.inputPanel.allTF.get(NUMBER_VLAN_S);
+                JTextField vlanField = (JTextField) inputPanel.allTF.get(NUMBER_VLAN_S);
                 vlanField.setText(vlanNumberM.group(1));
             }
         });
 
         freePortBut = new JButton("Найти свободный порт");
         freePortBut.addActionListener((e) -> {
-            JTextField ipField = (JTextField) mainWindow.mainPanel.opticPanel.inputPanel.allTF.get(IP_SWITCH_S);
+            JTextField ipField = (JTextField) inputPanel.allTF.get(IP_SWITCH_S);
             if (ipField.getInputVerifier().verify(ipField)) {
                 mainWindow.eventPrintFrame.pDate();
                 String ip = ipField.getText();
                 char[] key = mainWindow.authDialog.getPass();
                 EventPrintFrame toPrint = mainWindow.eventPrintFrame;
-                JTextField portField = (JTextField) mainWindow.mainPanel.opticPanel.inputPanel.allTF.get(PORT_S);
+                JTextField portField = (JTextField) inputPanel.allTF.get(PORT_S);
                 new FreePorts(ip, key, toPrint, portField).start();
             } else if (ipField.getText().length() <= 0) {
                 mainWindow.eventPrintFrame.printEvent("[Error] Не задан IP свитча.");
@@ -233,5 +235,5 @@ class RightPartPanel extends JPanel {
         add(new JLabel());
         add(changeSpeedBut);
     }
-}
+} // ** class RightPartPanel
 
