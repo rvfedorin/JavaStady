@@ -493,7 +493,7 @@ public class Cisco {
     }
 
     private String getClFromClConf(String mnemokod, String ipUnix, boolean downloadClConf) {
-        String result = "[Error] Not found client in " + LOCAL_CLIENTS_CONF_FILE;
+        String result = "\n[Error] Not found client in " + LOCAL_CLIENTS_CONF_FILE + "\n";
         StringBuilder foundClients = new StringBuilder();
         boolean successDownload;
         if (downloadClConf) {
@@ -515,8 +515,10 @@ public class Cisco {
                     result = foundClients.toString();
             } catch (IOException ioex) {
                 ioex.printStackTrace();
-                result = "[Error] open file " + LOCAL_CLIENTS_CONF_FILE;
+                result = "\n[Error] open file " + LOCAL_CLIENTS_CONF_FILE + "\n";
             }
+        } else {
+            result = "\n[Error] download file " + LOCAL_CLIENTS_CONF_FILE + "\n";
         } // if we get Clients.conf
         return result;
     } // ** getClFromClConf()
