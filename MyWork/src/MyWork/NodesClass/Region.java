@@ -1,6 +1,8 @@
 package MyWork.NodesClass;
 
-public class Region {
+import java.io.Serializable;
+
+public class Region implements Serializable {
     private String city;
     private String prefix;
     private String id;

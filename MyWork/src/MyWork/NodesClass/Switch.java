@@ -74,11 +74,13 @@ public class Switch {
                     String confUntag;
                     if (customer.getUntagged()) {
                         confUntag = "config vlan default delete " + customer.getPort() + "\n";
-                        confUntag += "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();
+                        result += (connect.sendCommand(confUntag) + "\n").replaceAll("Fail!", "");
+                        confUntag = "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();
                     } else
                         confUntag = "conf vlan " + customer.getMnemokod() + " add tagged " + customer.getPort();
 
                     result += connect.sendCommand(confUntag) + "\n";
+
                 } // ** if untagged or not
                 result += connect.sendCommand("Saving", "save\r\n") + "\n";
             } // ** if vlan exist then exit
@@ -105,7 +107,7 @@ public class Switch {
             result += connect.sendCommand(deleteByName) + "\n";
             if (!isSuccess(result)) {
                 String deleteByNumber = "delete vlan vlanid " + customer.getVlan();
-                result = connect.sendCommand(deleteByNumber) + "\n";
+                result += connect.sendCommand(deleteByNumber) + "\n";
                 if (isSuccess(result)) {
                     result += connect.sendCommand("Saving", "save\r\n") + "\n";
                     ok = true;
