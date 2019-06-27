@@ -190,6 +190,7 @@ public class FullPathToSw extends JFrame {
 
         return result;
     }
+
 } // ** class
 
 class getNodeLinksConnect implements Callable<String> {
@@ -216,13 +217,30 @@ class getNodeLinksConnect implements Callable<String> {
         }
 
         if (commandsPort.size() > 1) {
+            Matcher upPortM;
+            Matcher downPortM;
             String response = swNode.runCommand(commandsPort).replaceAll("\n", " ");
 
-            Pattern upPortP = Pattern.compile("Port : " + swNode.getUpPort() + ".*?(\\d{5,8}Kbit)");
-            Matcher upPortM = upPortP.matcher(response);
+            if (ERROR_ON_SWITCHES_PATTERN.matcher(response).find()) {
+                commandsPort.clear();
+                commandsPort.add("sh ports " + swNode.getUpPort());
+                commandsPort.add("q");
+                commandsPort.add("sh ports " + swNode.getDownPort());
+                commandsPort.add("q");
+                response = swNode.runCommand(commandsPort).replaceAll("\n", " ");
 
-            Pattern downPortP = Pattern.compile("Port : " + swNode.getDownPort() + ".*?(\\d{5,8}Kbit)");
-            Matcher downPortM = downPortP.matcher(response);
+                Pattern upPortP = Pattern.compile(swNode.getUpPort() + ".*?(\\d{2,5}M)/Full/None");
+                upPortM = upPortP.matcher(response);
+
+                Pattern downPortP = Pattern.compile(swNode.getDownPort() + ".*?(\\d{2,5}M)/Full/None");
+                downPortM = downPortP.matcher(response);
+            } else {
+                Pattern upPortP = Pattern.compile("Port : " + swNode.getUpPort() + ".*?(\\d{5,8}Kbit)");
+                upPortM = upPortP.matcher(response);
+
+                Pattern downPortP = Pattern.compile("Port : " + swNode.getDownPort() + ".*?(\\d{5,8}Kbit)");
+                downPortM = downPortP.matcher(response);
+            } // if error is in response
 
             if (upPortM.find()) {
                 upPort = " [" + SPEEDS.getOrDefault(upPortM.group(1), "?") + "]";
@@ -231,6 +249,7 @@ class getNodeLinksConnect implements Callable<String> {
             if (downPortM.find()) {
                 downPort = " [" + SPEEDS.getOrDefault(downPortM.group(1), "?") + "]";
             }
+
         } // if we have commands
 
         result = "(" + swNode.getUpPort() + "p" + upPort + ")-" +
