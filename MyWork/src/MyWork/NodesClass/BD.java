@@ -1,10 +1,10 @@
 package MyWork.NodesClass;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.HashMap;
 
 import static MyWork.Config.BD_REGIONS_FILE;
-import static MyWork.Config.CITIES;
 
 public class BD {
 
@@ -14,10 +14,18 @@ public class BD {
             regionsHashMap = (HashMap<String, Region>) ois.readObject();
         } catch (IOException ex) {
             ex.printStackTrace();
-            regionsHashMap.put("[Error] file with DB Regions not found.", null);
+            JOptionPane.showMessageDialog(null,
+                    "[Error] file with DB Regions not found.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+//            regionsHashMap.put("[Error] file with DB Regions not found.", null);
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
-            regionsHashMap.put("[Error] HashMap not found in " + BD_REGIONS_FILE, null);
+            JOptionPane.showMessageDialog(null,
+                    "[Error] HashMap not found in " + BD_REGIONS_FILE,
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+//            regionsHashMap.put("[Error] HashMap not found in " + BD_REGIONS_FILE, null);
         }
         return regionsHashMap;
     } // ** getRegions()

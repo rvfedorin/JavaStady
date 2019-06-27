@@ -19,6 +19,9 @@ class AuthDialog extends JDialog {
 
     AuthDialog(JFrame owner, String title){
         super(owner, title, true);
+        if(CITIES.keySet().size() < 1) {
+            System.exit(0);
+        }
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocation(owner.getLocation());
 

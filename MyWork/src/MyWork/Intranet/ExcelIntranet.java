@@ -207,6 +207,7 @@ public class ExcelIntranet extends Intranet {
                 if (cellDevConnect != null) {
                     try {
                         String cellValue = cellDevConnect.getStringCellValue().replaceAll(IP_PATTERN + "/[\\d]{1,2}", " ");
+                        cellValue = cellValue.replaceAll("0/", "");  // remove if there is port view Gi0/2
                         Matcher matcher = connectPattern.matcher(cellValue);
                         if (matcher.find()) {
 //                            System.out.println("Pattern port:" + port + " IP:" + ip);
