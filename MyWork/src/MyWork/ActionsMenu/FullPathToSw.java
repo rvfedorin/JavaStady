@@ -179,7 +179,7 @@ public class FullPathToSw extends JFrame {
         String ipPathStr = ipPath.toString().replaceFirst(SEPARATOR_CONNECTION, "");
         for (String ip : ipPathStr.split(SEPARATOR_CONNECTION)) {
             try {
-//                System.out.println("nodesResponse.get(ip).get() " + nodesResponse.get(ip).get());
+                System.out.println("nodesResponse.get(ip).get() " + nodesResponse.get(ip).get());
                 resultBuilder.append(SEPARATOR_CONNECTION).append(nodesResponse.get(ip).get());
             } catch (Exception e) {
                 System.out.println("[Error] nodesResponse.get(ip).get()");
@@ -217,8 +217,11 @@ class getNodeLinksConnect implements Callable<String> {
         }
 
         if (commandsPort.size() > 1) {
-            Matcher upPortM;
-            Matcher downPortM;
+            Pattern upPortP = Pattern.compile(swNode.getUpPort() + ".*?(\\d{2,5}M)/Full/(None|Disabled)");
+            Pattern downPortP = Pattern.compile(swNode.getDownPort() + ".*?(\\d{2,5}M)/Full/(None|Disabled)");
+            Pattern upPortDesP = Pattern.compile("Port : " + swNode.getUpPort() + ".*?(\\d{5,8}Kbit)");
+            Pattern downPortDesP = Pattern.compile("Port : " + swNode.getDownPort() + ".*?(\\d{5,8}Kbit)");
+
             String response = swNode.runCommand(commandsPort).replaceAll("\n", " ");
 
             if (ERROR_ON_SWITCHES_PATTERN.matcher(response).find()) {
@@ -228,33 +231,31 @@ class getNodeLinksConnect implements Callable<String> {
                 commandsPort.add("sh ports " + swNode.getDownPort());
                 commandsPort.add("q");
                 response = swNode.runCommand(commandsPort).replaceAll("\n", " ");
-
-                Pattern upPortP = Pattern.compile(swNode.getUpPort() + ".*?(\\d{2,5}M)/Full/None");
-                upPortM = upPortP.matcher(response);
-
-                Pattern downPortP = Pattern.compile(swNode.getDownPort() + ".*?(\\d{2,5}M)/Full/None");
-                downPortM = downPortP.matcher(response);
-            } else {
-                Pattern upPortP = Pattern.compile("Port : " + swNode.getUpPort() + ".*?(\\d{5,8}Kbit)");
-                upPortM = upPortP.matcher(response);
-
-                Pattern downPortP = Pattern.compile("Port : " + swNode.getDownPort() + ".*?(\\d{5,8}Kbit)");
-                downPortM = downPortP.matcher(response);
             } // if error is in response
 
-            if (upPortM.find()) {
-                upPort = " [" + SPEEDS.getOrDefault(upPortM.group(1), "?") + "]";
+            Matcher upPortDesM = upPortDesP.matcher(response);  // sh ports 1 des
+            Matcher upPortM = upPortP.matcher(response); // sh ports 1
+
+            Matcher downPortDesM = downPortDesP.matcher(response);
+            Matcher downPortM = downPortP.matcher(response);
+
+            if (upPortDesM.find()) {
+                upPort = "[" + SPEEDS.getOrDefault(upPortDesM.group(1), "?") + "]";
+            } else if (upPortM.find()) {
+                upPort = "[" + SPEEDS.getOrDefault(upPortM.group(1), "?") + "]";
             }
 
-            if (downPortM.find()) {
-                downPort = " [" + SPEEDS.getOrDefault(downPortM.group(1), "?") + "]";
+            if (downPortDesM.find()) {
+                downPort = "[" + SPEEDS.getOrDefault(downPortDesM.group(1), "?") + "]";
+            } else if (downPortM.find()) {
+                downPort = "[" + SPEEDS.getOrDefault(downPortM.group(1), "?") + "]";
             }
 
         } // if we have commands
 
-        result = "(" + swNode.getUpPort() + "p" + upPort + ")-" +
+        result = upPort + " (" + swNode.getUpPort() + "p)-" +
                 swNode.getIp() +
-                "-(" + swNode.getDownPort() + "p" + downPort + ")";
+                "-(" + swNode.getDownPort() + "p) " + downPort;
 
         return result;
     }

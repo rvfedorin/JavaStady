@@ -135,6 +135,7 @@ public abstract class Config {
     static {
         SPEEDS = new HashMap<>();
         SPEEDS.put("10000Kbit", "10Fa");
+        SPEEDS.put("10M", "10Fa");
         SPEEDS.put("100000Kbit", "100Fa");
         SPEEDS.put("100M", "100Fa");
         SPEEDS.put("1000000Kbit", "1Gi");
