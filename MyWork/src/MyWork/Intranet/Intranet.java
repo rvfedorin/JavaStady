@@ -1,6 +1,5 @@
 package MyWork.Intranet;
 
-import MyWork.NodesClass.Customer;
 import MyWork.NodesClass.Region;
 
 public abstract class Intranet {

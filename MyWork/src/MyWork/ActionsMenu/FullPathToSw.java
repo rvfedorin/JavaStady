@@ -264,7 +264,7 @@ class getNodeLinksConnect implements Callable<String> {
      * delete from out unwanted symbols and return the field with link
      */
     private String formatPort(String out, String port) {
-        String result = "null";
+        StringBuilder result = new StringBuilder("null");
 
         for (String line : out.split("\n")) {
             if (line.contains(port) && !line.contains("Down")) {
@@ -274,10 +274,10 @@ class getNodeLinksConnect implements Callable<String> {
                 if (blocks.length >= 4)
                     line = blocks[3];
 //                System.out.println(line);
-                result += line + "\n";
+                result.append(line).append("\n");
             }
         } // ** for lines of out
-        return result;
+        return result.toString();
     }
 
 } // ** class getNodeLinksConnect

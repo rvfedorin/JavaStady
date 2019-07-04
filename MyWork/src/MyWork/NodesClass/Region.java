@@ -112,12 +112,10 @@ public class Region implements Serializable {
 
     private String calcIPCisco(String ipUnix) {
         String[] ipUnixbyPart = ipUnix.split("\\.");
-        String ipCisco = ipUnixbyPart[0] +
+        return ipUnixbyPart[0] +
                 "." + ipUnixbyPart[1] +
                 "." + ipUnixbyPart[2] +
                 "." + (new Integer(ipUnixbyPart[3]) - 1);
-
-        return ipCisco;
     }
 
     @Override

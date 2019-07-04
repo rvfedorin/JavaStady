@@ -176,7 +176,7 @@ public class SSH {
 
             System.exit(0);
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
             try {
                 if (fos != null) fos.close();
             } catch (Exception ee) {

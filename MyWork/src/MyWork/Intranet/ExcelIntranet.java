@@ -15,6 +15,7 @@ import MyWork.NodesClass.Region;
 import MyWork.NodesClass.Switch;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.functions.Match;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -138,7 +139,15 @@ public class ExcelIntranet extends Intranet {
             } catch (IllegalStateException | NullPointerException ex) {
                 continue;
             }
-            if (cellData.contains(ipSw)) {
+
+            Matcher cellDataM = Pattern.compile(".*?(" + IP_PATTERN + ").*?").matcher(cellData);
+            if(cellDataM.find()) {
+                cellData = cellDataM.group(1);
+            } else {
+                cellData = "none";
+            }
+
+            if (cellData.equals(ipSw)) {
                 ipToAdd = row.getCell(cellID).getStringCellValue();
                 allIP.addAll(allIPConnected(ipToAdd));
 //                System.out.print(ipToAdd);
@@ -149,7 +158,7 @@ public class ExcelIntranet extends Intranet {
     } // ** allIPConnected(String ipSw)
 
     private String getCustomerOnIP(String IP) {
-        String customers = "";
+        StringBuilder customers = new StringBuilder();
         Iterator<Row> rows = workbook.getSheetAt(0).rowIterator();
         int cellID = Integer.valueOf(region.getDevCellId());
 
@@ -162,7 +171,15 @@ public class ExcelIntranet extends Intranet {
             } catch (IllegalStateException | NullPointerException ex) {
                 continue;
             }
-            if (cellData.contains(IP)) {
+
+            Matcher cellDataM = Pattern.compile(".*?(" + IP_PATTERN + ").*?").matcher(cellData);
+            if(cellDataM.find()) {
+                cellData = cellDataM.group(1);
+            } else {
+                cellData = "none";
+            }
+
+            if (cellData.equals(IP)) {
                 int emptyLine = 0;
                 while (emptyLine < 3) {
                     row = rows.next();
@@ -174,7 +191,7 @@ public class ExcelIntranet extends Intranet {
                         continue;
                     }
                     if (customerMnemo.startsWith(region.getPrefix())) {
-                        customers += "\t" + customerMnemo + "\n";
+                        customers.append("\t" + customerMnemo + "\n");
                     } else {
                         emptyLine++;
                     }
@@ -183,11 +200,11 @@ public class ExcelIntranet extends Intranet {
             } // ** if(cellData.contains(IP))
         } // ** while (rows.hasNext())
 
-        return customers;
+        return customers.toString();
     } // ** getCustomerOnIP(String IP)
 
     private String findConnectedFrom(String ip, String upPorts, String vlanName, int vlanNumber) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         String connectedLine = "";
 
         for (String port : upPorts.split(",")) {
@@ -217,9 +234,7 @@ public class ExcelIntranet extends Intranet {
                             connectFrom = cellDev.getStringCellValue();
                             break;
                         }
-                    } catch (Exception ex) {
-                        continue;
-                    }
+                    } catch (Exception ex) {}
                 }
             } // ** while looking for row by row
             Matcher getIP = IP_PATTERN.matcher(connectFrom);
@@ -237,25 +252,25 @@ public class ExcelIntranet extends Intranet {
                         if (!portsAndVlan.contains("untagged") && portsAndVlan.split("XXX").length > 1) {
                             String ports = portsAndVlan.split("XXX")[0];
                             int newVlanNumber = Integer.valueOf(portsAndVlan.split("XXX")[1]);
-                            result += node.getIp() + " -> ";
-                            result += findConnectedFrom(node.getIp(), ports, vlanName, newVlanNumber);
+                            result.append(node.getIp()).append(" -> ");
+                            result.append(findConnectedFrom(node.getIp(), ports, vlanName, newVlanNumber));
                         }
 
                         if (portsAndVlan.contains("untagged"))
-                            result = node.getIp();
+                            result.append(node.getIp());
                     } else {// ** if Error in node.showVlanByNumber(vlanNumber);
-                        result += vlanOnSw;
+                        result.append(vlanOnSw);
                     }
                 } else {
-                    result += "\nNot found on " + connectFrom + "(" + connectedLine + ") [END]\n";
+                    result.append("\nNot found on ").append(connectFrom).append("(").append(connectedLine).append(") [END]\n");
                 }
 
             } else {
-                result += "[END]\n";
+                result.append("[END]\n");
             }
         }
 
-        return result;
+        return result.toString();
     } // ** findConnectedFrom()
 
     /*

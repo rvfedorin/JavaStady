@@ -456,8 +456,7 @@ public class Cisco {
     private String getMask(String cidr) {
         int power = 32 - Integer.valueOf(cidr);
         int hosts = 256 - (int) Math.pow(2, power);
-        String mask = "255.255.255." + hosts;
-        return mask;
+        return "255.255.255." + hosts;
     }
 
     private String getIntCisco(String vlan) {
