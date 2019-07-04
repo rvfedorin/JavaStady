@@ -181,16 +181,18 @@ public class ExcelIntranet extends Intranet {
 
             if (cellData.equals(IP)) {
                 int emptyLine = 0;
-                while (emptyLine < 3) {
+                while (emptyLine < 2) {
                     row = rows.next();
                     String customerMnemo;
+                    String customerPort;
                     try {
                         customerMnemo = row.getCell(0).getStringCellValue();
+                        customerPort =  row.getCell(cellID).getStringCellValue();
                     } catch (IllegalStateException | NullPointerException ex) {
                         emptyLine++;
                         continue;
                     }
-                    if (customerMnemo.startsWith(region.getPrefix())) {
+                    if (customerMnemo.startsWith(region.getPrefix()) & !IP_PATTERN.matcher(customerPort).find()) {
                         customers.append("\t" + customerMnemo + "\n");
                     } else {
                         emptyLine++;
