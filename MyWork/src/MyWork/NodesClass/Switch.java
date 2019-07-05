@@ -2,6 +2,7 @@ package MyWork.NodesClass;
 
 import MyWork.Tools.CryptDecrypt;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -63,27 +64,27 @@ public class Switch {
             if (!getDownPort().contains("null") && getUpPort().contains("null")) pDown = getDownPort();
             if (!getUpPort().contains("null")) pUp = getUpPort();
 
-            String create = "create vlan " + customer.getMnemokod() + " tag " + customer.getVlan();
-            result += connect.sendCommand(create) + "\n";
+            boolean recreate = false;
 
-            if (!ERROR_PATTERN.matcher(result).find()) {
-                String confTag = "conf vlan " + customer.getMnemokod() + " add tagged " + pUp + pDown;
-                result += connect.sendCommand(confTag) + "\n";
-
-                if (getIp().contains(customer.getIPConnection())) {
-                    String confUntag;
-                    if (customer.getUntagged()) {
-                        confUntag = "config vlan default delete " + customer.getPort() + "\n";
-                        result += (connect.sendCommand(confUntag) + "\n").replaceAll("Fail!", "");
-                        confUntag = "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();
-                    } else
-                        confUntag = "conf vlan " + customer.getMnemokod() + " add tagged " + customer.getPort();
-
-                    result += connect.sendCommand(confUntag) + "\n";
-
-                } // ** if untagged or not
-                result += connect.sendCommand("Saving", "save\r\n") + "\n";
-            } // ** if vlan exist then exit
+            do {
+                String create = "create vlan " + customer.getMnemokod() + " tag " + customer.getVlan();
+                result += connect.sendCommand(create) + "\n";
+                if (!ERROR_PATTERN.matcher(result).find()) {
+                    result += addPortsToVlan(customer, connect, pUp, pDown);
+                    recreate = false;
+                } else if (result.contains("exist") && !recreate) {
+                    String message = "Vlan " + customer.getVlan() + " exist on " + getIp() + "\nУдалить и создать новый?";
+                    String title = "Выберите действие";
+                    int input = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+                    if (input == JOptionPane.YES_OPTION) {
+                        String delete = "delete vlan vlanid " + customer.getVlan();
+                        result = "\n" + connect.sendCommand(delete) + "\n";
+                        recreate = true;
+                    } // if we recreate vlan
+                }  else {
+                    recreate = false;
+                } // ** if vlan error then exit
+            } while (recreate);
 
             connect.close();
 
@@ -95,6 +96,29 @@ public class Switch {
             return ERROR_S + " Can't connect.\n";
         } // ** if not connected
     } // ** createClient(Customer customer)
+
+    private String addPortsToVlan(Customer customer, Telnet connect, String pUp, String pDown) {
+        StringBuilder response = new StringBuilder();
+
+        String confTag = "conf vlan " + customer.getMnemokod() + " add tagged " + pUp + pDown;
+        response.append(connect.sendCommand(confTag)).append("\n");
+
+        if (getIp().contains(customer.getIPConnection())) {
+            String confUntag;
+            if (customer.getUntagged()) {
+                confUntag = "config vlan default delete " + customer.getPort() + "\n";
+                response.append((connect.sendCommand(confUntag) + "\n").replaceAll("Fail!", ""));
+                confUntag = "conf vlan " + customer.getMnemokod() + " add untagged " + customer.getPort();
+            } else
+                confUntag = "conf vlan " + customer.getMnemokod() + " add tagged " + customer.getPort();
+
+            response.append(connect.sendCommand(confUntag)).append("\n");
+
+        } // ** if untagged or not
+        response.append(connect.sendCommand("Saving", "save\r\n")).append("\n");
+
+        return response.toString();
+    } // ** addPortsToVlan()
 
     public String deleteClient(Customer customer) {
         String result = "\n";
