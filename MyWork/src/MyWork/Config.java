@@ -1,14 +1,45 @@
 package MyWork;
 
 import java.awt.*;
+import java.io.*;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import MyWork.NodesClass.BD;
 import MyWork.NodesClass.Region;
 
+import javax.swing.*;
+
 public abstract class Config {
+    private static Properties conf;
+    private static File confFile = new File("conf.ini");
+    static {
+        conf = new Properties();
+        try {
+            conf.load(new FileInputStream(confFile));
+        } catch (IOException ex) {
+            try { // create default conf file
+                confFile.createNewFile();
+                conf.setProperty("CURRENT_INTRANET_TYPE", "excel");
+                conf.setProperty("SPEEDS_FILE", "speeds.txt");
+                conf.setProperty("LOG_FILE", ".\\log\\log");
+                conf.setProperty("REMOTE_CLIENTS_CONF_FILE", "/etc/Clients.conf");
+                conf.setProperty("LOCAL_CLIENTS_CONF_FILE", "Clients.conf");
+                conf.setProperty("BD_REGIONS_FILE", "regions.dat");
+                conf.setProperty("INTRANETS_PATH", "C:\\INTRANETS\\");
+                conf.store(new FileOutputStream(confFile), null);
+                conf.load(new FileInputStream(confFile));
+            } catch (IOException ioex) {
+                JOptionPane.showMessageDialog(null,
+                        "Error create default config file (conf.ini)",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            } // ** don't create
+        }
+    } // ** static conf
+
     public static final String VERSION = "1.0";
 
     /////////////// **************** START GUI STRINGS ************* ////////////////////////
@@ -62,9 +93,16 @@ public abstract class Config {
     public enum CONNECT_TYPE {OPTIC, MB, RWR}
 
     public enum INTRANET_TYPE {WEB, EXCEL}
+    public static final INTRANET_TYPE CURRENT_INTRANET_TYPE;
+    static {
+        if(conf.getProperty("CURRENT_INTRANET_TYPE").equalsIgnoreCase("web")) {
+            CURRENT_INTRANET_TYPE = INTRANET_TYPE.WEB;
+        } else {
+            CURRENT_INTRANET_TYPE = INTRANET_TYPE.EXCEL;
+        }
+    }
 
-    public static final INTRANET_TYPE CURRENT_INTRANET_TYPE = INTRANET_TYPE.EXCEL;
-    public static final String INTRANETS_PATH = "C:\\INTRANETS\\";
+
     public static final String SEPARATOR_CONNECTION = "<=>";
     public static final String SEPARATOR_PORT = "P";
     public static final Pattern SWITCH_PATTERN = Pattern.compile("DES|switch|D-Link|DGS");
@@ -77,11 +115,12 @@ public abstract class Config {
     public static final Pattern ERROR_ON_SWITCHES_PATTERN = Pattern.compile("Invalid|Error|Fail|exist|vlanid 2-4094|Entries : 0|possible");
 
     /////////////// **************** START FILES ************* ////////////////////////
-    public static final String SPEEDS_FILE = "speeds.txt";
-    public static final String LOG_FILE = ".\\log\\log";
-    public static final String REMOTE_CLIENTS_CONF_FILE = "/etc/Clients.conf";
-    public static final String LOCAL_CLIENTS_CONF_FILE = "Clients.conf";
-    public static final String BD_REGIONS_FILE = "regions.dat";
+    public static final String SPEEDS_FILE = conf.getProperty("SPEEDS_FILE");
+    public static final String LOG_FILE = conf.getProperty("LOG_FILE");
+    public static final String REMOTE_CLIENTS_CONF_FILE = conf.getProperty("REMOTE_CLIENTS_CONF_FILE");
+    public static final String LOCAL_CLIENTS_CONF_FILE = conf.getProperty("LOCAL_CLIENTS_CONF_FILE");
+    public static final String BD_REGIONS_FILE = conf.getProperty("BD_REGIONS_FILE");
+    public static final String INTRANETS_PATH = conf.getProperty("INTRANETS_PATH");
     /////////////// **************** END FILES ************* ////////////////////////
 
 
@@ -146,12 +185,6 @@ public abstract class Config {
     public static final String SUCCESS_S = "Ok";
     public static final String ERROR_S = "[Error]";
 
-/////////////// **************** START UNIX SETTINGS ************* ////////////////////////
-//
-
-    public static final String CLIENTS_CONF = "/etc/Clients.conf";
-//
-/////////////// **************** END UNIX SETTINGS ************* ////////////////////////
 
     /////////////// **************** START PASS STRINGS ************* ////////////////////////
 //
