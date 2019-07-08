@@ -49,7 +49,7 @@ public class MainMenu {
                 new WorkWithDB(mainFrame.eventPrintFrame));
         toolsMenu.addSeparator();
         clientSettings = toolsMenu.add("Полные настройки клиента.");
-        clientSettings.addActionListener(e -> new ClientFullSettings(mainFrame.eventPrintFrame));
+        clientSettings.addActionListener(e -> new ClientFullSettings(mainFrame.eventPrintFrame, mainFrame.authDialog.getPass()));
         findCustomer = toolsMenu.add("Найти клиента.");
         findCustomer.addActionListener(e ->
                 new FindCustomer(mainFrame.eventPrintFrame, mainFrame.authDialog.getPass())

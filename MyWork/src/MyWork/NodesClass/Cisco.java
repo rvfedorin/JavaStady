@@ -2,11 +2,7 @@ package MyWork.NodesClass;
 
 import MyWork.Tools.CiscoSpeedFormat;
 import MyWork.Tools.CryptDecrypt;
-import MyWork.Tools.SSH;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,7 +73,8 @@ public class Cisco {
     public String createClient(Customer client) {
         String result = "createClient -> ";
 
-        String clSettings = getClFromClConf(client.getMnemokod(), client.getCity().getCoreUnix(), true);
+        Unix unix = new Unix(client.getCity().getCoreUnix(), key);
+        String clSettings = unix.getClFromClConf(client.getMnemokod(), true);
         System.out.println("clSettings " + clSettings);
 
         if (!clSettings.contains("Error")) {
@@ -141,7 +138,8 @@ public class Cisco {
     public String deleteClient(Customer client) {
         String result = "deleteClient -> ";
 
-        String clSettings = getClFromClConf(client.getMnemokod(), client.getCity().getCoreUnix(), true);
+        Unix unix = new Unix(client.getCity().getCoreUnix(), key);
+        String clSettings = unix.getClFromClConf(client.getMnemokod(), true);
         System.out.println("clSettings " + clSettings);
 
         if (!clSettings.contains("Error")) {
@@ -204,12 +202,12 @@ public class Cisco {
             Region region = CITIES.getOrDefault(mnemo.split("-")[0], null);
             if (region != null) {
                 String out;
-                String unixIP = region.getCoreUnix();
+                Unix unix = new Unix(region.getCoreUnix(), key);
                 String clSettings;
                 if (freshClientsconf)
-                    clSettings = getClFromClConf(mnemo, unixIP, false);
+                    clSettings = unix.getClFromClConf(mnemo, false);
                 else {
-                    clSettings = getClFromClConf(mnemo, unixIP, true);
+                    clSettings = unix.getClFromClConf(mnemo, true);
                     freshClientsconf = true;
                 }
                 String clIPLine = clSettings.split("\n")[0];
@@ -485,42 +483,6 @@ public class Cisco {
 
         return result;
     }
-
-    private boolean downloadClientsConf(String ipUnix) {
-        SSH ssh = new SSH(ipUnix, key);
-        return ssh.downloadFile(REMOTE_CLIENTS_CONF_FILE, LOCAL_CLIENTS_CONF_FILE);
-    }
-
-    private String getClFromClConf(String mnemokod, String ipUnix, boolean downloadClConf) {
-        String result = "\n[Error] Not found client in " + LOCAL_CLIENTS_CONF_FILE + "\n";
-        StringBuilder foundClients = new StringBuilder();
-        boolean successDownload;
-        if (downloadClConf) {
-            successDownload = downloadClientsConf(ipUnix);
-        } else {
-            successDownload = true;
-        }
-
-        if (successDownload) {
-            try (BufferedReader br = new BufferedReader(new FileReader(LOCAL_CLIENTS_CONF_FILE))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    line = line.replaceAll("\\s+", " ");
-                    if (line.toLowerCase().contains(mnemokod.toLowerCase() + " ")) {
-                        foundClients.append(line).append("\n");
-                    }
-                } // while every line
-                if (foundClients.length() > 0)
-                    result = foundClients.toString();
-            } catch (IOException ioex) {
-                ioex.printStackTrace();
-                result = "\n[Error] open file " + LOCAL_CLIENTS_CONF_FILE + "\n";
-            }
-        } else {
-            result = "\n[Error] download file " + LOCAL_CLIENTS_CONF_FILE + "\n";
-        } // if we get Clients.conf
-        return result;
-    } // ** getClFromClConf()
 
     private String formatFreeInt(String rawOut) {
         boolean start = false;
