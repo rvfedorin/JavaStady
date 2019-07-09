@@ -2,6 +2,7 @@ package MyWork;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -17,10 +18,9 @@ public abstract class Config {
     static {
         conf = new Properties();
         try {
-            conf.load(new FileInputStream(confFile));
+            conf.load(Files.newInputStream(confFile.toPath()));
         } catch (IOException ex) {
             try { // create default conf file
-                confFile.createNewFile();
                 conf.setProperty("CURRENT_INTRANET_TYPE", "excel");
                 conf.setProperty("SPEEDS_FILE", "speeds.txt");
                 conf.setProperty("LOG_FILE", ".\\log\\log");
@@ -28,8 +28,8 @@ public abstract class Config {
                 conf.setProperty("LOCAL_CLIENTS_CONF_FILE", "Clients.conf");
                 conf.setProperty("BD_REGIONS_FILE", "regions.dat");
                 conf.setProperty("INTRANETS_PATH", "C:\\INTRANETS\\");
-                conf.store(new FileOutputStream(confFile), null);
-                conf.load(new FileInputStream(confFile));
+                conf.store(Files.newOutputStream(confFile.toPath()), null);
+                conf.load(Files.newInputStream(confFile.toPath()));
             } catch (IOException ioex) {
                 JOptionPane.showMessageDialog(null,
                         "Error create default config file (conf.ini)",

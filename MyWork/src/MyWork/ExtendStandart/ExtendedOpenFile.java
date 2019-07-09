@@ -4,11 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static MyWork.Config.SPEEDS_FILE;
 
@@ -16,17 +16,16 @@ public class ExtendedOpenFile {
 
     public static BufferedReader readFile(String fileName) {
         BufferedReader frSpeedFile = null;
-        File speedFile = new File(fileName);
+        Path speedFile = Paths.get(fileName);
 
         try {
-//            frSpeedFile = new BufferedReader(new FileReader(speedFile));
-            frSpeedFile = Files.newBufferedReader(speedFile.toPath(), StandardCharsets.UTF_8);
+            frSpeedFile = Files.newBufferedReader(speedFile, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.showDialog(null, "Select");
-            speedFile = fileChooser.getSelectedFile();
+            speedFile = fileChooser.getSelectedFile().toPath();
             try {
-                frSpeedFile = new BufferedReader(new FileReader(speedFile));
+                frSpeedFile = Files.newBufferedReader(speedFile, StandardCharsets.UTF_8);
             } catch (IOException IOex) {
                 IOex.printStackTrace();
             }

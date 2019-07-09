@@ -248,10 +248,10 @@ public class Cisco {
                     commands.add("end");
 //                    System.out.println(commands);
                 } else {
-                    result.add("[Error] " + mnemo + "not found");
+                    result.add("[Error] " + mnemo + " not found on cisco " + ip);
                 }// ** if (interfaceCl != null)
             } else {
-                result.add("[Error] " + mnemo + "Region not found. Node[Cisco]-[changeSpeed()]");
+                result.add("[Error] " + mnemo + " Region not found. Node[Cisco]-[changeSpeed()]");
             } // if we have region
         } // for every mnemo-speed
 
