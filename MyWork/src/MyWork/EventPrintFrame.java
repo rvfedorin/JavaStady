@@ -80,8 +80,8 @@ public class EventPrintFrame extends JFrame {
         }
     } // ** saveToFile(String text)
 
-    private boolean saveOperation(String filaName, String text) {
-        File log = new File(filaName);
+    private boolean saveOperation(String fileName, String text) {
+        File log = new File(fileName);
         try (FileWriter fw = new FileWriter(log, true)) {
             fw.write(text + "\n");
             return true;
