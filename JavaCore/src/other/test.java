@@ -1,19 +1,33 @@
 package other;
 
 
-import MyWork.NodesClass.Cisco;
-import MyWork.NodesClass.Customer;
-
-
 public class test {
     public static void main(String[] args) {
-        char[] key = "".toCharArray();
-        String ip = "";
-        Cisco cisco = new Cisco(ip, key);
-        Customer customer = new Customer("Orel", "Orel-test", "1431", "no", "no", "no");
-        //Orel-test               in      10240   31.200.205.87           -unnumbered
-//        System.out.println(cisco.createClient(customer));
-//        System.out.println(cisco.deleteClient(customer));
+        int x = 0;
+
+        while (x < 4) {
+            x = x + 1;
+            if (x < 1) {
+                System.out.print("an");
+            }
+            x = x - 1;
+
+            if (x > 1) {
+                System.out.println("an");
+                x = x + 1;
+            }
+
+            if (x == 1) {
+                System.out.print("noise");
+            }
+
+            if (x > 0) {
+                System.out.println("234");
+            }
+
+            System.out.println();
+            x = x - 2;
+        }
 
 
     } // ** main()
