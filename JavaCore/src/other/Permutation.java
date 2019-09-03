@@ -10,12 +10,18 @@ public class Permutation {
 
 
     public static void main(String[] args) {
+        int[] original = {1, 2, 3, 4};
+//        HashSet<String> allCombinationC = withCycle(original);
+        HashSet<Object> allCombinationR = withRecurs(original);
+        printComb(allCombinationR);
+
+    } // ** main()
+
+    public static HashSet<String> withCycle(int[] original) {
         Logger logger = Logger.getLogger("frv.permutation");
         logger.setLevel(Level.WARNING);
         StringBuilder sb = new StringBuilder();
 
-
-        int[] original = {1, 2, 3, 4};
         int size = original.length;
         int count = countCombination(size);
         System.out.println("Counts: " + count);
@@ -62,9 +68,42 @@ public class Permutation {
 
         }
         logger.info(sb.toString());
-        printComb(allCombination);
+        return allCombination;
+    }
 
-    } // ** main()
+    public static HashSet<Object> withRecurs(int[] original) {
+        Object[] allComb = combinationPrefix(original);
+        HashSet<Object> allCombSet = new HashSet<>(Arrays.asList(allComb));
+
+        return allCombSet;
+    }
+
+    private static Object[] combinationPrefix(int[] data) {
+        HashSet<String> comb = new HashSet<>();
+
+
+        if(data.length == 2) {
+            comb.add(data[0] + "" + data[1]);
+            comb.add(data[1] + "" + data[0]);
+        } else {
+
+            Object[] prefixes = combinationPrefix(Arrays.copyOfRange(data, 1, data.length));
+
+            for (Object prefix : prefixes) {
+                String newString = String.valueOf(data[0]) + prefix;
+                comb.add(newString);
+                String[] symbols = newString.split("");
+
+                for (int i = 0; i < symbols.length - 1; i++) {
+                    String temp = symbols[i];
+                    symbols[i] = symbols[i + 1];
+                    symbols[i + 1] = temp;
+                    comb.add(String.join("", symbols));
+                }
+            }
+        }
+        return comb.toArray();
+    }
 
     private static int countCombination(int len) {
         if (len == 1) return 1;
@@ -75,9 +114,9 @@ public class Permutation {
         return result;
     }
 
-    private static void printComb(HashSet<String> s) {
+    private static <T> void printComb(HashSet<T> s) {
         int num = 1;
-        for (String s1 : s) {
+        for (T s1 : s) {
             System.out.println(num++ + " " + s1);
         }
     }

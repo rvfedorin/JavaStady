@@ -57,6 +57,7 @@ public class ScriptTest {
                     String scriptCode = (String) events.get(e);
                     addListener(s[0], s[1], scriptCode, engine, components);
 
+                    System.out.println("Bean: " + s[0]);
                     System.out.println("Code: " + scriptCode);
                 }
                 System.out.println(String.join("", Collections.nCopies(20, "=")));
@@ -81,13 +82,14 @@ public class ScriptTest {
         Object bean = components.get(beanName);
         EventSetDescriptor descriptor = getEventSetDescriptor(bean, eventName);
         if (descriptor == null) return;
-        descriptor.getAddListenerMethod().invoke(bean, Proxy.newProxyInstance(null, new Class[] {
-            descriptor.getListenerType()},
+        descriptor.getAddListenerMethod().invoke(
+                bean,
+                Proxy.newProxyInstance(null, new Class[] {descriptor.getListenerType()},
                 (proxy, method, args) -> {
                     engine.eval(scriptCode);
                     return null;
-                }
-        ));
+                }) // ** proxy
+        ); // ** invoke()
     }
 
     private static EventSetDescriptor getEventSetDescriptor(Object bean, String eventName)
@@ -96,8 +98,9 @@ public class ScriptTest {
         for (EventSetDescriptor descriptor: Introspector.getBeanInfo(bean.getClass()).getEventSetDescriptors()) {
 
             if (descriptor.getName().equals(eventName)) {
-                System.out.println("\t Descriptor name: " + descriptor.getName());
-                System.out.println("\t\t getListenerType: " + descriptor.getListenerType());
+                System.out.println("Descriptor name: " + descriptor.getName());
+                System.out.println("Listener Type: " + descriptor.getListenerType());
+                System.out.println();
                 return descriptor;
             }
 //            else {
