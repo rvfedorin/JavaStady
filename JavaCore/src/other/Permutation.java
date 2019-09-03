@@ -11,10 +11,9 @@ public class Permutation {
 
     public static void main(String[] args) {
         int[] original = {1, 2, 3, 4};
-//        HashSet<String> allCombinationC = withCycle(original);
-        HashSet<Object> allCombinationR = withRecurs(original);
-        printComb(allCombinationR);
-
+        HashSet<String> allCombinationC = withCycle(original);
+        HashSet<String> allCombinationR = withRecurs(original);
+        System.out.println(allCombinationC.equals(allCombinationR));
     } // ** main()
 
     public static HashSet<String> withCycle(int[] original) {
@@ -24,9 +23,8 @@ public class Permutation {
 
         int size = original.length;
         int count = countCombination(size);
-        System.out.println("Counts: " + count);
         HashSet<String> allCombination = new HashSet<>();
-        allCombination.add(Arrays.toString(original));
+        allCombination.add(arrayIntToString(original));
 
         while (count > 0) {
             int i = 0;
@@ -64,16 +62,20 @@ public class Permutation {
             sb.append("\n\tafter ").append(Arrays.toString(original)).append("\n=============\n");
 
             count--;
-            allCombination.add(Arrays.toString(original));
+            allCombination.add(arrayIntToString(original));
 
         }
         logger.info(sb.toString());
         return allCombination;
     }
 
-    public static HashSet<Object> withRecurs(int[] original) {
+    public static HashSet<String> withRecurs(int[] original) {
         Object[] allComb = combinationPrefix(original);
-        HashSet<Object> allCombSet = new HashSet<>(Arrays.asList(allComb));
+
+        HashSet<String> allCombSet = new HashSet<>();
+        for(Object o: allComb) {
+            allCombSet.add((String) o);
+        }
 
         return allCombSet;
     }
@@ -119,5 +121,13 @@ public class Permutation {
         for (T s1 : s) {
             System.out.println(num++ + " " + s1);
         }
+    }
+
+    private static String arrayIntToString(int[] data) {
+        StringBuilder sb = new StringBuilder();
+        for(int element: data) {
+            sb.append(element);
+        }
+        return sb.toString();
     }
 }
