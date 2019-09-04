@@ -1,0 +1,8 @@
+сен 04, 2019 9:14:17 AM other.MyLogger main
+INFO: [*] Logger INFO string 1
+сен 04, 2019 9:14:18 AM other.MyLogger main
+INFO: [*] Logger INFO string 2
+сен 04, 2019 9:15:19 AM other.MyLogger main
+INFO: [*] Logger INFO string 1
+сен 04, 2019 9:15:19 AM other.MyLogger main
+INFO: [*] Logger INFO string 2
