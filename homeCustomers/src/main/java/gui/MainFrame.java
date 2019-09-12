@@ -99,18 +99,34 @@ public class MainFrame extends JFrame {
             String passClient = getData("Pass: ").getText().trim();
 
             new Thread(new StartSession(mnemokod, ipClient, passClient, key)).start();
-
         });
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(getStatusButton);
-        buttonPanel.add(runSessionButton);
+        JButton detailSessionButton = new JButton("Информация по сессии"); //StartSession
+        detailSessionButton.addActionListener(e -> {
+            String mnemokod = getData("Mnemokod: ").getText();
+            String ipClient = getData("IP: ").getText();
+            String passClient = getData("Pass: ").getText();
+            String ipISG = buttonGroup.getSelection().getActionCommand();
+
+            if (mnemokod != null && ipClient != null && passClient != null && ipISG != null) {
+                new Thread(new GetStatus(mnemokod, ipClient, passClient, ipISG, key).detailed(true)).start();
+            } else {
+                System.out.println("Error getStatusButton.addActionListener");
+            }
+        });
+
+        JPanel buttonPanel1 = new JPanel();
+        buttonPanel1.add(getStatusButton);
+        buttonPanel1.add(runSessionButton);
+        JPanel buttonPanel2 = new JPanel();
+        buttonPanel2.add(detailSessionButton);
 
         mainPanel.add(inputPanel);
         mainPanel.add(radioButtonPanel);
-        mainPanel.add(buttonPanel);
+        mainPanel.add(buttonPanel1);
+        mainPanel.add(buttonPanel2);
 
-        MainMenu mainMenu = new MainMenu(this);
+        new MainMenu(this);
 
         this.add(mainPanel);
         this.pack();

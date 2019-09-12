@@ -239,9 +239,14 @@ public class SSH {
 ////      dataOut.writeBytes("enable\r\n");
 //        dataOut.writeBytes(command+"\r\n");
             dataOut.writeBytes("exit\r\n"); //exit from telnet
+            dataOut.flush();
+            sleep(10);
+            dataOut.writeBytes("exit\r\n"); //exit from telnet
+            dataOut.flush();
             sleep(10);
             dataOut.writeBytes("exit\r\n"); //exit from shell
             dataOut.flush();
+
 
             System.out.println("Data has transmitted.");
 
@@ -262,7 +267,6 @@ public class SSH {
                 dataIn.close();
                 dataOut.close();
                 channel.disconnect();
-                session.disconnect();
             } catch (Exception ex) {}
         }
 

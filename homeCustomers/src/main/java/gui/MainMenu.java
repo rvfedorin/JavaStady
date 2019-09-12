@@ -37,7 +37,7 @@ class MainMenu {
         aboutItem = helpMenu.add("About");
         aboutItem.addActionListener(e -> {
             JOptionPane.showMessageDialog(null,
-                    "ver. 1.0.0\nPowered by Roman V. Fedorin" ,
+                    "ver. 1.1.0\nPowered by Roman V. Fedorin" ,
                     "Homes Customers",
                     JOptionPane.INFORMATION_MESSAGE);
         });
