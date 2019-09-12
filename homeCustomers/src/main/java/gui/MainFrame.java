@@ -46,7 +46,7 @@ public class MainFrame extends JFrame {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
-        JPanel inputPanel = new JPanel();
+        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JPanel panelLabels = new JPanel(new GridLayout(labels.length, 1, 1, 8));
         JPanel panelInputs = new JPanel(new GridLayout(labels.length, 1, 1, 1));
         inputPanel.add(panelLabels);
@@ -57,7 +57,7 @@ public class MainFrame extends JFrame {
             JTextField input = new JTextField(18);
             labelsWithInputs.put(name, input);
 
-            panelLabels.add(new JLabel(name));
+            panelLabels.add(new JLabel(name + "          "));
             panelInputs.add(input);
         }
 
@@ -115,6 +115,15 @@ public class MainFrame extends JFrame {
             }
         });
 
+        JButton clearTextFieldsButton = new JButton("Очистить поля");
+        clearTextFieldsButton.addActionListener(e -> {
+            for(String label: labels) {
+                labelsWithInputs.get(label).setText("");
+            }
+        });
+        JPanel clearTextFieldsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        clearTextFieldsPanel.add(clearTextFieldsButton);
+
         JPanel buttonPanel1 = new JPanel();
         buttonPanel1.add(getStatusButton);
         buttonPanel1.add(runSessionButton);
@@ -122,6 +131,7 @@ public class MainFrame extends JFrame {
         buttonPanel2.add(detailSessionButton);
 
         mainPanel.add(inputPanel);
+        mainPanel.add(clearTextFieldsPanel);
         mainPanel.add(radioButtonPanel);
         mainPanel.add(buttonPanel1);
         mainPanel.add(buttonPanel2);
@@ -135,6 +145,9 @@ public class MainFrame extends JFrame {
     }
 
     public void setKey(final char[] key) {
+        if(key.length < 4) {
+            System.exit(0);
+        }
         this.key = key;
     }
 
