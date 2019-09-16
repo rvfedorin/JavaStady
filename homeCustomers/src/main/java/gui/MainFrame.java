@@ -12,6 +12,7 @@ import static tools.Config.ISG_2;
 import static tools.CryptDecrypt.getEncrypt;
 
 public class MainFrame extends JFrame {
+
     private HashMap<String, JTextField> labelsWithInputs;
     private char[] key;
 
@@ -51,7 +52,6 @@ public class MainFrame extends JFrame {
         JPanel panelInputs = new JPanel(new GridLayout(labels.length, 1, 1, 1));
         inputPanel.add(panelLabels);
         inputPanel.add(panelInputs);
-
 
         for (String name : labels) {
             JTextField input = new JTextField(18);
@@ -117,7 +117,7 @@ public class MainFrame extends JFrame {
 
         JButton clearTextFieldsButton = new JButton("Очистить поля");
         clearTextFieldsButton.addActionListener(e -> {
-            for(String label: labels) {
+            for (String label : labels) {
                 labelsWithInputs.get(label).setText("");
             }
         });
@@ -145,7 +145,7 @@ public class MainFrame extends JFrame {
     }
 
     public void setKey(final char[] key) {
-        if(key.length < 4) {
+        if (key.length < 4) {
             System.exit(0);
         }
         this.key = key;
