@@ -6,7 +6,9 @@ package frv.org.classloader;
 import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -101,14 +103,15 @@ class CryptoClassLoader extends ClassLoader {
     } // ** findClass()
 
     public byte[] loadClassBytes(String name) throws IOException {
-        String cname = name.replace('.', '/') + ".crypt";
-        cname = "resources/" + cname;
-
-        byte[] bytes = Files.readAllBytes(Paths.get(cname));
-        for (int i = 0; i < bytes.length; i++) {
-            bytes[i] = (byte) (bytes[i] - key);
+        String cname = "resources/" +  name + ".crypt";
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        InputStream in = getClass().getResourceAsStream(cname);
+        int b;
+        while((b=in.read()) != -1) {
+            b = (byte) (b - key);
+            bytes.write(b);
         }
-        return bytes;
+        return bytes.toByteArray();
     }
 
 } // ** CryptoClassLoader
