@@ -1,4 +1,5 @@
 rv\fedorin\codewars\BouncingBall.class
+rv\fedorin\codewars\Scramblies.class
 rv\fedorin\codewars\PhoneNumber.class
 rv\fedorin\codewars\ReplaceVowel.class
 rv\fedorin\codewars\EnoughIsEnough.class
@@ -7,3 +8,4 @@ rv\fedorin\codewars\TwoSum.class
 rv\fedorin\codewars\Uniq.class
 rv\fedorin\codewars\Braces.class
 rv\fedorin\codewars\FindOutlier.class
+rv\fedorin\codewars\SqInRect.class
