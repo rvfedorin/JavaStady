@@ -1,0 +1,11 @@
+rv\fedorin\hibernate\demo\GetCoursesForMaryDemo.class
+rv\fedorin\hibernate\demo\DeleteMaryStudentDemo.class
+rv\fedorin\hibernate\demo\CreateCoursesForMaryDemo.class
+rv\fedorin\hibernate\demo\entity\Instructor.class
+rv\fedorin\hibernate\demo\CreateCourseAndReviewsDemo.class
+rv\fedorin\hibernate\demo\DeletePacmanCourseDemo.class
+rv\fedorin\hibernate\demo\CreateCourseAndStudentsDemo.class
+rv\fedorin\hibernate\demo\entity\Course.class
+rv\fedorin\hibernate\demo\entity\Review.class
+rv\fedorin\hibernate\demo\entity\Student.class
+rv\fedorin\hibernate\demo\entity\InstructorDetail.class
