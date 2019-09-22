@@ -15,7 +15,7 @@ public class Validate {
     public static boolean validate(String n) {
         int[] convertedNum = everySecondToDouble(n);
         int sum = Arrays.stream(convertedNum).sum();
-        return (sum % 10) != 0 ? false : true;
+        return (sum % 10) != 0;
     }
 
     public static int[] everySecondToDouble(String n) {
