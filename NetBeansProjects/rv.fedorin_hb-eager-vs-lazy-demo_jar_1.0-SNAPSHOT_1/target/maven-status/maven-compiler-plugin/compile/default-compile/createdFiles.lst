@@ -1,0 +1,15 @@
+rv\fedorin\hibernate\demo\DeleteCourseDemo.class
+rv\fedorin\hibernate\demo\DeleteInstructorDetailDemo.class
+rv\fedorin\hibernate\demo\EagerLazyDemo.class
+rv\fedorin\hibernate\demo\entity\Instructor.class
+rv\fedorin\hibernate\demo\CreateCoursesDemo.class
+rv\fedorin\hibernate\demo\FetchJoinDemo.class
+rv\fedorin\hibernate\demo\CreateInstructorDemo.class
+rv\fedorin\hibernate\demo\GetInstructorDetailDemo.class
+rv\fedorin\hibernate\demo\GetInstructorCoursesDemo.class
+rv\fedorin\hibernate\demo\DeleteDemo.class
+rv\fedorin\hibernate\demo\entity\Course.class
+rv\fedorin\hibernate\demo\entity\Student.class
+rv\fedorin\hibernate\tutorial\TestJdbc.class
+rv\fedorin\hibernate\demo\CreateDemo.class
+rv\fedorin\hibernate\demo\entity\InstructorDetail.class
