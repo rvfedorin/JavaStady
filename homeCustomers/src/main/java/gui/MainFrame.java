@@ -10,6 +10,7 @@ import java.util.HashMap;
 import static tools.Config.ISG_1;
 import static tools.Config.ISG_2;
 import static tools.CryptDecrypt.getEncrypt;
+import tools.ExtendedTextField;
 
 public class MainFrame extends JFrame {
 
@@ -54,7 +55,7 @@ public class MainFrame extends JFrame {
         inputPanel.add(panelInputs);
 
         for (String name : labels) {
-            JTextField input = new JTextField(18);
+            JTextField input = new ExtendedTextField(18);
             labelsWithInputs.put(name, input);
 
             panelLabels.add(new JLabel(name + "          "));
