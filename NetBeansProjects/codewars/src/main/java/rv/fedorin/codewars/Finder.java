@@ -74,15 +74,9 @@ public class Finder {
 
     public static char[][] buildMaze(String maze) {
         char[][] mazeArray = new char[maze.split("\n").length][];
-
         int lineIndex = 0;
         for (String line : maze.split("\n")) {
-            mazeArray[lineIndex] = new char[line.length()];
-            int colIndex = 0;
-            for (String step : line.split("")) {
-                mazeArray[lineIndex][colIndex++] = step.charAt(0);
-            }
-            lineIndex++;
+            mazeArray[lineIndex++] = line.toCharArray();
         }
         return mazeArray;
     }
@@ -146,3 +140,72 @@ public class Finder {
     }
 
 }
+
+//public class Finder {
+//  
+//  private static class Pos {
+//    final int x, y;
+//    Pos(int x, int y) { this.x = x; this.y = y; } 
+//    Pos[] neighbours() { return new Pos[]{ new Pos(x-1,y), new Pos(x+1,y), new Pos(x,y-1), new Pos(x,y+1) }; }
+//    boolean onPath(char[][]g) { return x >= 0 && x < g[0].length && y >= 0 && y < g.length && g[y][x] == '.'; }    
+//  }
+//
+//  static boolean pathFinder(String maze) {
+//    final String rows[] = maze.split("\n");
+//    final char[][] grid = new char[rows.length][];
+//    for (int i = 0; i < rows.length; i++) grid[i] = rows[i].toCharArray();
+//    return findExit(new Pos(0,0), grid);
+//  }
+//  
+//  private static boolean findExit(Pos p, char[][]g) {        
+//    if (p.x == g.length-1 && p.x == p.y) return true; // We made it to the exit!    
+//    if (!p.onPath(g)) return false;
+//    g[p.y][p.x] = 'B';  // drop a breadcrumb
+//    final Pos[] n = p.neighbours();
+//    return findExit(n[0],g) | findExit(n[1],g) | findExit(n[2],g) | findExit(n[3],g);
+//  }
+//
+//}
+//==========================================================================================================
+//import java.util.*;
+//import java.util.stream.*;
+//import java.awt.Point;
+//
+//
+//public class Finder {
+//    
+//    final private static List<Point> MOVES = Arrays.asList(new Point(1,0), new Point(0,1), new Point(0,-1), new Point(-1,0));
+//    
+//    
+//    static boolean pathFinder(String maze) {
+//        
+//        int S = (int) Math.sqrt(maze.length()) - 1;
+//        if (S == 0) return true;
+//            
+//        final Set<Point> bag  = new HashSet<>();
+//        int x = -1;
+//        for (String line: maze.split("\n")) { x++;
+//            for (int y=0 ; y < line.length() ; y++) 
+//                if (line.charAt(y)=='.') bag.add(new Point(x,y));
+//        }
+//        bag.remove(new Point(0,0));
+//        
+//        final Point     end    = new Point(S,S);
+//        final boolean[] hasEnd = {false};
+//        Set<Point>      look   = new HashSet<>(Arrays.asList(new Point(0,0)));
+//        
+//        while (!look.isEmpty()) {
+//            if (hasEnd[0]) return true;
+//            look = look.stream()
+//                       .flatMap( p -> MOVES.stream().map( d -> new Point(p.x+d.x, p.y+d.y) ))
+//                       .distinct()
+//                       .filter(  p -> { if (p.equals(end)) hasEnd[0] = true;
+//                                        if (bag.contains(p)) {
+//                                            bag.remove(p);
+//                                            return true;
+//                                        } else return false; })
+//                      .collect(Collectors.toSet());
+//        }
+//        return false;
+//    }
+//}
