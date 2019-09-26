@@ -2,7 +2,7 @@
  * Proprietary software.
  * 
  */
-package rv.fedorin.web.customer.tracker.testdb;
+package rv.fedorin.web.testdb;
 
 import java.io.IOException;
 import java.io.PrintWriter;
