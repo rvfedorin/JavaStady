@@ -5,6 +5,7 @@ package frv.org.chapter2_10;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -43,7 +44,9 @@ class PlanetTableFrame extends JFrame {
     public PlanetTableFrame() {
         final JTable jTable = new JTable(cells, columnNames);
         jTable.setAutoCreateRowSorter(true);
-        add(new JScrollPane(jTable), BorderLayout.CENTER);
+        JScrollPane jsp = new JScrollPane(jTable);
+        jsp.setPreferredSize(new Dimension(500, 150));
+        add(jsp, BorderLayout.CENTER);
         JButton printButton = new JButton("Print");
         printButton.addActionListener(e -> {
             try{jTable.print();} 
