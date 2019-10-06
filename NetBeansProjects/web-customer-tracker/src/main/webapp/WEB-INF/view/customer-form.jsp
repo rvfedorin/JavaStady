@@ -28,6 +28,8 @@
         <div id="container">
             <h3>Save customer</h3>
             <form:form action="saveCustomer" modelAttribute="customer" method="Post">
+                // to update customer we need set customer id
+                <form:hidden path="id" />
                 <table>
                     <tbody>
                         <tr>
