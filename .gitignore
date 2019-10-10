@@ -11,3 +11,5 @@ JavaCore/out/production/JavaCore/META-INF/JavaCore.kotlin_module
 /JavaCore/classLoader/target/
 /NetBeansProjects/web-customer-tracker/target/
 /JavaCore/chapter2_10/target/
+/telegram-bot/target/
+telegram-bot/src/main/resources/bot-data.properties
