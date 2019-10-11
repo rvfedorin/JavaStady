@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
@@ -35,8 +37,23 @@ public class Weather {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        System.out.println("[->] " + result);
-        return result;
+//        System.out.println("[->] " + result);
+        
+        JSONObject object = new JSONObject(result);
+        model.setName(object.getString("name"));
+        
+        JSONObject mainObj = object.getJSONObject("main");
+        model.setTemper(mainObj.getDouble("temp"));
+        model.setHumidity(mainObj.getDouble("humidity"));
+        
+        JSONArray jsonArray = object.getJSONArray("weather");
+
+        for(Object obj:  jsonArray) {
+            model.setIcon((String) ((JSONObject) obj).get("icon"));
+            model.setMain((String) ((JSONObject) obj).get("main"));
+        }
+        return model.toString();
+        
     }
 
 }

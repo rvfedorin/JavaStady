@@ -53,6 +53,17 @@ public class Model {
     public void setMain(String main) {
         this.main = main;
     }
+
+    @Override
+    public String toString() {
+        return "Model{" 
+                + "\nname=" + name 
+                + "\ntemper=" + temper 
+                + "\nhumidity=" + humidity 
+                + "\nmain=" + main
+                + "\nhttp://openweathermap.org/img/wn/"+icon+".png"
+                + '}';
+    }
     
     
 }
