@@ -12,3 +12,6 @@ JavaCore/out/production/JavaCore/META-INF/JavaCore.kotlin_module
 /NetBeansProjects/web-customer-tracker/target/
 /JavaCore/chapter2_10/target/
 /NetBeansProjects/spring-demo-aop/target/
+/telegram-bot/target/
+telegram-bot/src/main/resources/bot-data.properties
+
