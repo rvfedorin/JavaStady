@@ -87,7 +87,13 @@ public class MainFrame extends JFrame {
             String ipISG = buttonGroup.getSelection().getActionCommand();
 
             if (mnemokod != null && ipClient != null && passClient != null && ipISG != null) {
-                new Thread(new GetStatus(mnemokod, ipClient, passClient, ipISG, key)).start();
+                new Thread(
+                        new GetStatus(mnemokod, 
+                                ipClient, 
+                                passClient, 
+                                ipISG, 
+                                key, 
+                                this)).start();
             } else {
                 System.out.println("Error getStatusButton.addActionListener");
             }
@@ -102,7 +108,7 @@ public class MainFrame extends JFrame {
             new Thread(new StartSession(mnemokod, ipClient, passClient, key)).start();
         });
 
-        JButton detailSessionButton = new JButton("Информация по сессии"); //StartSession
+        JButton detailSessionButton = new JButton("Информация по сессии"); //GetInfoSession
         detailSessionButton.addActionListener(e -> {
             String mnemokod = getData("Mnemokod: ").getText();
             String ipClient = getData("IP: ").getText();
@@ -110,7 +116,7 @@ public class MainFrame extends JFrame {
             String ipISG = buttonGroup.getSelection().getActionCommand();
 
             if (mnemokod != null && ipClient != null && passClient != null && ipISG != null) {
-                new Thread(new GetStatus(mnemokod, ipClient, passClient, ipISG, key).detailed(true)).start();
+                new Thread(new GetStatus(mnemokod, ipClient, passClient, ipISG, key, this).detailed(true)).start();
             } else {
                 System.out.println("Error getStatusButton.addActionListener");
             }

@@ -1,25 +1,30 @@
 package actions;
 
+import gui.ResultWindow;
+import javax.swing.JFrame;
 import tools.SSH;
 
 import static tools.Config.*;
 import static tools.CryptDecrypt.getEncrypt;
 
 public class GetStatus implements Runnable {
+
     private String mnemokod;
     private String ipClient;
     private String passClient;
     private String ipISG;
     private char[] key;
+    JFrame parent;
     private SSH ssh;
     private boolean detailed;
 
-    public GetStatus(String mnemokod, String ipClient, String passClient, String ipISG, char[] key) {
+    public GetStatus(String mnemokod, String ipClient, String passClient, String ipISG, char[] key, JFrame parent) {
         this.mnemokod = mnemokod;
         this.ipClient = ipClient;
         this.passClient = passClient;
         this.ipISG = ipISG;
         this.key = key;
+        this.parent = parent;
         detailed = false;
     }
 
@@ -50,13 +55,13 @@ public class GetStatus implements Runnable {
                             getEncrypt(new String(key), SSH_PASS_L),
                             ipISG);
 
-                    result += "\n\n" + clearDetailOut(responseDetail, ">"+showDetailedSessionCommand);
+                    result += "\n\n" + clearDetailOut(responseDetail, ">" + showDetailedSessionCommand);
                 } else {
                     result += "\nНе удалось получить ID сессии.\n";
                 }
             }
-            ShowDialogs.info(result);
-
+//            ShowDialogs.info(result);
+            new ResultWindow(result, parent);
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -108,11 +113,11 @@ public class GetStatus implements Runnable {
 
     @Override
     public String toString() {
-        return "GetStatus{" +
-                "mnemokod='" + mnemokod + '\'' +
-                ", ipClient='" + ipClient + '\'' +
-                ", passClient='" + passClient + '\'' +
-                ", ipISG=" + ipISG +
-                '}';
+        return "GetStatus{"
+                + "mnemokod='" + mnemokod + '\''
+                + ", ipClient='" + ipClient + '\''
+                + ", passClient='" + passClient + '\''
+                + ", ipISG=" + ipISG
+                + '}';
     }
 }

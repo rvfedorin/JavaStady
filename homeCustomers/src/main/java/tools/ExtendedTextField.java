@@ -11,9 +11,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.Document;
 
-import tools.TextPopUpMenu;
-
-
 public class ExtendedTextField extends JTextField
 {
 
@@ -95,6 +92,7 @@ public class ExtendedTextField extends JTextField
         // Add the mouse listener
         this.addMouseListener(new MouseAdapter()
         {
+            @Override
             public void mouseClicked(MouseEvent evt)
             {
                 requestFocus();

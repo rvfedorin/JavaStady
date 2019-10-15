@@ -53,17 +53,14 @@ public class TextPopUpMenu {
          *
          * @param e ignored
          */
+        @Override
         public void actionPerformed(ActionEvent e) {
             comp.selectAll();
             /* Need to also selectAll() via a later because in the case of FormattedText fields
              * the field is re-drawn if the request is made durring a focusGained event.
              * This is a pain but there doesn't appear to be any need solution to this and it is
              * a known swing bug but it isn't going to be fixed anytime soon. */
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    comp.selectAll();
-                }
-            });
+            SwingUtilities.invokeLater(comp::selectAll);
 
         }
 
@@ -72,6 +69,7 @@ public class TextPopUpMenu {
          *
          * @return True if the action is allowed
          */
+        @Override
         public boolean isEnabled() {
             return comp.isEnabled()
                     && comp.getText().length() > 0;
@@ -108,6 +106,7 @@ public class TextPopUpMenu {
          *
          * @param e ignored
          */
+        @Override
         public void actionPerformed(ActionEvent e) {
             comp.paste();
         }
@@ -117,6 +116,7 @@ public class TextPopUpMenu {
          *
          * @return True if the action is allowed
          */
+        @Override
         public boolean isEnabled() {
             if (comp.isEditable() && comp.isEnabled()) {
                 Transferable contents = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this);
@@ -157,6 +157,7 @@ public class TextPopUpMenu {
          *
          * @param e ignored
          */
+        @Override
         public void actionPerformed(ActionEvent e) {
             comp.replaceSelection(null);
         }
@@ -166,6 +167,7 @@ public class TextPopUpMenu {
          *
          * @return True if the action is allowed
          */
+        @Override
         public boolean isEnabled() {
             return comp.isEditable()
                     && comp.isEnabled()
@@ -204,6 +206,7 @@ public class TextPopUpMenu {
          *
          * @param e ignored
          */
+        @Override
         public void actionPerformed(ActionEvent e) {
 
             comp.cut();
@@ -214,6 +217,7 @@ public class TextPopUpMenu {
          *
          * @return True if the action is allowed
          */
+        @Override
         public boolean isEnabled() {
             return comp.isEditable()
                     && comp.isEnabled()
@@ -253,6 +257,7 @@ public class TextPopUpMenu {
          *
          * @param e ignored
          */
+        @Override
         public void actionPerformed(ActionEvent e) {
             comp.copy();
         }
@@ -262,6 +267,7 @@ public class TextPopUpMenu {
          *
          * @return True if the action is allowed
          */
+        @Override
         public boolean isEnabled() {
             return comp.isEnabled()
                     && comp.getSelectedText() != null;
