@@ -30,7 +30,8 @@ public class GetStatus implements Runnable {
 
     @Override
     public void run() {
-        String showSessionCommand = "show subscriber session | inc " + mnemokod;
+//        String showSessionCommand = "show subscriber session | inc " + mnemokod;
+        String showSessionCommand = "show subscriber session username " + mnemokod + " feature accounting";
 
         try {
             ssh = new SSH(getEncrypt(new String(key), WORK), key);
@@ -71,21 +72,44 @@ public class GetStatus implements Runnable {
         }
     }
 
+//    private String getUID(String result) {
+//        result = result.replaceAll("\\s", " ");
+//        return result.split(" ")[0];
+//    }
     private String getUID(String result) {
-        result = result.replaceAll("\\s", " ");
-        return result.split(" ")[0];
+        String response = "";
+        for(String line: result.split("\n")) {
+            if(line.contains("UID")) {
+                for(String block: line.split(",")) {
+                    if(block.contains("UID")) {
+                        response = block.replace("UID: ", ipClient);
+                        return response;
+                    }
+                }
+            }
+        }
+        return response;
     }
 
     private String parseOut(String rawOut, String replace) {
+//Type: IPv4, UID: 4599, State: authen, Identity: podolskaya18-1H-1
+//IPv4 Address: 10.20.184.79
+//Session Up-time: 4d03h   , Last Changed: 4d00h
+
         String result = "Сессия не запущена.";
         rawOut = rawOut.replaceAll(replace, "");
+        StringBuilder sb = new StringBuilder();
 
         for (String line : rawOut.split("\n")) {
-            if (line.contains(mnemokod)) {
-                result = line;
+            if (line.contains("Type") || line.contains("Address") || line.contains("Session")) {
+                sb.append(line).append("\n");
             }
         }
 
+        if(sb.length() > 0) {
+            result = sb.toString();
+        }
+        
         return result;
     }
 

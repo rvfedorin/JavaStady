@@ -2,6 +2,7 @@ package gui;
 
 import actions.GetStatus;
 import actions.StartSession;
+import actions.StopSession;
 
 import javax.swing.*;
 import java.awt.*;
@@ -88,11 +89,11 @@ public class MainFrame extends JFrame {
 
             if (mnemokod != null && ipClient != null && passClient != null && ipISG != null) {
                 new Thread(
-                        new GetStatus(mnemokod, 
-                                ipClient, 
-                                passClient, 
-                                ipISG, 
-                                key, 
+                        new GetStatus(mnemokod,
+                                ipClient,
+                                passClient,
+                                ipISG,
+                                key,
                                 this)).start();
             } else {
                 System.out.println("Error getStatusButton.addActionListener");
@@ -108,7 +109,7 @@ public class MainFrame extends JFrame {
             new Thread(new StartSession(mnemokod, ipClient, passClient, key)).start();
         });
 
-        JButton detailSessionButton = new JButton("Информация по сессии"); //GetInfoSession
+        JButton detailSessionButton = new JButton("Параметры сессии"); //GetInfoSession
         detailSessionButton.addActionListener(e -> {
             String mnemokod = getData("Mnemokod: ").getText();
             String ipClient = getData("IP: ").getText();
@@ -118,7 +119,22 @@ public class MainFrame extends JFrame {
             if (mnemokod != null && ipClient != null && passClient != null && ipISG != null) {
                 new Thread(new GetStatus(mnemokod, ipClient, passClient, ipISG, key, this).detailed(true)).start();
             } else {
-                System.out.println("Error getStatusButton.addActionListener");
+                System.out.println("Error detailSessionButton.addActionListener");
+            }
+        });
+
+        JButton stopSessionButton = new JButton("Остановить сессию"); //StopSession
+        stopSessionButton.setBorder(BorderFactory.createEmptyBorder(4,0,4,0));
+        stopSessionButton.addActionListener(e -> {
+            String mnemokod = getData("Mnemokod: ").getText();
+            String ipClient = getData("IP: ").getText();
+            String passClient = getData("Pass: ").getText();
+            String ipISG = buttonGroup.getSelection().getActionCommand();
+
+            if (mnemokod != null && ipClient != null && passClient != null && ipISG != null) {
+                new Thread(new StopSession(mnemokod, ipISG, key, this)).start();
+            } else {
+                System.out.println("Error stopSessionButton.addActionListener");
             }
         });
 
@@ -131,17 +147,16 @@ public class MainFrame extends JFrame {
         JPanel clearTextFieldsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         clearTextFieldsPanel.add(clearTextFieldsButton);
 
-        JPanel buttonPanel1 = new JPanel();
-        buttonPanel1.add(getStatusButton);
-        buttonPanel1.add(runSessionButton);
-        JPanel buttonPanel2 = new JPanel();
-        buttonPanel2.add(detailSessionButton);
+        JPanel buttonsPanel = new JPanel(new GridLayout(2, 2, 0, 4));
+        buttonsPanel.add(getStatusButton);
+        buttonsPanel.add(runSessionButton);
+        buttonsPanel.add(detailSessionButton);
+        buttonsPanel.add(stopSessionButton);
 
         mainPanel.add(inputPanel);
         mainPanel.add(clearTextFieldsPanel);
         mainPanel.add(radioButtonPanel);
-        mainPanel.add(buttonPanel1);
-        mainPanel.add(buttonPanel2);
+        mainPanel.add(buttonsPanel);
 
         new MainMenu(this);
 
@@ -161,4 +176,5 @@ public class MainFrame extends JFrame {
     public JTextField getData(String name) {
         return labelsWithInputs.getOrDefault(name, null);
     }
+
 } // ** class MainFrame
