@@ -17,6 +17,8 @@ public class MainFrame extends JFrame {
 
     private HashMap<String, JTextField> labelsWithInputs;
     private char[] key;
+    private MainMenu menu;
+    public ResultWindow resultFrame;
 
     public MainFrame() {
         super();
@@ -26,6 +28,7 @@ public class MainFrame extends JFrame {
         int x = (int) (X_SCREEN_SIZE - getWidth()) / 3;
         int y = (int) (Y_SCREEN_SIZE - getHeight()) / 3;
         setLocation(x, y);
+        
     } // ** constructor
 
     public void createGUI() {
@@ -124,7 +127,7 @@ public class MainFrame extends JFrame {
         });
 
         JButton stopSessionButton = new JButton("Остановить сессию"); //StopSession
-        stopSessionButton.setBorder(BorderFactory.createEmptyBorder(4,0,4,0));
+        stopSessionButton.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
         stopSessionButton.addActionListener(e -> {
             String mnemokod = getData("Mnemokod: ").getText();
             String ipClient = getData("IP: ").getText();
@@ -158,12 +161,14 @@ public class MainFrame extends JFrame {
         mainPanel.add(radioButtonPanel);
         mainPanel.add(buttonsPanel);
 
-        new MainMenu(this);
+        menu = new MainMenu(this);
+        add(ProgressBar.progressBar, BorderLayout.SOUTH);
 
         this.add(mainPanel);
         this.pack();
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        resultFrame = new ResultWindow(this);
     }
 
     public void setKey(final char[] key) {

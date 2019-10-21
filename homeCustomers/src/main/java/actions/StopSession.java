@@ -3,9 +3,9 @@
  */
 package actions;
 
-import gui.ResultWindow;
+import gui.MainFrame;
+import static gui.ProgressBar.progressBar;
 import java.lang.reflect.Field;
-import javax.swing.JFrame;
 import static tools.Config.SSH_LOGIN;
 import static tools.Config.SSH_PASS_L;
 import static tools.Config.WORK;
@@ -25,10 +25,10 @@ public class StopSession implements Runnable {
     private String ipISG;
     private String enISG;
     private char[] key;
-    JFrame parent;
+    private MainFrame parent;
     private SSH ssh;
 
-    public StopSession(String mnemokod, String ipISG, char[] key, JFrame parent) {
+    public StopSession(String mnemokod, String ipISG, char[] key, MainFrame parent) {
         this.mnemokod = mnemokod;
         this.ipISG = ipISG;
         this.key = key;
@@ -42,12 +42,13 @@ public class StopSession implements Runnable {
         } catch (Throwable t) {
             String error = "[ERROR] TO_CLOSE " + t;
             System.out.println(error);
-            new ResultWindow(error, parent);
+            parent.resultFrame.showResult(error);
         };
     }
 
     @Override
     public void run() {
+        progressBar.setIndeterminate(true);
         String stopSessionCommand = "clear subscriber session username " + mnemokod;
         try {
             ssh = new SSH(getEncrypt(new String(key), WORK), key);
@@ -64,12 +65,13 @@ public class StopSession implements Runnable {
             String result = "Отправлено: \n\t" + stopSessionCommand;
             result += "\n\tНа ISG: " + ipISG;
 //            System.out.println(result);
-            new ResultWindow(result, parent);
+            parent.resultFrame.showResult(result);
 
         } catch (Exception ex) {
             ex.printStackTrace();
             ShowDialogs.info("Ошибка подключения к ISG. StopSession->run()");
         } finally {
+            progressBar.setIndeterminate(false);
             ssh.closeSession();
         }
     }

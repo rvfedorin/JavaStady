@@ -1,7 +1,7 @@
 package actions;
 
-import gui.ResultWindow;
-import javax.swing.JFrame;
+import gui.MainFrame;
+import static gui.ProgressBar.progressBar;
 import tools.SSH;
 
 import static tools.Config.*;
@@ -14,11 +14,11 @@ public class GetStatus implements Runnable {
     private String passClient;
     private String ipISG;
     private char[] key;
-    JFrame parent;
+    private MainFrame parent;
     private SSH ssh;
     private boolean detailed;
 
-    public GetStatus(String mnemokod, String ipClient, String passClient, String ipISG, char[] key, JFrame parent) {
+    public GetStatus(String mnemokod, String ipClient, String passClient, String ipISG, char[] key, MainFrame parent) {
         this.mnemokod = mnemokod;
         this.ipClient = ipClient;
         this.passClient = passClient;
@@ -30,6 +30,7 @@ public class GetStatus implements Runnable {
 
     @Override
     public void run() {
+        progressBar.setIndeterminate(true);
 //        String showSessionCommand = "show subscriber session | inc " + mnemokod;
         String showSessionCommand = "show subscriber session username " + mnemokod + " feature accounting";
         String showARP = "show arp " + ipClient;
@@ -68,13 +69,14 @@ public class GetStatus implements Runnable {
                 }
             }
 //            ShowDialogs.info(result);
-            new ResultWindow(result, parent);
+            parent.resultFrame.showResult(result);
 
         } catch (Exception ex) {
             ex.printStackTrace();
             ShowDialogs.info("Ошибка подключения к ISG. GetStatus->run()");
         } finally {
             ssh.closeSession();
+            progressBar.setIndeterminate(false);
         }
     }
 
