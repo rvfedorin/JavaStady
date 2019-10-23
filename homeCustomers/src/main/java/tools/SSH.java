@@ -14,7 +14,7 @@ public class SSH {
     private Session session;
 
     public SSH(String host, char[] pass) {
-        System.out.println("SSH create host: " + host);
+//        System.out.println("SSH create host: " + host);
         this.host = host;
         this.key = pass;
         this.jsch = new JSch();
@@ -226,13 +226,13 @@ public class SSH {
             BufferedReader reader = new BufferedReader(new InputStreamReader(dataIn));
             dataOut = new DataOutputStream(channel.getOutputStream());
 
-            System.out.println("Starting telnet connection...");
+//            System.out.println("Starting telnet connection...");
             dataOut.writeBytes("telnet " + host + "\n");
             dataOut.writeBytes(user + "\n");
             dataOut.writeBytes(password + "\n");
 
             for (String command : commands) {
-                System.out.println(command);
+//                System.out.println(command);
                 dataOut.writeBytes(command + "\n");
             }
 //        dataOut.writeBytes("telnet localhost 4242\r\n");
@@ -248,14 +248,14 @@ public class SSH {
             dataOut.flush();
 
 
-            System.out.println("Data has transmitted.");
+//            System.out.println("Data has transmitted.");
 
             String line = reader.readLine();
             result = line + "\n";
 
 //            while (!(line = reader.readLine()).equals("Connection closed by foreign host")) {
             while ((line = reader.readLine()) != null && !line.contains("Connection closed by foreign host.")) {
-                System.out.println(line);
+//                System.out.println(line);
                 result += line + "\n";
             }
 
@@ -291,12 +291,12 @@ public class SSH {
             BufferedReader reader = new BufferedReader(new InputStreamReader(dataIn));
             dataOut = new DataOutputStream(channel.getOutputStream());
 
-            System.out.println("Starting remote connection...");
+//            System.out.println("Starting remote connection...");
             dataOut.writeBytes("ssh " + getEncrypt(new String(key), SSH_LOGIN) + "@"+ getEncrypt(new String(key), QESM) +"\r\n");
-            System.out.println("Has connected to " + getEncrypt(new String(key), QESM));
+//            System.out.println("Has connected to " + getEncrypt(new String(key), QESM));
 
             for (String command : commands) {
-                System.out.println(command);
+//                System.out.println(command);
                 dataOut.writeBytes(command + "\n");
             }
 
@@ -306,18 +306,18 @@ public class SSH {
             dataOut.writeBytes("exit\r\n"); //exit from shell
             dataOut.flush();
 
-            System.out.println("Data has transmitted.");
+//            System.out.println("Data has transmitted.");
 
             String line = reader.readLine();
             result = line + "\n";
 
 //            while (!(line = reader.readLine()).equals("Connection closed by foreign host")) {
             while ((line = reader.readLine()) != null && !line.contains("closed.")) {
-                System.out.println(line);
+//                System.out.println(line);
                 result += line + "\n";
             }
 
-            System.out.println("[End reading]");
+//            System.out.println("[End reading]");
 
         } catch (IOException | JSchException | InterruptedException ex) {
             ex.printStackTrace();

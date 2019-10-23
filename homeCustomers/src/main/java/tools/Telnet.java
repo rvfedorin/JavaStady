@@ -25,7 +25,7 @@ public class Telnet {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
         } catch (IOException ex) {
-            System.out.println("[Error] -> class " + getClass().getName() + " -> constructor() ");
+//            System.out.println("[Error] -> class " + getClass().getName() + " -> constructor() ");
         } // ** try
 
     }
@@ -43,14 +43,6 @@ public class Telnet {
 //            System.out.println("1 ==============>>>>>>>> ");
             client.sendCommand("Done", "save");
 
-
-//            ArrayList<String> commands = new ArrayList<>();
-//            commands.add("show ports 2");
-//            commands.add("q");
-//            commands.add("show ports 3");
-//            commands.add("q");
-//            client.sendListCommands(commands);
-            System.out.println("2 ==============>>>>>>>> ");
         }
         ////////////////////// END  SWITCH ///////////////////////////////////////////
 
