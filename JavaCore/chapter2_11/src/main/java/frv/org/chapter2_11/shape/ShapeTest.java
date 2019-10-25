@@ -10,6 +10,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -46,6 +47,10 @@ public class ShapeTest {
 class ShapeTestFrame extends JFrame {
 
     public ShapeTestFrame() {
+        int hScr = Toolkit.getDefaultToolkit().getScreenSize().height;
+        int wScr = Toolkit.getDefaultToolkit().getScreenSize().width;
+        setLocation(wScr/3, hScr/3);
+        
         final ShapeComponent comp = new ShapeComponent();
         add(comp, BorderLayout.CENTER);
         final JComboBox<ShapeMaker> comboBox = new JComboBox();
