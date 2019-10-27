@@ -15,9 +15,9 @@ import java.io.OutputStreamWriter;
 public class Crypt {
 
     public static void main(String[] args) {
-        String clName = "calc/";
+        String clName = "toCr";
 
-        for (File f : new File("calc").listFiles()) {
+        for (File f : new File(clName).listFiles()) {
             if (f.getName().endsWith("class")) {
                 try (FileInputStream in = new FileInputStream(f);
                         FileOutputStream out = new FileOutputStream(f.getName().replace("class", "crypt"));

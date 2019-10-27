@@ -1,7 +1,7 @@
 package tools;
 
 public abstract class Config {
-    public static final String VERSION = "1.1.3";
+    public static final String VERSION = "1.1.7";
     public static final String SSH_LOGIN = "0csNHs7T74c=";
     public static final String SSH_PASS_D = "bE2QKINXdSYs0ZV7SgSPtw==";
     public static final String SSH_PASS_L = "//IbAoVBhahpVczHF2JNFQ==";

@@ -1,5 +1,6 @@
 package actions;
 
+import static gui.ProgressBar.progressBar;
 import tools.SSH;
 
 import static tools.Config.*;
@@ -21,6 +22,7 @@ public class StartSession implements Runnable {
 
     @Override
     public void run() {
+        progressBar.setIndeterminate(true);
         StringBuilder startCommand = new StringBuilder(); //"ssh support@172.16.55.2 \"/usr/local/bin/sss adanini5-800 Tohwoo 10.20.10.156\"";
         startCommand.append("php start_session.php ");
         startCommand.append(mnemokod).append(" ");
@@ -43,6 +45,7 @@ public class StartSession implements Runnable {
             ex.printStackTrace();
             ShowDialogs.info("Ошибка подключения. StartSession->run()");
         } finally {
+            progressBar.setIndeterminate(false);
             ssh.closeSession();
         }
     }
