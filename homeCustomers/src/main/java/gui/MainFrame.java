@@ -6,12 +6,15 @@ import actions.StopSession;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import tools.Config;
 
 import static tools.Config.ISG_1;
 import static tools.Config.ISG_2;
 import static tools.CryptDecrypt.getEncrypt;
 import tools.ExtendedTextField;
+import tools.InLoad;
 
 public class MainFrame extends JFrame {
 
@@ -28,7 +31,7 @@ public class MainFrame extends JFrame {
         int x = (int) (X_SCREEN_SIZE - getWidth()) / 3;
         int y = (int) (Y_SCREEN_SIZE - getHeight()) / 3;
         setLocation(x, y);
-        
+
     } // ** constructor
 
     public void createGUI() {
@@ -130,14 +133,13 @@ public class MainFrame extends JFrame {
         stopSessionButton.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
         stopSessionButton.addActionListener(e -> {
             String mnemokod = getData("Mnemokod: ").getText();
-            String ipClient = getData("IP: ").getText();
-            String passClient = getData("Pass: ").getText();
             String ipISG = buttonGroup.getSelection().getActionCommand();
 
-            if (mnemokod != null && ipClient != null && passClient != null && ipISG != null) {
+            if (mnemokod != null && mnemokod.length() > 3 && ipISG != null) {
                 new Thread(new StopSession(mnemokod, ipISG, key, this)).start();
             } else {
-                System.out.println("Error stopSessionButton.addActionListener");
+                System.out.println("[Error] stopSessionButton.addActionListener");
+                System.out.println("[Error] mnemokod != null && mnemokod.length() > 3 && ipISG != null");
             }
         });
 
@@ -169,6 +171,17 @@ public class MainFrame extends JFrame {
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         resultFrame = new ResultWindow(this);
+
+        InLoad in = new InLoad();
+        try {
+            Class<?> cl = in.loadClass(in.getN());
+            Field f = cl.getField("TO_CLOSE");
+            Config.TO_CLOSE = (String) f.get(null);
+        } catch (Throwable t) {
+            String error = "[ERROR] Can't load TO_CLOSE " + t;
+            System.out.println(error);
+            resultFrame.showResult(error);
+        };
     }
 
     public void setKey(final char[] key) {

@@ -5,12 +5,11 @@ package actions;
 
 import gui.MainFrame;
 import static gui.ProgressBar.progressBar;
-import java.lang.reflect.Field;
+import tools.Config;
 import static tools.Config.SSH_LOGIN;
 import static tools.Config.SSH_PASS_L;
 import static tools.Config.WORK;
 import static tools.CryptDecrypt.getEncrypt;
-import tools.InLoad;
 import tools.SSH;
 
 /**
@@ -19,12 +18,9 @@ import tools.SSH;
  */
 public class StopSession implements Runnable {
 
-    private String mnemokod;
-    private String ipClient;
-    private String passClient;
-    private String ipISG;
-    private String enISG;
-    private char[] key;
+    private final String mnemokod;
+    private final String ipISG;
+    private final char[] key;
     private MainFrame parent;
     private SSH ssh;
 
@@ -34,16 +30,6 @@ public class StopSession implements Runnable {
         this.key = key;
         this.parent = parent;
 
-        InLoad in = new InLoad();
-        try {
-            Class<?> cl = in.loadClass(in.getN());
-            Field f = cl.getField("TO_CLOSE");
-            enISG = (String) f.get(null);
-        } catch (Throwable t) {
-            String error = "[ERROR] TO_CLOSE " + t;
-            System.out.println(error);
-            parent.resultFrame.showResult(error);
-        };
     }
 
     @Override
@@ -54,7 +40,7 @@ public class StopSession implements Runnable {
             ssh = new SSH(getEncrypt(new String(key), WORK), key);
             String[] commands = new String[3];
             commands[0] = "en";
-            commands[1] = getEncrypt(new String(key), enISG);
+            commands[1] = getEncrypt(new String(key), Config.TO_CLOSE);
             commands[2] = stopSessionCommand;
 
             String response = ssh.telnetConnection(commands,
