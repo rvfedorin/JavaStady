@@ -12,7 +12,6 @@ import javax.swing.JProgressBar;
 class BeatBar extends JProgressBar implements Runnable {
 
     private static final long serialVersionUID = 2L;
-    JProgressBar progressBar;
     Thread thread;
 
     public BeatBar() {
@@ -23,9 +22,9 @@ class BeatBar extends JProgressBar implements Runnable {
 
     @Override
     public void run() {
-        while(true) {
+        while (true) {
             int value = getValue();
-            value = (int) (value* .75);
+            value = (int) (value * .75);
             setValue(value);
             repaint();
             try {

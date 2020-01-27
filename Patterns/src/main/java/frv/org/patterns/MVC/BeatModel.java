@@ -24,7 +24,7 @@ public class BeatModel implements BeatModelInterface, MetaEventListener {
     Track track;
     ArrayList<BeatObserver> beatObserver = new ArrayList();
     ArrayList<BPMObserver> bpmObserver = new ArrayList();
-    int bpm = 90;
+    int bpm = 30;
 
     @Override
     public void initialize() {
@@ -35,7 +35,7 @@ public class BeatModel implements BeatModelInterface, MetaEventListener {
     @Override
     public void on() {
         sequencer.start();
-        setBPM(90);
+        setBPM(getBPM());
     }
 
     @Override
@@ -47,6 +47,7 @@ public class BeatModel implements BeatModelInterface, MetaEventListener {
     @Override
     public void setBPM(int bpm) {
         this.bpm = bpm;
+        System.out.println("Now BPM is " + getBPM());
         sequencer.setTempoInBPM(getBPM());
         notifyBPMObservers();
     }
@@ -75,32 +76,36 @@ public class BeatModel implements BeatModelInterface, MetaEventListener {
 
     @Override
     public void registerObserver(BPMObserver o) {
-        int i = bpmObserver.indexOf(o);
-        if (i >= 0) {
-            bpmObserver.add(o);
-        }
+        bpmObserver.add(o);
+
     }
 
     @Override
     public void removeObserver(BPMObserver o) {
-        bpmObserver.remove(o);
+        int i = bpmObserver.indexOf(o);
+        if (i >= 0) {
+            bpmObserver.remove(o);
+        }
     }
 
     private void notifyBPMObservers() {
-        beatObserver.forEach((o) -> {
-            o.updateBeat();
+        bpmObserver.forEach((o) -> {
+            System.out.println("notifyBPMObservers");
+            o.updateBPM();
         });
     }
 
     private void notifyBeatObservers() {
-        bpmObserver.forEach((o) -> {
-            o.updateBPM();
+        beatObserver.forEach((o) -> {
+            o.updateBeat();
+            System.out.println("updateBeat");
         });
     }
 
     @Override
     public void meta(MetaMessage meta) {
         if (meta.getType() == 47) {
+            System.out.println("beatEvent();");
             beatEvent();
             sequencer.start();
             setBPM(getBPM());
@@ -115,6 +120,7 @@ public class BeatModel implements BeatModelInterface, MetaEventListener {
             sequence = new Sequence(Sequence.PPQ, 4);
             track = sequence.createTrack();
             sequencer.setTempoInBPM(getBPM());
+            sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
         } catch (Exception e) {
             e.printStackTrace();
         }
