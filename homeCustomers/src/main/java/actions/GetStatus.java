@@ -49,9 +49,9 @@ public class GetStatus implements Runnable {
                     getEncrypt(new String(key), SSH_LOGIN),
                     getEncrypt(new String(key), SSH_PASS_L),
                     ipISG);
-
+//            System.out.println("Response showSessionCommand: " + response);
             String result = parseOut(response, showSessionCommand);
-//            System.out.println(result);
+//            System.out.println("RESULT showSessionCommand: " + result);
             if (detailed) {
                 String uid = getUID(result);
                 if (uid != null && uid.length() > 2) {
@@ -90,7 +90,7 @@ public class GetStatus implements Runnable {
             if (line.contains("UID")) {
                 for (String block : line.split(",")) {
                     if (block.contains("UID")) {
-                        response = block.replace("UID: ", ipClient);
+                        response = block.replace("UID: ", "");
                         return response;
                     }
                 }
