@@ -18,3 +18,4 @@ telegram-bot/src/main/resources/bot-data.properties
 /JavaCore/chapter2_11/target/
 /Patterns/target/
 /Streams/target/
+*.jar
