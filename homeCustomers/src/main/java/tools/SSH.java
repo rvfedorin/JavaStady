@@ -8,9 +8,9 @@ import static tools.CryptDecrypt.getEncrypt;
 import static tools.Config.*;
 
 public class SSH {
-    private char[] key;
-    private String host;
-    private JSch jsch;
+    private final char[] key;
+    private final String host;
+    private final JSch jsch;
     private Session session;
 
     public SSH(String host, char[] pass) {
@@ -289,14 +289,21 @@ public class SSH {
 
             dataIn = new DataInputStream(channel.getInputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(dataIn));
-            dataOut = new DataOutputStream(channel.getOutputStream());
+            OutputStream outStream = channel.getOutputStream();
+            dataOut = new DataOutputStream(outStream);
 
-//            System.out.println("Starting remote connection...");
+            System.out.println(">>>>>>>>>>>> Starting remote connection...");
             dataOut.writeBytes("ssh " + getEncrypt(new String(key), SSH_LOGIN) + "@"+ getEncrypt(new String(key), QESM) +"\r\n");
-//            System.out.println("Has connected to " + getEncrypt(new String(key), QESM));
+            dataOut.flush();
+            System.out.println(">>>>>>>>>>>> Has connected to " + getEncrypt(new String(key), QESM));
+            
+            sleep(1000);   // when terminal spam by "-bash: /dev/null: Permission denied"
+            outStream.write(3);
+            outStream.flush();
+            sleep(1000);
+
 
             for (String command : commands) {
-//                System.out.println(command);
                 dataOut.writeBytes(command + "\n");
             }
 
@@ -306,14 +313,14 @@ public class SSH {
             dataOut.writeBytes("exit\r\n"); //exit from shell
             dataOut.flush();
 
-//            System.out.println("Data has transmitted.");
+            System.out.println(">>>>>>>>>>>> Data has transmitted.");
 
             String line = reader.readLine();
             result = line + "\n";
 
 //            while (!(line = reader.readLine()).equals("Connection closed by foreign host")) {
             while ((line = reader.readLine()) != null && !line.contains("closed.")) {
-//                System.out.println(line);
+                System.out.println(line);
                 result += line + "\n";
             }
 

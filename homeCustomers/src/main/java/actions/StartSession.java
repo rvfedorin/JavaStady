@@ -38,7 +38,7 @@ public class StartSession implements Runnable {
             String response = ssh.shellConnection(commands);
 
             String result = parseOut(response);
-            System.out.println(result);
+            System.out.println("ssh response: " + result);
             ShowDialogs.info(result);
 
         } catch (Exception ex) {
